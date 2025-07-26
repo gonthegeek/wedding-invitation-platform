@@ -37,27 +37,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const createUserDocument = async (firebaseUser: FirebaseUser, role: UserRole, displayName?: string) => {
-    const userDoc = {
-      uid: firebaseUser.uid,
-      email: firebaseUser.email!,
-      role,
-      displayName: displayName || firebaseUser.displayName || '',
-      photoURL: firebaseUser.photoURL || '',
-      createdAt: new Date(),
-      lastLoginAt: new Date(),
-    };
+    try {
+      const userDoc = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email!,
+        role,
+        displayName: displayName || firebaseUser.displayName || '',
+        photoURL: firebaseUser.photoURL || '',
+        createdAt: new Date(),
+        lastLoginAt: new Date(),
+      };
 
-    await setDoc(doc(db, 'users', firebaseUser.uid), userDoc);
-    return userDoc;
+      await setDoc(doc(db, 'users', firebaseUser.uid), userDoc);
+      console.log('User document created in Firestore:', userDoc);
+      return userDoc;
+    } catch (error) {
+      console.error('Error creating user document:', error);
+      throw new Error('Failed to create user profile');
+    }
   };
 
   const getUserDocument = async (uid: string): Promise<User | null> => {
     try {
+      console.log('Fetching user document for UID:', uid);
       const userDocRef = doc(db, 'users', uid);
       const userDoc = await getDoc(userDocRef);
       
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        console.log('User document found:', userData);
         return {
           ...userData,
           createdAt: userData.createdAt?.toDate() || new Date(),
@@ -65,6 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } as User;
       }
       
+      console.log('User document not found for UID:', uid);
       return null;
     } catch (error) {
       console.error('Error fetching user document:', error);
@@ -75,9 +84,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const updateLastLogin = async (uid: string) => {
     try {
       const userDocRef = doc(db, 'users', uid);
-      await updateDoc(userDocRef, {
-        lastLoginAt: new Date(),
-      });
+      // Check if document exists first
+      const userDoc = await getDoc(userDocRef);
+      
+      if (userDoc.exists()) {
+        await updateDoc(userDocRef, {
+          lastLoginAt: new Date(),
+        });
+      } else {
+        console.warn('User document not found for lastLogin update:', uid);
+        // Document doesn't exist, this might be expected during registration
+      }
     } catch (error) {
       console.error('Error updating last login:', error);
     }
@@ -87,14 +104,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setFirebaseUser(firebaseUser);
-        const userDoc = await getUserDocument(firebaseUser.uid);
-        setCurrentUser(userDoc);
-        await updateLastLogin(firebaseUser.uid);
+        let userDoc = await getUserDocument(firebaseUser.uid);
+        
+        // If user document doesn't exist, it might be a new registration
+        // Wait a moment and try again, or create a basic document
+        if (!userDoc) {
+          console.log('User document not found, waiting for creation...');
+          // Wait a short time for the registration process to complete
+          setTimeout(async () => {
+            userDoc = await getUserDocument(firebaseUser.uid);
+            if (userDoc) {
+              setCurrentUser(userDoc);
+              await updateLastLogin(firebaseUser.uid);
+            } else {
+              console.warn('User document still not found after registration');
+              setCurrentUser(null);
+            }
+            setLoading(false);
+          }, 1000);
+        } else {
+          setCurrentUser(userDoc);
+          await updateLastLogin(firebaseUser.uid);
+          setLoading(false);
+        }
       } else {
         setFirebaseUser(null);
         setCurrentUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return unsubscribe;
@@ -121,7 +158,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         await updateProfile(user, { displayName });
       }
       
-      await createUserDocument(user, role, displayName);
+      // Create the user document
+      const userDoc = await createUserDocument(user, role, displayName);
+      console.log('User document created successfully:', userDoc);
+      
+      // Set the current user immediately after creation
+      setCurrentUser(userDoc);
+      
+      // Wait a moment to ensure Firestore has processed the write
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
