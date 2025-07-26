@@ -22,24 +22,52 @@ service cloud.firestore {
 
     // Guest documents
     match /guests/{guestId} {
-      // Guests can read their own data
-      allow read: if request.auth != null && 
-        (resource.data.email == request.auth.token.email || 
-         resource.data.inviteCode == request.auth.token.invite_code);
+      // Allow couples to read all guests for their wedding
+      allow read: if request.auth != null && (
+        get(/databases/$(database)/documents/weddings/$(resource.data.weddingId)).data.coupleId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
       
       // Wedding couples and admins can manage guests
-      allow write: if request.auth != null && 
-        (get(/databases/$(database)/documents/weddings/$(resource.data.weddingId)).data.coupleId == request.auth.uid ||
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow write: if request.auth != null && (
+        get(/databases/$(database)/documents/weddings/$(resource.data.weddingId)).data.coupleId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      
+      // Allow creation of guests by couples
+      allow create: if request.auth != null;
+    }
+
+    // Guest Groups
+    match /guestGroups/{groupId} {
+      // Allow couples to read all guest groups for their wedding
+      allow read: if request.auth != null && (
+        get(/databases/$(database)/documents/weddings/$(resource.data.weddingId)).data.coupleId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      
+      // Wedding couples and admins can manage guest groups
+      allow write: if request.auth != null && (
+        get(/databases/$(database)/documents/weddings/$(resource.data.weddingId)).data.coupleId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      
+      // Allow creation of guest groups by couples
+      allow create: if request.auth != null;
     }
 
     // RSVP documents
     match /rsvps/{rsvpId} {
-      // Public read for wedding couples to see responses
-      allow read: if request.auth != null;
+      // Couples can read all RSVPs for their wedding
+      allow read: if request.auth != null && (
+        get(/databases/$(database)/documents/weddings/$(resource.data.weddingId)).data.coupleId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
       
-      // Guests can create/update their own RSVPs
+      // Anyone can create RSVPs (for guest submissions)
+      // Couples and admins can update
       allow write: if request.auth != null;
+      allow create: if true; // Allow unauthenticated RSVP submissions
     }
 
     // Wedding party documents

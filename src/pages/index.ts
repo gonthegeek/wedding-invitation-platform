@@ -6,6 +6,7 @@ export { GuestInvitation } from './GuestInvitation';
 export { UnauthorizedPage } from './UnauthorizedPage';
 export { NotFoundPage } from './NotFoundPage';
 export { CreateWeddingPage } from './CreateWeddingPage';
+export { GuestManagementPage } from './GuestManagementPage';
 export { CoupleRoutes } from './CoupleRoutes';
 
 // Export shared components

@@ -14,7 +14,7 @@ interface UseWeddingResult {
   uploadWeddingImage: (file: File, imagePath: string) => Promise<string | null>;
 }
 
-export function useWedding(weddingId?: string) {
+export function useWedding(weddingId?: string): UseWeddingResult {
   const [wedding, setWedding] = useState<Wedding | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -48,6 +48,18 @@
   --breakpoint-xl: 1280px;
 }
 
+/* CSS Reset */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
@@ -56,9 +68,18 @@ body {
   background-color: var(--background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .app {
+  min-height: 100vh;
+  width: 100%;
+}
+
+#root {
+  width: 100%;
   min-height: 100vh;
 }
 
@@ -73,12 +94,12 @@ body {
 }
 
 .header-container {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
   padding: var(--spacing-md) var(--spacing-xl);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .header-left .header-title {

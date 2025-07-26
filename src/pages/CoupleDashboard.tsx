@@ -5,9 +5,13 @@ import { useWedding } from '../hooks/useWedding';
 import styled from 'styled-components';
 
 const DashboardContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  padding: var(--spacing-lg);
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-md);
+  }
 `;
 
 const DashboardGrid = styled.div`

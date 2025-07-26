@@ -9,6 +9,7 @@ import {
   UnauthorizedPage,
   NotFoundPage,
 } from './pages';
+import { RSVPPage } from './pages/RSVPPage';
 import { CoupleRoutes } from './pages/CoupleRoutes';
 import './styles/global.css';
 
@@ -26,6 +27,7 @@ function App() {
             {/* Guest Invitation Routes (Public) */}
             <Route path="/invitation/:weddingId" element={<GuestInvitation />} />
             <Route path="/invitation/:weddingId/:subdomain" element={<GuestInvitation />} />
+            <Route path="/rsvp/:inviteCode" element={<RSVPPage />} />
             
             {/* Protected Admin Routes */}
             <Route 
