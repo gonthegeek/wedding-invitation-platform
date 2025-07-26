@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:prod": "cp .env.production .env && npm run build && rm .env",
     "lint": "eslint .",
     "preview": "vite preview"
   },
