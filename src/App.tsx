@@ -5,11 +5,11 @@ import {
   LoginPage,
   RegisterPage,
   AdminDashboard,
-  CoupleDashboard,
   GuestInvitation,
   UnauthorizedPage,
   NotFoundPage,
 } from './pages';
+import { CoupleRoutes } from './pages/CoupleRoutes';
 import './styles/global.css';
 
 function App() {
@@ -42,7 +42,7 @@ function App() {
               path="/couple/*" 
               element={
                 <ProtectedRoute allowedRoles={['couple']}>
-                  <CoupleDashboard />
+                  <CoupleRoutes />
                 </ProtectedRoute>
               } 
             />

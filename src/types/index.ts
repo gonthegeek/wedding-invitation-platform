@@ -62,6 +62,7 @@ export interface WeddingSettings {
   allowGiftRegistry: boolean;
   isPublic: boolean;
   requireApproval: boolean;
+  welcomeMessage?: string;
 }
 
 export interface Guest {
