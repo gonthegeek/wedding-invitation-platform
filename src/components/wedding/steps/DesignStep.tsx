@@ -104,7 +104,9 @@ const TemplateGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
-const TemplateCard = styled.div<{ isSelected: boolean }>`
+const TemplateCard = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isSelected',
+})<{ isSelected: boolean }>`
   border: 2px solid ${props => props.isSelected ? '#3b82f6' : '#e5e7eb'};
   border-radius: 8px;
   padding: 1rem;
@@ -129,7 +131,9 @@ const TemplateCard = styled.div<{ isSelected: boolean }>`
   }
 `;
 
-const ColorPreview = styled.div<{ color: string }>`
+const ColorPreview = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'color',
+})<{ color: string }>`
   width: 40px;
   height: 40px;
   border-radius: 8px;

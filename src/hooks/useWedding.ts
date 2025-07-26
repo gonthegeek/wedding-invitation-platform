@@ -14,11 +14,11 @@ interface UseWeddingResult {
   uploadWeddingImage: (file: File, imagePath: string) => Promise<string | null>;
 }
 
-export const useWedding = (weddingId?: string): UseWeddingResult => {
-  const { currentUser } = useAuth();
+export function useWedding(weddingId?: string) {
   const [wedding, setWedding] = useState<Wedding | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { currentUser } = useAuth();
 
   // Fetch wedding data
   const fetchWedding = useCallback(async () => {

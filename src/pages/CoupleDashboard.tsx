@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '../components/shared/Layout';
 import { useWedding } from '../hooks/useWedding';
 import styled from 'styled-components';
@@ -142,6 +142,11 @@ const LoadingSpinner = styled.div`
 
 export const CoupleDashboard: React.FC = () => {
   const { wedding, loading } = useWedding();
+  const navigate = useNavigate();
+
+  const handleCreateWedding = () => {
+    navigate('/couple/create-wedding');
+  };
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
@@ -186,9 +191,23 @@ export const CoupleDashboard: React.FC = () => {
               Create your wedding invitation and share it with your guests. 
               Our easy-to-use wizard will guide you through the process step by step.
             </p>
-            <ActionButton to="/couple/create-wedding" variant="primary" style={{ marginTop: '1rem' }}>
+            <button 
+              onClick={handleCreateWedding}
+              style={{
+                marginTop: '1rem',
+                padding: '1rem 1.5rem',
+                background: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
               Create Your Wedding Invitation
-            </ActionButton>
+            </button>
           </DashboardCard>
 
           <ActionSection>

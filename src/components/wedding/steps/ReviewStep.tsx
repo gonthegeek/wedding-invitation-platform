@@ -57,7 +57,9 @@ const ColorPreview = styled.div<{ color: string }>`
   margin-left: 0.5rem;
 `;
 
-const TemplatePreview = styled.div<{ primaryColor: string; secondaryColor: string; fontFamily: string }>`
+const TemplatePreview = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['primaryColor', 'secondaryColor', 'fontFamily'].includes(prop),
+})<{ primaryColor: string; secondaryColor: string; fontFamily: string }>`
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 2rem;

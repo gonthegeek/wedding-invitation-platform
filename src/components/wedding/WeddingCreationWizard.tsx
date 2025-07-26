@@ -78,7 +78,9 @@ const StepIndicator = styled.div`
   }
 `;
 
-const Step = styled.div<{ isActive: boolean; isCompleted: boolean }>`
+const Step = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isActive', 'isCompleted'].includes(prop),
+})<{ isActive: boolean; isCompleted: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;

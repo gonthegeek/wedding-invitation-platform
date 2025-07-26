@@ -44,12 +44,30 @@ export class WeddingService {
       
       if (weddingDoc.exists()) {
         const data = weddingDoc.data();
+        
+        // Helper function to safely convert dates
+        const safeToDate = (dateField: unknown): Date => {
+          if (!dateField) return new Date();
+          if (dateField instanceof Date) return dateField;
+          
+          // Check if it's a Firestore Timestamp
+          if (typeof dateField === 'object' && dateField !== null && 'toDate' in dateField) {
+            const timestamp = dateField as { toDate: () => Date };
+            if (typeof timestamp.toDate === 'function') {
+              return timestamp.toDate();
+            }
+          }
+          
+          if (typeof dateField === 'string') return new Date(dateField);
+          return new Date();
+        };
+        
         return {
           id: weddingDoc.id,
           ...data,
-          weddingDate: data.weddingDate?.toDate() || new Date(),
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
+          weddingDate: safeToDate(data.weddingDate),
+          createdAt: safeToDate(data.createdAt),
+          updatedAt: safeToDate(data.updatedAt),
         } as Wedding;
       }
       
@@ -75,12 +93,30 @@ export class WeddingService {
       if (!querySnapshot.empty) {
         const doc = querySnapshot.docs[0];
         const data = doc.data();
+        
+        // Helper function to safely convert dates
+        const safeToDate = (dateField: unknown): Date => {
+          if (!dateField) return new Date();
+          if (dateField instanceof Date) return dateField;
+          
+          // Check if it's a Firestore Timestamp
+          if (typeof dateField === 'object' && dateField !== null && 'toDate' in dateField) {
+            const timestamp = dateField as { toDate: () => Date };
+            if (typeof timestamp.toDate === 'function') {
+              return timestamp.toDate();
+            }
+          }
+          
+          if (typeof dateField === 'string') return new Date(dateField);
+          return new Date();
+        };
+        
         return {
           id: doc.id,
           ...data,
-          weddingDate: data.weddingDate?.toDate() || new Date(),
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
+          weddingDate: safeToDate(data.weddingDate),
+          createdAt: safeToDate(data.createdAt),
+          updatedAt: safeToDate(data.updatedAt),
         } as Wedding;
       }
       
