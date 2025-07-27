@@ -211,6 +211,36 @@ export const CustomizeInvitationPage: React.FC = () => {
     }
   };
 
+  const handleWeddingUpdate = async (updatedWedding: Partial<Wedding>) => {
+    if (!wedding) return;
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      console.log('Updating wedding data:', updatedWedding);
+
+      // Update the wedding with new data
+      await WeddingService.updateWedding(wedding.id, updatedWedding);
+
+      console.log('Wedding updated successfully');
+
+      // Update local state
+      const newWedding = { ...wedding, ...updatedWedding };
+      setWedding(newWedding);
+
+      // Show success message
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+
+    } catch (err) {
+      console.error('Error updating wedding:', err);
+      setError('Failed to save changes. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handlePreview = () => {
     if (!wedding) return;
     
@@ -335,6 +365,7 @@ export const CustomizeInvitationPage: React.FC = () => {
         wedding={wedding}
         onSave={handleSave}
         onPreview={handlePreview}
+        onWeddingUpdate={handleWeddingUpdate}
       />
     </PageContainer>
   );

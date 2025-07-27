@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Save, Eye, Edit3, Heart, Palette, Settings } from 'lucide-react';
+import { Save, Eye, Edit3, Heart, Palette, Settings, MapPin } from 'lucide-react';
 import type { Wedding, WeddingSettings, SectionVisibility } from '../../types';
 import { ImageUpload } from '../shared/ImageUpload';
 import { GalleryUpload } from '../shared/GalleryUpload';
@@ -308,15 +308,18 @@ const RemoveButton = styled.button`
 interface WeddingDetailsEditorProps {
   wedding: Wedding;
   onSave: (settings: WeddingSettings) => Promise<void>;
+  onWeddingUpdate?: (wedding: Partial<Wedding>) => Promise<void>;
   onPreview: () => void;
 }
 
 export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
-  wedding,
+  wedding: initialWedding,
   onSave,
+  onWeddingUpdate,
   onPreview
 }) => {
-  const [activeTab, setActiveTab] = useState<'content' | 'design' | 'additional' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'design' | 'additional' | 'venues' | 'settings'>('content');
+  const [wedding, setWedding] = useState<Wedding>(initialWedding);
   const [settings, setSettings] = useState<WeddingSettings>({
     ...wedding.settings,
     // Ensure all customizable fields have default values
@@ -379,13 +382,30 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
     }));
   };
 
+  const handleVenueChange = (locationType: 'ceremony' | 'reception', field: string, value: string) => {
+    const locationField = locationType === 'ceremony' ? 'ceremonyLocation' : 'receptionLocation';
+    setWedding(prev => ({
+      ...prev,
+      [locationField]: {
+        ...prev[locationField],
+        [field]: value
+      }
+    }));
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
       console.log('WeddingDetailsEditor: Saving settings:', settings);
       await onSave(settings);
+      
+      // If wedding data has changed and we have a wedding update handler, save it too
+      if (onWeddingUpdate && JSON.stringify(wedding) !== JSON.stringify(initialWedding)) {
+        console.log('WeddingDetailsEditor: Saving wedding data:', wedding);
+        await onWeddingUpdate(wedding);
+      }
     } catch (error) {
-      console.error('WeddingDetailsEditor: Error saving wedding settings:', error);
+      console.error('WeddingDetailsEditor: Error saving wedding data:', error);
     } finally {
       setSaving(false);
     }
@@ -492,6 +512,13 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
         >
           <Heart size={20} />
           Additional Sections
+        </Tab>
+        <Tab 
+          $active={activeTab === 'venues'} 
+          onClick={() => setActiveTab('venues')}
+        >
+          <MapPin size={20} />
+          Venue Details
         </Tab>
         <Tab 
           $active={activeTab === 'settings'} 
@@ -917,6 +944,125 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
             </>
           )}
 
+          {activeTab === 'venues' && (
+            <>
+              <SectionTitle>
+                <MapPin size={20} />
+                Venue Details
+              </SectionTitle>
+
+              {/* Ceremony Location */}
+              <FormGroup>
+                <Label>Ceremony Venue</Label>
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  <Input
+                    value={wedding.ceremonyLocation?.name || ''}
+                    onChange={(e) => handleVenueChange('ceremony', 'name', e.target.value)}
+                    placeholder="Venue name"
+                  />
+                  <Input
+                    value={wedding.ceremonyLocation?.address || ''}
+                    onChange={(e) => handleVenueChange('ceremony', 'address', e.target.value)}
+                    placeholder="Address"
+                  />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+                    <Input
+                      value={wedding.ceremonyLocation?.city || ''}
+                      onChange={(e) => handleVenueChange('ceremony', 'city', e.target.value)}
+                      placeholder="City"
+                    />
+                    <Input
+                      value={wedding.ceremonyLocation?.state || ''}
+                      onChange={(e) => handleVenueChange('ceremony', 'state', e.target.value)}
+                      placeholder="State"
+                    />
+                    <Input
+                      value={wedding.ceremonyLocation?.zipCode || ''}
+                      onChange={(e) => handleVenueChange('ceremony', 'zipCode', e.target.value)}
+                      placeholder="Zip Code"
+                    />
+                  </div>
+                  <Input
+                    value={wedding.ceremonyLocation?.googleMapsUrl || ''}
+                    onChange={(e) => handleVenueChange('ceremony', 'googleMapsUrl', e.target.value)}
+                    placeholder="Google Maps link (optional)"
+                    type="url"
+                  />
+                </div>
+              </FormGroup>
+
+              {/* Ceremony Time */}
+              <FormGroup>
+                <Label>Ceremony Time</Label>
+                <Input
+                  value={wedding.ceremonyTime || ''}
+                  onChange={(e) => setWedding(prev => ({ ...prev, ceremonyTime: e.target.value }))}
+                  placeholder="e.g., 4:00 PM"
+                />
+              </FormGroup>
+
+              {/* Reception Location */}
+              <FormGroup>
+                <Label>Reception Venue</Label>
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  <Input
+                    value={wedding.receptionLocation?.name || ''}
+                    onChange={(e) => handleVenueChange('reception', 'name', e.target.value)}
+                    placeholder="Venue name"
+                  />
+                  <Input
+                    value={wedding.receptionLocation?.address || ''}
+                    onChange={(e) => handleVenueChange('reception', 'address', e.target.value)}
+                    placeholder="Address"
+                  />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+                    <Input
+                      value={wedding.receptionLocation?.city || ''}
+                      onChange={(e) => handleVenueChange('reception', 'city', e.target.value)}
+                      placeholder="City"
+                    />
+                    <Input
+                      value={wedding.receptionLocation?.state || ''}
+                      onChange={(e) => handleVenueChange('reception', 'state', e.target.value)}
+                      placeholder="State"
+                    />
+                    <Input
+                      value={wedding.receptionLocation?.zipCode || ''}
+                      onChange={(e) => handleVenueChange('reception', 'zipCode', e.target.value)}
+                      placeholder="Zip Code"
+                    />
+                  </div>
+                  <Input
+                    value={wedding.receptionLocation?.googleMapsUrl || ''}
+                    onChange={(e) => handleVenueChange('reception', 'googleMapsUrl', e.target.value)}
+                    placeholder="Google Maps link (optional)"
+                    type="url"
+                  />
+                </div>
+              </FormGroup>
+
+              {/* Reception Time */}
+              <FormGroup>
+                <Label>Reception Time</Label>
+                <Input
+                  value={wedding.receptionTime || ''}
+                  onChange={(e) => setWedding(prev => ({ ...prev, receptionTime: e.target.value }))}
+                  placeholder="e.g., 6:00 PM"
+                />
+              </FormGroup>
+
+              {/* Wedding Date */}
+              <FormGroup>
+                <Label>Wedding Date</Label>
+                <Input
+                  type="date"
+                  value={wedding.weddingDate ? new Date(wedding.weddingDate).toISOString().split('T')[0] : ''}
+                  onChange={(e) => setWedding(prev => ({ ...prev, weddingDate: new Date(e.target.value) }))}
+                />
+              </FormGroup>
+            </>
+          )}
+
           {activeTab === 'settings' && (
             <>
               <SectionTitle>
@@ -1185,6 +1331,88 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     fontSize: '0.8rem'
                   }}>
                     Details
+                  </div>
+                </div>
+              </PreviewCard>
+            </>
+          )}
+
+          {activeTab === 'venues' && (
+            <>
+              <PreviewTitle style={{ color: settings.primaryColor }}>Venue Preview</PreviewTitle>
+              <PreviewCard>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <h4 style={{ margin: '0 0 1rem', color: settings.primaryColor, fontSize: '1.1rem' }}>
+                    📅 {wedding.weddingDate ? new Date(wedding.weddingDate).toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    }) : 'Wedding Date'}
+                  </h4>
+                </div>
+
+                <div style={{ display: 'grid', gap: '1.5rem' }}>
+                  <div style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                    <h5 style={{ margin: '0 0 0.5rem', color: settings.primaryColor, fontSize: '1rem' }}>
+                      ⛪ Ceremony
+                    </h5>
+                    <div style={{ fontSize: '0.9rem', color: '#333' }}>
+                      <div style={{ fontWeight: '600' }}>{wedding.ceremonyLocation?.name || 'Ceremony Venue'}</div>
+                      <div>{wedding.ceremonyTime || 'Ceremony Time'}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                        {wedding.ceremonyLocation?.address && (
+                          <>
+                            {wedding.ceremonyLocation.address}
+                            {wedding.ceremonyLocation.city && `, ${wedding.ceremonyLocation.city}`}
+                            {wedding.ceremonyLocation.state && `, ${wedding.ceremonyLocation.state}`}
+                            {wedding.ceremonyLocation.zipCode && ` ${wedding.ceremonyLocation.zipCode}`}
+                          </>
+                        )}
+                      </div>
+                      {wedding.ceremonyLocation?.googleMapsUrl && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <span style={{ 
+                            fontSize: '0.8rem', 
+                            color: settings.primaryColor, 
+                            textDecoration: 'underline' 
+                          }}>
+                            📍 View on Maps
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                    <h5 style={{ margin: '0 0 0.5rem', color: settings.primaryColor, fontSize: '1rem' }}>
+                      🎉 Reception
+                    </h5>
+                    <div style={{ fontSize: '0.9rem', color: '#333' }}>
+                      <div style={{ fontWeight: '600' }}>{wedding.receptionLocation?.name || 'Reception Venue'}</div>
+                      <div>{wedding.receptionTime || 'Reception Time'}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                        {wedding.receptionLocation?.address && (
+                          <>
+                            {wedding.receptionLocation.address}
+                            {wedding.receptionLocation.city && `, ${wedding.receptionLocation.city}`}
+                            {wedding.receptionLocation.state && `, ${wedding.receptionLocation.state}`}
+                            {wedding.receptionLocation.zipCode && ` ${wedding.receptionLocation.zipCode}`}
+                          </>
+                        )}
+                      </div>
+                      {wedding.receptionLocation?.googleMapsUrl && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <span style={{ 
+                            fontSize: '0.8rem', 
+                            color: settings.primaryColor, 
+                            textDecoration: 'underline' 
+                          }}>
+                            📍 View on Maps
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </PreviewCard>
