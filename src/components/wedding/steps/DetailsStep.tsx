@@ -168,6 +168,21 @@ export default function DetailsStep() {
               )}
             </FormGroup>
           </FormRow>
+
+          <FormRow style={{ marginTop: '1rem' }}>
+            <FormGroup>
+              <Label htmlFor="ceremonyLocation.googleMapsUrl">Google Maps Link (Optional)</Label>
+              <Input
+                {...register('ceremonyLocation.googleMapsUrl')}
+                id="ceremonyLocation.googleMapsUrl"
+                type="url"
+                placeholder="https://maps.google.com/... (paste from Google Maps)"
+              />
+              <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
+                Go to Google Maps, search your venue, click "Share" and copy the link
+              </small>
+            </FormGroup>
+          </FormRow>
         </LocationSection>
       </div>
 
@@ -261,6 +276,21 @@ export default function DetailsStep() {
               {errors.receptionLocation?.zipCode && (
                 <ErrorMessage>{errors.receptionLocation.zipCode.message}</ErrorMessage>
               )}
+            </FormGroup>
+          </FormRow>
+
+          <FormRow style={{ marginTop: '1rem' }}>
+            <FormGroup>
+              <Label htmlFor="receptionLocation.googleMapsUrl">Google Maps Link (Optional)</Label>
+              <Input
+                {...register('receptionLocation.googleMapsUrl')}
+                id="receptionLocation.googleMapsUrl"
+                type="url"
+                placeholder="https://maps.google.com/... (paste from Google Maps)"
+              />
+              <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
+                Go to Google Maps, search your venue, click "Share" and copy the link
+              </small>
             </FormGroup>
           </FormRow>
         </LocationSection>

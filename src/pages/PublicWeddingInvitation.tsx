@@ -30,16 +30,20 @@ const InvitationContainer = styled.div.withConfig({
   backgroundSize?: string;
 }>`
   min-height: 100vh;
-  background: ${props => {
+  ${props => {
     if (props.backgroundType === 'image' && props.backgroundImageUrl) {
-      return `url(${props.backgroundImageUrl})`;
+      return `
+        background-image: url(${props.backgroundImageUrl});
+        background-position: ${props.backgroundPosition || 'center'};
+        background-size: ${props.backgroundSize || 'cover'};
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      `;
     }
-    return `linear-gradient(135deg, ${props.primaryColor || '#667eea'} 0%, ${props.secondaryColor || '#764ba2'} 100%)`;
-  }};
-  background-position: ${props => props.backgroundPosition || 'center'};
-  background-size: ${props => props.backgroundSize || 'cover'};
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+    return `
+      background: linear-gradient(135deg, ${props.primaryColor || '#667eea'} 0%, ${props.secondaryColor || '#764ba2'} 100%);
+    `;
+  }}
   font-family: 'Georgia', serif;
   position: relative;
   overflow-x: hidden;
