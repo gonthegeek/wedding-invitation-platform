@@ -55,14 +55,74 @@ export interface WeddingTemplate {
 }
 
 export interface WeddingSettings {
-  allowPlusOnes: boolean;
-  allowChildrenAttendance: boolean;
-  requireRSVPDeadline: Date;
-  sendEmailNotifications: boolean;
-  allowGiftRegistry: boolean;
-  isPublic: boolean;
-  requireApproval: boolean;
-  welcomeMessage?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  fontFamily?: string;
+  backgroundImage?: string;
+  musicPlaylist?: string[];
+  photoGallery?: string[];
+  customMessage?: string;
+  templateStyle?: 'classic' | 'modern' | 'rustic' | 'elegant';
+  // Couple photos
+  bridePhoto?: string;
+  groomPhoto?: string;
+  couplePhoto?: string;
+  // Customizable content for invitation
+  loveQuote?: string;
+  brideFatherName?: string;
+  brideMotherName?: string;
+  groomFatherName?: string;
+  groomMotherName?: string;
+  dressCode?: string;
+  dressCodeDescription?: string;
+  specialInstructions?: string;
+  rsvpMessage?: string;
+  rsvpTitle?: string;
+  rsvpButtonText?: string;
+  childrenNote?: string;
+  childrenNoteDetails?: string;
+  giftMessage?: string;
+  footerMessage?: string;
+  footerSignature?: string;
+  // Padrinos (Godparents)
+  padrinos?: Padrino[];
+  // Gift options
+  giftOptions?: GiftOption[];
+  // Hotel information
+  hotelInfo?: HotelInfo;
+}
+
+export interface Padrino {
+  id: string;
+  type: 'velacion' | 'anillos' | 'arras' | 'lazo' | 'biblia' | 'cojines' | 'ramo';
+  name: string;
+  lastName?: string;
+  icon?: string;
+}
+
+export interface GiftOption {
+  id: string;
+  type: 'bank' | 'store' | 'cash' | 'other';
+  title: string;
+  description?: string;
+  accountNumber?: string;
+  bankName?: string;
+  accountHolder?: string;
+  storeUrl?: string;
+  storeName?: string;
+  icon?: string;
+}
+
+export interface HotelInfo {
+  name: string;
+  address: string;
+  phone?: string;
+  website?: string;
+  bookingUrl?: string;
+  description?: string;
+  photos?: string[];
+  specialRate?: string;
+  bookingCode?: string;
 }
 
 export interface Guest {

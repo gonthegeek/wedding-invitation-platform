@@ -4,13 +4,14 @@ import { ProtectedRoute } from './components/shared/ProtectedRoute';
 import {
   LoginPage,
   RegisterPage,
-  AdminDashboard,
   GuestInvitation,
   UnauthorizedPage,
   NotFoundPage,
 } from './pages';
 import { RSVPPage } from './pages/RSVPPage';
 import { CoupleRoutes } from './pages/CoupleRoutes';
+import { AdminRoutes } from './pages/AdminRoutes';
+import { PublicWeddingInvitation } from './pages/PublicWeddingInvitation';
 import './styles/global.css';
 
 function App() {
@@ -27,14 +28,20 @@ function App() {
             {/* Guest Invitation Routes (Public) */}
             <Route path="/invitation/:weddingId" element={<GuestInvitation />} />
             <Route path="/invitation/:weddingId/:subdomain" element={<GuestInvitation />} />
-            <Route path="/rsvp/:inviteCode" element={<RSVPPage />} />
+            
+            {/* RSVP Routes - Backward compatibility + New format */}
+            <Route path="/rsvp/:inviteCode" element={<RSVPPage />} />  {/* Keep for backward compatibility */}
+            <Route path="/invite/:inviteCode" element={<PublicWeddingInvitation />} />  {/* New preferred format */}
+            
+            {/* Public Wedding Invitation */}
+            <Route path="/wedding/:weddingId" element={<PublicWeddingInvitation />} />
             
             {/* Protected Admin Routes */}
             <Route 
               path="/admin/*" 
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
+                  <AdminRoutes />
                 </ProtectedRoute>
               } 
             />

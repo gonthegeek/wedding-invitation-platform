@@ -416,7 +416,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
   const getInvitationURL = (guest: Guest) => {
     // In a real app, this would be the actual domain
     const baseURL = window.location.origin;
-    return `${baseURL}/rsvp/${guest.inviteCode}`;
+    return `${baseURL}/invite/${guest.inviteCode}`;  // Updated to new format with embedded RSVP
   };
 
   const markGuestAsInvited = async (guest: Guest) => {

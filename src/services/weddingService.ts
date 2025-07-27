@@ -135,6 +135,33 @@ export class WeddingService {
     }
   }
 
+  // Helper function to convert various date formats to Date object
+  private static convertToDate(dateValue: unknown): Date {
+    if (!dateValue) return new Date();
+    
+    // If it's already a Date object
+    if (dateValue instanceof Date) {
+      return dateValue;
+    }
+    
+    // If it's a Firestore Timestamp with toDate method
+    if (dateValue && typeof dateValue === 'object' && 'toDate' in dateValue) {
+      const timestamp = dateValue as { toDate: () => Date };
+      if (typeof timestamp.toDate === 'function') {
+        return timestamp.toDate();
+      }
+    }
+    
+    // If it's a string or number, try to parse it
+    if (typeof dateValue === 'string' || typeof dateValue === 'number') {
+      const parsed = new Date(dateValue);
+      return isNaN(parsed.getTime()) ? new Date() : parsed;
+    }
+    
+    // Fallback to current date
+    return new Date();
+  }
+
   // Get all weddings (for admin)
   static async getAllWeddings(): Promise<Wedding[]> {
     try {
@@ -151,9 +178,9 @@ export class WeddingService {
         weddings.push({
           id: doc.id,
           ...data,
-          weddingDate: data.weddingDate?.toDate() || new Date(),
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
+          weddingDate: this.convertToDate(data.weddingDate),
+          createdAt: this.convertToDate(data.createdAt),
+          updatedAt: this.convertToDate(data.updatedAt),
         } as Wedding);
       });
       
@@ -167,14 +194,15 @@ export class WeddingService {
   // Update wedding
   static async updateWedding(weddingId: string, updates: Partial<Wedding>): Promise<void> {
     try {
+      console.log('WeddingService: Starting updateWedding', { weddingId, updates });
       const weddingRef = doc(db, this.COLLECTION, weddingId);
       await updateDoc(weddingRef, {
         ...updates,
         updatedAt: serverTimestamp(),
       });
-      console.log('Wedding updated successfully');
+      console.log('WeddingService: Wedding updated successfully');
     } catch (error) {
-      console.error('Error updating wedding:', error);
+      console.error('WeddingService: Error updating wedding:', error);
       throw new Error('Failed to update wedding');
     }
   }
