@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Modal } from '../shared/Modal';
 import { GuestService } from '../../services/guestService';
+import { EmailService } from '../../services/emailService';
 import { generateSharingURL } from '../../config/invitationConfig';
 import type { Guest } from '../../types/guest';
 import { Mail, Copy, Send, CheckCircle, AlertCircle, Users, ExternalLink, MessageCircle, Smartphone } from 'lucide-react';
@@ -335,6 +336,39 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
   const [copiedURLs, setCopiedURLs] = useState<Set<string>>(new Set());
   const [invitationMethod, setInvitationMethod] = useState<'urls' | 'email'>('urls');
   const [guestFilter, setGuestFilter] = useState<'pending' | 'invited' | 'all'>('pending');
+  const [emailServiceStatus, setEmailServiceStatus] = useState<{
+    available: boolean;
+    provider: string;
+    error?: string;
+  } | null>(null);
+
+  // Check email service status on mount
+  useEffect(() => {
+    const checkEmailService = async () => {
+      try {
+        // Temporarily disable email service check until functions are deployed
+        // TODO: Re-enable after firebase functions are deployed
+        setEmailServiceStatus({
+          available: false,
+          provider: 'not_deployed',
+          error: 'Email functions not deployed yet - use URL sharing instead'
+        });
+        
+        // Uncomment below when functions are deployed:
+        // const status = await EmailService.checkEmailServiceStatus();
+        // setEmailServiceStatus(status);
+      } catch (err) {
+        console.error('Failed to check email service:', err);
+        setEmailServiceStatus({
+          available: false,
+          provider: 'none',
+          error: 'Failed to check email service'
+        });
+      }
+    };
+
+    checkEmailService();
+  }, []);
 
   // Filter guests based on invitation status
   const getFilteredGuests = () => {
@@ -485,39 +519,60 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
     setStatusMessage(null);
 
     try {
-      // TODO: Implement actual email sending service
-      // For now, we'll simulate sending emails
       const selectedGuestsList = guests.filter(guest => selectedGuests.has(guest.id));
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Update guests to mark invitations as sent
-      for (const guest of selectedGuestsList) {
-        await GuestService.updateGuest(guest.id, {
-          remindersSent: guest.remindersSent + 1,
-          invitedAt: new Date(),
+      // Check if we have weddingId (should be available from guests data)
+      const weddingId = selectedGuestsList[0]?.weddingId;
+      if (!weddingId) {
+        throw new Error('Wedding ID not found');
+      }
+
+      // Use EmailService to send real emails
+      const result = await EmailService.sendInvitationEmails({
+        weddingId,
+        guests: selectedGuestsList
+      });
+
+      if (result.success) {
+        setStatusMessage({
+          type: 'success',
+          message: `Successfully sent ${result.totalSent} invitation${result.totalSent === 1 ? '' : 's'}!` +
+            (result.totalFailed > 0 ? ` (${result.totalFailed} failed)` : '')
+        });
+
+        onInvitationsSent();
+        
+        // Auto-close after success
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
+        setStatusMessage({
+          type: 'error',
+          message: 'Some invitations failed to send. Please try again.'
         });
       }
 
-      setStatusMessage({
-        type: 'success',
-        message: `Successfully sent ${selectedGuests.size} invitation${selectedGuests.size === 1 ? '' : 's'}!`
-      });
-
-      onInvitationsSent();
-      
-      // Auto-close after success
-      setTimeout(() => {
-        onClose();
-      }, 2000);
-
     } catch (error) {
       console.error('Error sending invitations:', error);
-      setStatusMessage({
-        type: 'error',
-        message: 'Failed to send invitations. Please try again.'
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      if (errorMessage.includes('not authenticated')) {
+        setStatusMessage({
+          type: 'error',
+          message: 'Authentication required. Please log in again.'
+        });
+      } else if (errorMessage.includes('email service')) {
+        setStatusMessage({
+          type: 'error',
+          message: 'Email service not configured. Please contact support or use URL sharing method.'
+        });
+      } else {
+        setStatusMessage({
+          type: 'error',
+          message: 'Failed to send invitations. Please try again or use URL sharing method.'
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -647,10 +702,22 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
             )}
 
             {invitationMethod === 'email' && (
-              <InfoBox type="warning">
+              <InfoBox type={emailServiceStatus?.available ? 'info' : 'warning'}>
                 <AlertCircle size={16} />
                 <div>
-                  <strong>Email service required:</strong> Currently showing simulated email sending. To send real emails, you'll need to configure an email service provider (additional costs may apply).
+                  {emailServiceStatus?.available ? (
+                    <>
+                      <strong>Email service ready:</strong> Using {emailServiceStatus.provider} for email delivery. 
+                      Emails will be sent professionally with tracking and delivery confirmation.
+                    </>
+                  ) : (
+                    <>
+                      <strong>Email service required:</strong> To send real emails, you'll need to configure an email service provider. 
+                      {emailServiceStatus?.error && ` (${emailServiceStatus.error})`}
+                      <br />
+                      <small>Consider using URL sharing method instead - it's free and often more personal!</small>
+                    </>
+                  )}
                 </div>
               </InfoBox>
             )}
@@ -764,7 +831,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
               <Button 
                 variant="primary" 
                 onClick={sendInvitations}
-                disabled={isLoading || selectedGuests.size === 0}
+                disabled={isLoading || selectedGuests.size === 0 || !emailServiceStatus?.available}
               >
                 {isLoading ? (
                   <>

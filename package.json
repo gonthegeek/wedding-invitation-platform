@@ -8,7 +8,11 @@
     "build": "tsc -b && vite build",
     "build:prod": "cp .env.production .env && npm run build && rm .env",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "functions:build": "cd functions && npm run build",
+    "functions:serve": "cd functions && npm run serve",
+    "functions:deploy": "cd functions && npm run deploy",
+    "deploy:full": "npm run build && npm run functions:deploy && firebase deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",
