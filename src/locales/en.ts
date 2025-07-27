@@ -349,12 +349,16 @@ export const englishTranslations: TranslationKeys = {
     createWeddingFirst: 'Please create a wedding first before customizing your invitation.',
     unableToLoadWedding: 'Unable to Load Wedding',
     
-    // Tabs
+    // Tab navigation
+    contentSettings: 'Content Settings',
+    designSettings: 'Design Settings',
     contentAndText: 'Content & Text',
     designAndColors: 'Design & Colors',
     additionalSections: 'Additional Sections',
     venueDetails: 'Venue Details',
+    weddingParty: 'Wedding Party',
     weddingPartyTab: 'Wedding Party',
+    settingsVisibility: 'Settings & Visibility',
     settingsAndVisibility: 'Settings & Visibility',
     
     // Content Tab
@@ -368,11 +372,15 @@ export const englishTranslations: TranslationKeys = {
     dressCodeDescriptionPlaceholder: 'Detailed dress code instructions',
     specialInstructions: 'Special Instructions',
     specialInstructionsPlaceholder: 'Any additional information for your guests...',
+    specialInstructionsTitle: 'Special Instructions',
+    specialInstructionsMessage: 'Important information for our guests',
     rsvpTitle: 'RSVP Title',
     rsvpMessage: 'RSVP Message',
     rsvpButtonText: 'RSVP Button Text',
     giftMessage: 'Gift Message',
     giftMessagePlaceholder: 'Message about gifts',
+    giftRegistryTitle: 'Gift Registry Title',
+    giftRegistryMessage: 'Gift Registry Message',
     customMessage: 'Custom Message',
     customMessagePlaceholder: 'Add a personal message to your invitation',
     footerMessage: 'Footer Message',
@@ -386,14 +394,18 @@ export const englishTranslations: TranslationKeys = {
     invitationDesign: 'Invitation Design',
     primaryColor: 'Primary Color',
     secondaryColor: 'Secondary Color',
+    accentColor: 'Accent Color',
+    textColor: 'Text Color',
     fontFamily: 'Font Family',
     backgroundImage: 'Background Image',
     uploadBackgroundImage: 'Upload Background Image',
     removeBackgroundImage: 'Remove Background Image',
+    backgroundPosition: 'Background Position',
     templateStyle: 'Template Style',
     classic: 'Classic',
     modern: 'Modern',
     rustic: 'Rustic',
+    romantic: 'Romantic',
     elegant: 'Elegant',
     
     // Background Position Options
@@ -451,6 +463,8 @@ export const englishTranslations: TranslationKeys = {
     giftStoreUrl: 'Store URL',
     
     // Padrinos Section
+    padrinosTitle: 'Wedding Sponsors',
+    padrinosDe: 'Wedding Sponsors of',
     padrinos: 'Padrinos (Godparents)',
     addPadrinos: 'Add Padrinos',
     addPadrino: '+ Add Padrino',
@@ -482,6 +496,8 @@ export const englishTranslations: TranslationKeys = {
     storeUrl: 'Store URL',
     
     // Hotel Information Section
+    hotelInfoTitle: 'Hotel Information',
+    hotelInfoMessage: 'Hotel recommendations for our guests',
     hotelInformation: 'Hotel Information',
     hotelName: 'Hotel Name',
     hotelAddress: 'Address',

@@ -27,6 +27,15 @@ export const spanishTranslations: TranslationKeys = {
     required: 'Requerido',
   },
 
+  // Common UI elements
+  dressCode: 'Código de Vestimenta',
+  giftOptions: 'Opciones de Regalos',
+  hotelInformation: 'Información del Hotel',
+  loveQuote: 'Frase de Amor',
+  specialInstructions: 'Instrucciones Especiales',
+  couplePhoto: 'Foto de la Pareja',
+  photoGallery: 'Galería de Fotos',
+
   // Wedding Customization
   customization: {
     // Page titles
@@ -54,12 +63,16 @@ export const spanishTranslations: TranslationKeys = {
     createWeddingFirst: 'Por favor, crea una boda primero antes de personalizar tu invitación.',
     unableToLoadWedding: 'No se Pudo Cargar la Boda',
     
-    // Tabs
+    // Tab navigation
+    contentSettings: 'Configuración de Contenido',
+    designSettings: 'Configuración de Diseño',
     contentAndText: 'Contenido y Texto',
     designAndColors: 'Diseño y Colores',
     additionalSections: 'Secciones Adicionales',
     venueDetails: 'Detalles del Lugar',
+    weddingParty: 'Cortejo de Boda',
     weddingPartyTab: 'Cortejo de Boda',
+    settingsVisibility: 'Configuración y Visibilidad',
     settingsAndVisibility: 'Configuración y Visibilidad',
     
     // Content Tab
@@ -73,11 +86,15 @@ export const spanishTranslations: TranslationKeys = {
     dressCodeDescriptionPlaceholder: 'Instrucciones detalladas del código de vestimenta',
     specialInstructions: 'Instrucciones Especiales',
     specialInstructionsPlaceholder: 'Cualquier información adicional para tus invitados...',
+    specialInstructionsTitle: 'Instrucciones Especiales',
+    specialInstructionsMessage: 'Información importante para nuestros invitados',
     rsvpTitle: 'Título de Confirmación',
     rsvpMessage: 'Mensaje de Confirmación',
     rsvpButtonText: 'Texto del Botón de Confirmación',
     giftMessage: 'Mensaje de Regalos',
     giftMessagePlaceholder: 'Mensaje sobre regalos',
+    giftRegistryTitle: 'Título de Lista de Regalos',
+    giftRegistryMessage: 'Mensaje de Lista de Regalos',
     customMessage: 'Mensaje Personalizado',
     customMessagePlaceholder: 'Agrega un mensaje personal a tu invitación',
     footerMessage: 'Mensaje del Pie de Página',
@@ -91,14 +108,18 @@ export const spanishTranslations: TranslationKeys = {
     invitationDesign: 'Diseño de la Invitación',
     primaryColor: 'Color Primario',
     secondaryColor: 'Color Secundario',
+    accentColor: 'Color de Acento',
+    textColor: 'Color del Texto',
     fontFamily: 'Tipo de Letra',
     backgroundImage: 'Imagen de Fondo',
     uploadBackgroundImage: 'Subir Imagen de Fondo',
     removeBackgroundImage: 'Quitar Imagen de Fondo',
+    backgroundPosition: 'Posición del Fondo',
     templateStyle: 'Estilo de Plantilla',
     classic: 'Clásico',
     modern: 'Moderno',
     rustic: 'Rústico',
+    romantic: 'Romántico',
     elegant: 'Elegante',
     
     // Background Position Options
@@ -156,6 +177,8 @@ export const spanishTranslations: TranslationKeys = {
     giftStoreUrl: 'URL de la Tienda',
     
     // Padrinos Section
+    padrinosTitle: 'Padrinos de Boda',
+    padrinosDe: 'Padrinos de',
     padrinos: 'Padrinos',
     addPadrinos: 'Agregar Padrinos',
     addPadrino: '+ Agregar Padrino',
@@ -187,6 +210,8 @@ export const spanishTranslations: TranslationKeys = {
     storeUrl: 'URL de la Tienda',
     
     // Hotel Information Section
+    hotelInfoTitle: 'Información del Hotel',
+    hotelInfoMessage: 'Recomendaciones de hotel para nuestros invitados',
     hotelInformation: 'Información del Hotel',
     hotelName: 'Nombre del Hotel',
     hotelAddress: 'Dirección',
