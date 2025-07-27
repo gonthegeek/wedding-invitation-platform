@@ -62,6 +62,14 @@ export interface WeddingSettings {
   musicPlaylist?: string[];
   photoGallery?: string[];
   customMessage?: string;
+  welcomeMessage?: string;
+  allowPlusOnes?: boolean;
+  allowChildrenAttendance?: boolean;
+  requireRSVPDeadline?: Date;
+  sendEmailNotifications?: boolean;
+  allowGiftRegistry?: boolean;
+  isPublic?: boolean;
+  requireApproval?: boolean;
   templateStyle?: 'classic' | 'modern' | 'rustic' | 'elegant';
   // Couple photos
   bridePhoto?: string;
