@@ -146,7 +146,6 @@ export const CustomizeInvitationPage: React.FC = () => {
   const { currentUser } = useAuth();
   const [wedding, setWedding] = useState<Wedding | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -181,7 +180,6 @@ export const CustomizeInvitationPage: React.FC = () => {
     if (!wedding) return;
 
     try {
-      setSaving(true);
       setError(null);
 
       console.log('Saving wedding settings:', settings);
@@ -206,8 +204,6 @@ export const CustomizeInvitationPage: React.FC = () => {
     } catch (err) {
       console.error('Error saving wedding settings:', err);
       setError('Failed to save changes. Please try again.');
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -215,7 +211,6 @@ export const CustomizeInvitationPage: React.FC = () => {
     if (!wedding) return;
 
     try {
-      setSaving(true);
       setError(null);
 
       console.log('Updating wedding data:', updatedWedding);
@@ -236,8 +231,6 @@ export const CustomizeInvitationPage: React.FC = () => {
     } catch (err) {
       console.error('Error updating wedding:', err);
       setError('Failed to save changes. Please try again.');
-    } finally {
-      setSaving(false);
     }
   };
 

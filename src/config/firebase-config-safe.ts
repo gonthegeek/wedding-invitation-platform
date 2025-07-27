@@ -1,8 +1,21 @@
 // Alternative Firebase config that uses window object for production
+
+interface WindowWithFirebaseConfig extends Window {
+  FIREBASE_CONFIG?: {
+    apiKey: string;
+    authDomain: string;
+    projectId: string;
+    storageBucket: string;
+    messagingSenderId: string;
+    appId: string;
+    measurementId?: string;
+  };
+}
+
 const getFirebaseConfig = () => {
   // Check if we're in production and have config in window object
-  if (typeof window !== 'undefined' && (window as any).FIREBASE_CONFIG) {
-    return (window as any).FIREBASE_CONFIG;
+  if (typeof window !== 'undefined' && (window as WindowWithFirebaseConfig).FIREBASE_CONFIG) {
+    return (window as WindowWithFirebaseConfig).FIREBASE_CONFIG;
   }
   
   // Otherwise use environment variables (development)
