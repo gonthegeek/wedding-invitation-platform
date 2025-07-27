@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Save, Eye, Edit3, Heart, Palette, Settings, MapPin, Users } from 'lucide-react';
 import type { Wedding, WeddingSettings, SectionVisibility } from '../../types';
-import { WeddingPartyManagement } from './WeddingPartyManagement';
+import WeddingPartyManagement from './WeddingPartyManagement';
 import { ImageUpload } from '../shared/ImageUpload';
 import { GalleryUpload } from '../shared/GalleryUpload';
 import { StorageService } from '../../services/storageService';
@@ -1074,7 +1074,6 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
           {activeTab === 'weddingParty' && (
             <WeddingPartyManagement 
               weddingId={wedding.id}
-              currentUserId={wedding.coupleId}
               wedding={wedding}
               onUpdate={() => {
                 // Refresh any data if needed

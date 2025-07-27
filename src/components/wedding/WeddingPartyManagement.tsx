@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Plus, Edit2, Trash2, GripVertical, Save, X, RefreshCw } from 'lucide-react';
 import { WeddingPartyService } from '../../services/weddingPartyService';
-import type { WeddingParty, WeddingPartyRole, Wedding, Padrino } from '../../types';
+import type { WeddingParty, WeddingPartyRole, Wedding } from '../../types';
 
 const Container = styled.div`
   background: white;
@@ -356,7 +356,6 @@ const ErrorMessage = styled.div`
 
 interface WeddingPartyManagementProps {
   weddingId: string;
-  currentUserId: string;
   wedding?: Wedding;
   onUpdate?: () => void;
 }
@@ -396,7 +395,6 @@ const weddingPartyRoles: { value: WeddingPartyRole; label: string }[] = [
 
 export default function WeddingPartyManagement({
   weddingId,
-  currentUserId,
   wedding,
   onUpdate
 }: WeddingPartyManagementProps) {
@@ -520,7 +518,7 @@ export default function WeddingPartyManagement({
     }
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
@@ -558,75 +556,6 @@ export default function WeddingPartyManagement({
     } catch (error) {
       console.error('Error saving member:', error);
       setError('Failed to save wedding party member');
-    }
-  };
-
-  const handleAdd = () => {
-    setEditingMember(null);
-    setFormData(defaultFormData);
-    setShowModal(true);
-  };
-
-  const handleEdit = (member: WeddingParty) => {
-    setEditingMember(member);
-    setFormData({
-      firstName: member.firstName,
-      lastName: member.lastName,
-      role: member.role,
-      relationship: member.relationship || '',
-      photo: member.photo || '',
-    });
-    setShowModal(true);
-  };
-
-  const handleDelete = async (memberId: string) => {
-    if (window.confirm('Are you sure you want to remove this wedding party member?')) {
-      try {
-        await WeddingPartyService.deleteWeddingPartyMember(memberId);
-        await fetchMembers();
-        onUpdate?.();
-      } catch (error) {
-        console.error('Error deleting wedding party member:', error);
-        alert('Failed to delete wedding party member');
-      }
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
-    try {
-      setSaving(true);
-      
-      const memberData = {
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        role: formData.role,
-        relationship: formData.relationship.trim() || undefined,
-        photo: formData.photo.trim() || undefined,
-        order: editingMember ? editingMember.order : members.length,
-        weddingId,
-      };
-
-      if (editingMember) {
-        await WeddingPartyService.updateWeddingPartyMember(editingMember.id, memberData);
-      } else {
-        await WeddingPartyService.addWeddingPartyMember(weddingId, memberData);
-      }
-
-      await fetchMembers();
-      onUpdate?.();
-      setShowModal(false);
-    } catch (error) {
-      console.error('Error saving wedding party member:', error);
-      alert('Failed to save wedding party member');
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -801,9 +730,9 @@ export default function WeddingPartyManagement({
                 <Button type="button" onClick={closeModal}>
                   Cancel
                 </Button>
-                <Button type="submit" variant="primary" disabled={saving}>
+                <Button type="submit" variant="primary">
                   <Save size={16} style={{ marginRight: '0.5rem' }} />
-                  {saving ? 'Saving...' : editingMember ? 'Update Member' : 'Add Member'}
+                  {editingMember ? 'Update Member' : 'Add Member'}
                 </Button>
               </ModalActions>
             </Form>

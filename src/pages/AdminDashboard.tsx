@@ -12,59 +12,17 @@ import {
   Trash2, 
   Eye, 
   Search,
-  Filter,
   Download,
   UserCheck,
-  Mail,
   TrendingUp,
   Activity
 } from 'lucide-react';
-import type { Wedding, User } from '../types';
+import type { Wedding } from '../types';
 
 const AdminContainer = styled.div`
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-`;
-
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-`;
-
-const StatCard = styled.div`
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const StatIcon = styled.div<{ color: string }>`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 8px;
-  background: ${props => props.color};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  margin-bottom: 1rem;
-`;
-
-const StatValue = styled.div`
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.25rem;
-`;
-
-const StatLabel = styled.div`
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
 `;
 
 const WeddingsTable = styled.div`
@@ -484,7 +442,7 @@ export const AdminDashboard: React.FC = () => {
     const headers = Object.keys(csvData[0] || {});
     const csvContent = [
       headers.join(','),
-      ...csvData.map(row => headers.map(header => `"${row[header]}"`).join(','))
+      ...csvData.map(row => headers.map(header => `"${row[header as keyof typeof row]}"`).join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

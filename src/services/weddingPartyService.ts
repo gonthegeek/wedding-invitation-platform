@@ -153,6 +153,7 @@ export class WeddingPartyService {
       'padrinos_biblia': 'Padrinos de Biblia',
       'padrinos_cojines': 'Padrinos de Cojines',
       'padrinos_ramo': 'Padrinos de Ramo',
+      'other': 'Other',
     };
     
     return roleDisplayNames[role] || role;
@@ -174,6 +175,7 @@ export class WeddingPartyService {
       'padrinos_biblia': '📖',
       'padrinos_cojines': '🛏️',
       'padrinos_ramo': '💐',
+      'other': '👥',
     };
     
     return roleIcons[role] || '👥';
