@@ -10,6 +10,7 @@ import { AddGuestModal } from '../components/guest/AddGuestModal';
 import { EditGuestModal } from '../components/guest/EditGuestModal';
 import { SendInvitationsModal } from '../components/guest/SendInvitationsModal';
 import { DeletedGuestsModal } from '../components/guest/DeletedGuestsModal';
+import { GuestImportExport } from '../components/guest/GuestImportExport';
 import { useWedding } from '../hooks/useWedding';
 import { useGuest } from '../hooks/useGuest';
 import type { Guest } from '../types/guest';
@@ -160,6 +161,7 @@ const WeddingManagementPage: React.FC = () => {
   const [isEditGuestModalOpen, setIsEditGuestModalOpen] = useState(false);
   const [isSendInvitationsModalOpen, setIsSendInvitationsModalOpen] = useState(false);
   const [isDeletedGuestsModalOpen, setIsDeletedGuestsModalOpen] = useState(false);
+  const [isImportExportModalOpen, setIsImportExportModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   
   // Get current user's wedding data
@@ -191,7 +193,7 @@ const WeddingManagementPage: React.FC = () => {
   };
 
   const handleImportGuests = () => {
-    alert('Import guests functionality coming soon!');
+    setIsImportExportModalOpen(true);
   };
 
   const handleEditGuest = (guest: Guest) => {
@@ -210,6 +212,11 @@ const WeddingManagementPage: React.FC = () => {
 
   const handleInvitationsSent = () => {
     refreshGuests();
+  };
+
+  const handleImportComplete = () => {
+    refreshGuests();
+    setIsImportExportModalOpen(false);
   };
   
   // Show loading state while wedding data is being fetched
@@ -402,6 +409,61 @@ const WeddingManagementPage: React.FC = () => {
             getDeletedGuests={getDeletedGuests}
             restoreGuest={restoreGuest}
           />
+
+          {/* Import/Export Modal */}
+          {isImportExportModalOpen && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              padding: '2rem'
+            }}>
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                width: '100%',
+                maxWidth: '800px',
+                maxHeight: '90vh',
+                overflow: 'auto',
+                position: 'relative'
+              }}>
+                <button
+                  onClick={() => setIsImportExportModalOpen(false)}
+                  style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem',
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1.5rem',
+                    cursor: 'pointer',
+                    zIndex: 1001,
+                    color: '#6b7280',
+                    width: '2rem',
+                    height: '2rem',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ×
+                </button>
+                <GuestImportExport
+                  weddingId={weddingId}
+                  guests={guests}
+                  onImportComplete={handleImportComplete}
+                />
+              </div>
+            </div>
+          )}
         </>
       )}
     </PageContainer>
