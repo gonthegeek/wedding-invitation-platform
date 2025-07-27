@@ -496,6 +496,230 @@ const GalleryImageCaption = styled.p`
   font-style: italic;
 `;
 
+// Padrinos Section
+const PadrinosSection = styled(Section)`
+  background: #f8f9fa;
+`;
+
+const PadrinosGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+`;
+
+const PadrinoCard = styled.div`
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const PadrinoIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 1rem;
+`;
+
+const PadrinoType = styled.h4`
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-transform: capitalize;
+`;
+
+const PadrinoName = styled.p`
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0.5rem 0;
+  font-weight: 500;
+`;
+
+const PadrinoGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`;
+
+const PadrinoPerson = styled.div`
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: rgba(102, 126, 234, 0.05);
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 0.5rem;
+  }
+`;
+
+// Gift Options Section
+const GiftSection = styled(Section)`
+  background: white;
+`;
+
+const GiftContainer = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+`;
+
+const GiftMessage = styled.p`
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 3rem;
+  line-height: 1.6;
+`;
+
+const GiftOptionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+`;
+
+const GiftOptionCard = styled.div`
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #667eea;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+  }
+`;
+
+const GiftIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 1rem;
+`;
+
+const GiftTitle = styled.h4`
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 1rem;
+`;
+
+const GiftDescription = styled.p`
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+`;
+
+const GiftDetails = styled.div`
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+`;
+
+// Hotel Section
+const HotelSection = styled(Section)`
+  background: #f8f9fa;
+`;
+
+const HotelContainer = styled.div`
+  max-width: 1000px;
+  margin: 0 auto;
+`;
+
+const HotelCard = styled.div`
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+`;
+
+const HotelContent = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+`;
+
+const HotelInfo = styled.div``;
+
+const HotelName = styled.h3`
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+`;
+
+const HotelAddress = styled.p`
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+`;
+
+const HotelDescription = styled.p`
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+`;
+
+const HotelBookingInfo = styled.div`
+  background: #f0f4ff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const HotelPhotos = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+`;
+
+const HotelPhoto = styled.img`
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+`;
+
+const BookingButton = styled.a`
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    color: white;
+  }
+`;
+
 // Footer
 const Footer = styled.footer`
   background: #1f2937;
@@ -503,6 +727,55 @@ const Footer = styled.footer`
   text-align: center;
   padding: 2rem;
 `;
+
+// Helper functions for Padrinos
+const getDefaultIcon = (type: string): string => {
+  const icons = {
+    velacion: '🕯️',
+    anillos: '💍',
+    arras: '🪙',
+    lazo: '🎀',
+    biblia: '📖',
+    cojines: '🛏️',
+    ramo: '💐'
+  };
+  return icons[type as keyof typeof icons] || '🤝';
+};
+
+const getTypeDisplayName = (type: string): string => {
+  const names = {
+    velacion: 'Velación',
+    anillos: 'Anillos',
+    arras: 'Arras',
+    lazo: 'Lazo',
+    biblia: 'Biblia y Rosario',
+    cojines: 'Cojines',
+    ramo: 'Ramo'
+  };
+  return names[type as keyof typeof names] || type;
+};
+
+const getGiftIcon = (type: string): string => {
+  const icons = {
+    bank: '🏦',
+    store: '🛒',
+    cash: '💵',
+    other: '🎁'
+  };
+  return icons[type as keyof typeof icons] || '🎁';
+};
+
+// Helper function to group padrinos by type
+const groupPadrinosByType = (padrinos: { id: string; type: string; name: string; lastName?: string; icon?: string }[]) => {
+  const grouped: Record<string, { id: string; type: string; name: string; lastName?: string; icon?: string }[]> = {};
+  padrinos.forEach(padrino => {
+    if (!grouped[padrino.type]) {
+      grouped[padrino.type] = [];
+    }
+    grouped[padrino.type].push(padrino);
+  });
+  return grouped;
+};
 
 export const PublicWeddingInvitation: React.FC = () => {
   const { weddingId, inviteCode } = useParams<{ weddingId?: string; inviteCode?: string }>();
@@ -748,6 +1021,31 @@ export const PublicWeddingInvitation: React.FC = () => {
         </ParentsContainer>
       </ParentsSection>
 
+      {/* Padrinos Section */}
+      {wedding.settings?.padrinos && wedding.settings.padrinos.length > 0 && (
+        <PadrinosSection>
+          <SectionTitle>Nuestros Padrinos</SectionTitle>
+          <PadrinosGrid>
+            {Object.entries(groupPadrinosByType(wedding.settings.padrinos)).map(([type, padrinos]) => (
+              <PadrinoCard key={type}>
+                <PadrinoIcon>
+                  {padrinos[0].icon || getDefaultIcon(type)}
+                </PadrinoIcon>
+                <PadrinoType>{getTypeDisplayName(type)}</PadrinoType>
+                <PadrinoGroup>
+                  {padrinos.map((padrino) => (
+                    <PadrinoPerson key={padrino.id}>
+                      <PadrinoName>{padrino.name}</PadrinoName>
+                      {padrino.lastName && <PadrinoName style={{ fontSize: '1rem', fontWeight: '400' }}>{padrino.lastName}</PadrinoName>}
+                    </PadrinoPerson>
+                  ))}
+                </PadrinoGroup>
+              </PadrinoCard>
+            ))}
+          </PadrinosGrid>
+        </PadrinosSection>
+      )}
+
       {/* Couple Section */}
       <CoupleSection>
         <SectionTitle>Nosotros</SectionTitle>
@@ -956,6 +1254,52 @@ export const PublicWeddingInvitation: React.FC = () => {
         </div>
       </RSVPSection>
 
+      {/* Gift Options Section */}
+      {wedding.settings?.giftOptions && wedding.settings.giftOptions.length > 0 && (
+        <GiftSection>
+          <SectionTitle>Gift Options</SectionTitle>
+          <GiftContainer>
+            <GiftMessage>
+              {wedding.settings?.giftMessage || "Our best gift is sharing this great day with you, but if you wish to give us something, we suggest the following options:"}
+            </GiftMessage>
+            <GiftOptionsGrid>
+              {wedding.settings.giftOptions.map((gift) => (
+                <GiftOptionCard key={gift.id}>
+                  <GiftIcon>
+                    {gift.icon || getGiftIcon(gift.type)}
+                  </GiftIcon>
+                  <GiftTitle>{gift.title}</GiftTitle>
+                  {gift.description && (
+                    <GiftDescription>{gift.description}</GiftDescription>
+                  )}
+                  <GiftDetails>
+                    {gift.type === 'bank' && (
+                      <>
+                        <div><strong>Bank:</strong> {gift.bankName}</div>
+                        <div><strong>Account:</strong> {gift.accountNumber}</div>
+                        <div><strong>Name:</strong> {gift.accountHolder}</div>
+                      </>
+                    )}
+                    {gift.type === 'store' && (
+                      <>
+                        <div><strong>Store:</strong> {gift.storeName}</div>
+                        {gift.storeUrl && (
+                          <div>
+                            <a href={gift.storeUrl} target="_blank" rel="noopener noreferrer">
+                              Visit Store
+                            </a>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </GiftDetails>
+                </GiftOptionCard>
+              ))}
+            </GiftOptionsGrid>
+          </GiftContainer>
+        </GiftSection>
+      )}
+
       {/* Photo Gallery */}
       {wedding.settings?.photoGallery && wedding.settings.photoGallery.length > 0 && (
         <GallerySection>
@@ -980,6 +1324,61 @@ export const PublicWeddingInvitation: React.FC = () => {
             ))}
           </GalleryContainer>
         </GallerySection>
+      )}
+
+      {/* Hotel Section */}
+      {wedding.settings?.hotelInfo && (
+        <HotelSection>
+          <SectionTitle>Accommodation</SectionTitle>
+          <HotelContainer>
+            <HotelCard>
+              <HotelContent>
+                <HotelInfo>
+                  <HotelName>{wedding.settings.hotelInfo.name}</HotelName>
+                  <HotelAddress>{wedding.settings.hotelInfo.address}</HotelAddress>
+                  {wedding.settings.hotelInfo.description && (
+                    <HotelDescription>{wedding.settings.hotelInfo.description}</HotelDescription>
+                  )}
+                  <HotelBookingInfo>
+                    {wedding.settings.hotelInfo.phone && (
+                      <div><strong>Phone:</strong> {wedding.settings.hotelInfo.phone}</div>
+                    )}
+                    {wedding.settings.hotelInfo.specialRate && (
+                      <div><strong>Special Rate:</strong> {wedding.settings.hotelInfo.specialRate}</div>
+                    )}
+                    {wedding.settings.hotelInfo.bookingCode && (
+                      <div><strong>Booking Code:</strong> {wedding.settings.hotelInfo.bookingCode}</div>
+                    )}
+                  </HotelBookingInfo>
+                  {wedding.settings.hotelInfo.bookingUrl && (
+                    <BookingButton 
+                      href={wedding.settings.hotelInfo.bookingUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      Make Reservation
+                    </BookingButton>
+                  )}
+                </HotelInfo>
+                {wedding.settings.hotelInfo.photos && wedding.settings.hotelInfo.photos.length > 0 && (
+                  <HotelPhotos>
+                    {wedding.settings.hotelInfo.photos.slice(0, 4).map((photo, index) => (
+                      <HotelPhoto 
+                        key={index}
+                        src={photo} 
+                        alt={`${wedding.settings?.hotelInfo?.name} - Photo ${index + 1}`}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                    ))}
+                  </HotelPhotos>
+                )}
+              </HotelContent>
+            </HotelCard>
+          </HotelContainer>
+        </HotelSection>
       )}
 
       {/* Footer */}
