@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { BarChart3, Users, UserPlus, Send, Calendar, Download, Filter, RefreshCw, Upload, Trash2, MessageSquare } from 'lucide-react';
+import { BarChart3, Users, UserPlus, Send, Filter, RefreshCw, Upload, Trash2, MessageSquare } from 'lucide-react';
 import { Layout } from '../components/shared/Layout';
 import { RSVPDashboard } from '../components/rsvp/RSVPDashboard';
 import { DetailedRSVPResponses } from '../components/rsvp/DetailedRSVPResponses';
@@ -248,11 +248,6 @@ const WeddingManagementPage: React.FC = () => {
     );
   }
 
-  const handleExportData = () => {
-    // TODO: Implement export functionality
-    alert('Export functionality coming soon!');
-  };
-
   return (
     <Layout>
       <PageContainer>
@@ -263,14 +258,6 @@ const WeddingManagementPage: React.FC = () => {
               <ActionButton onClick={handleRefresh} disabled={refreshing}>
                 <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
                 Refresh
-              </ActionButton>
-              <ActionButton onClick={handleExportData}>
-                <Download size={16} />
-                Export Data
-              </ActionButton>
-              <ActionButton variant="primary" as={Link} to="/admin/settings">
-                <Calendar size={16} />
-                Wedding Settings
               </ActionButton>
             </HeaderActions>
           </HeaderContent>

@@ -5,15 +5,9 @@ import {
   Home, 
   Users, 
   BarChart3, 
-  Settings, 
   Heart,
   Calendar,
-  Mail,
-  Camera,
-  Gift,
-  MapPin,
-  Crown,
-  Building
+  Crown
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -140,21 +134,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, on
             section: 'Overview',
             items: [
               { path: '/admin/dashboard', label: 'Dashboard', icon: Home },
-              { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-            ]
-          },
-          {
-            section: 'Management',
-            items: [
-              { path: '/admin/weddings', label: 'All Weddings', icon: Heart },
-              { path: '/admin/users', label: 'Users', icon: Users },
-              { path: '/admin/venues', label: 'Venues', icon: Building },
-            ]
-          },
-          {
-            section: 'System',
-            items: [
-              { path: '/admin/settings', label: 'Settings', icon: Settings },
             ]
           }
         ];
@@ -169,25 +148,11 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, on
             ]
           },
           {
-            section: 'Wedding Planning',
+            section: 'Wedding Management',
             items: [
               { path: '/couple/wedding-management', label: 'Wedding Management', icon: Heart },
-              { path: '/couple/invitations', label: 'Invitations', icon: Mail },
-              { path: '/couple/timeline', label: 'Wedding Timeline', icon: Calendar },
-            ]
-          },
-          {
-            section: 'Content',
-            items: [
-              { path: '/couple/gallery', label: 'Photo Gallery', icon: Camera },
-              { path: '/couple/registry', label: 'Gift Registry', icon: Gift },
-              { path: '/couple/venues', label: 'Venue Details', icon: MapPin },
-            ]
-          },
-          {
-            section: 'Settings',
-            items: [
-              { path: '/couple/settings', label: 'Wedding Settings', icon: Settings },
+              { path: '/couple/wedding-details', label: 'Wedding Details', icon: Calendar },
+              { path: '/couple/customize', label: 'Customize Invitation', icon: Users },
             ]
           }
         ];
