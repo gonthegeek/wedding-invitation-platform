@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { CoupleDashboard } from './CoupleDashboard';
 import { CreateWeddingPage } from './CreateWeddingPage';
 import WeddingManagementPage from './WeddingManagementPage';
+import { WeddingDetailsPage } from './WeddingDetailsPage';
+import { CustomizeInvitationPage } from './CustomizeInvitationPage';
 
 // Placeholder components for missing pages
 const PlaceholderPage: React.FC<{ title: string }> = ({ title }) => (
@@ -19,6 +21,7 @@ export const CoupleRoutes: React.FC = () => {
       <Route path="/dashboard" element={<CoupleDashboard />} />
       <Route path="/create-wedding" element={<CreateWeddingPage />} />
       <Route path="/wedding-management" element={<WeddingManagementPage />} />
+      <Route path="/wedding-details" element={<WeddingDetailsPage />} />
       <Route path="/rsvp-dashboard" element={<WeddingManagementPage />} />
       
       {/* Placeholder routes for future development */}
@@ -28,7 +31,7 @@ export const CoupleRoutes: React.FC = () => {
       <Route path="/registry" element={<PlaceholderPage title="Gift Registry" />} />
       <Route path="/venues" element={<PlaceholderPage title="Venue Details" />} />
       <Route path="/settings" element={<PlaceholderPage title="Wedding Settings" />} />
-      <Route path="/customize" element={<PlaceholderPage title="Customize Invitation" />} />
+      <Route path="/customize" element={<CustomizeInvitationPage />} />
     </Routes>
   );
 };

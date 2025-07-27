@@ -256,8 +256,8 @@ export const CoupleDashboard: React.FC = () => {
             <p className="description">
               {wedding.ceremonyLocation.name}
             </p>
-            <ActionButton to="/couple/edit-wedding" variant="primary">
-              Edit Details
+            <ActionButton to="/couple/wedding-details" variant="primary">
+              Edit Wedding Details
             </ActionButton>
           </DashboardCard>
           
@@ -289,11 +289,11 @@ export const CoupleDashboard: React.FC = () => {
             <ActionButton to="/couple/rsvp-dashboard" variant="primary">
               RSVP Analytics Dashboard
             </ActionButton>
-            <ActionButton to="/couple/customize" variant="secondary">
+            <ActionButton to="/couple/customize" variant="primary">
               Customize Invitation
             </ActionButton>
-            <ActionButton to={`/invitation/${wedding.subdomain}`} variant="secondary" target="_blank">
-              Preview Invitation
+            <ActionButton to={`/wedding/${wedding.id}`} variant="secondary" target="_blank">
+              View Beautiful Invitation
             </ActionButton>
           </ActionButtons>
         </ActionSection>
