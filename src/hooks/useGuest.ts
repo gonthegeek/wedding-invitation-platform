@@ -23,6 +23,8 @@ interface UseGuestResult {
   createGuest: (guestData: Omit<Guest, 'id' | 'inviteCode' | 'createdAt' | 'updatedAt' | 'invitedAt' | 'remindersSent'>) => Promise<string | null>;
   updateGuest: (guestId: string, updates: Partial<Guest>) => Promise<boolean>;
   deleteGuest: (guestId: string) => Promise<boolean>;
+  restoreGuest: (guestId: string) => Promise<boolean>;
+  getDeletedGuests: () => Promise<Guest[]>;
   importGuests: (guestsData: GuestImport[]) => Promise<boolean>;
   
   // Group operations
@@ -224,6 +226,34 @@ export function useGuest(weddingId?: string): UseGuestResult {
     }
   }, []);
 
+  // Restore guest
+  const restoreGuest = useCallback(async (guestId: string): Promise<boolean> => {
+    try {
+      setError(null);
+      await GuestService.restoreGuest(guestId);
+      await fetchGuests(); // Refresh the list
+      return true;
+    } catch (err) {
+      console.error('Error restoring guest:', err);
+      setError('Failed to restore guest');
+      return false;
+    }
+  }, [fetchGuests]);
+
+  // Get deleted guests
+  const getDeletedGuests = useCallback(async (): Promise<Guest[]> => {
+    if (!weddingId) return [];
+    
+    try {
+      setError(null);
+      return await GuestService.getDeletedGuests(weddingId);
+    } catch (err) {
+      console.error('Error fetching deleted guests:', err);
+      setError('Failed to fetch deleted guests');
+      return [];
+    }
+  }, [weddingId]);
+
   // Refresh guests data
   const refreshGuests = useCallback(async (): Promise<void> => {
     await fetchGuests();
@@ -243,6 +273,8 @@ export function useGuest(weddingId?: string): UseGuestResult {
     createGuest,
     updateGuest,
     deleteGuest,
+    restoreGuest,
+    getDeletedGuests,
     importGuests,
     createGroup,
     getGuestRSVP,

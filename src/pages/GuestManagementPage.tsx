@@ -5,7 +5,9 @@ import { useWedding } from '../hooks/useWedding';
 import { useGuest } from '../hooks/useGuest';
 import { AddGuestModal } from '../components/guest/AddGuestModal';
 import { EditGuestModal } from '../components/guest/EditGuestModal';
-import { Plus, Users, Upload, Mail, Search } from 'lucide-react';
+import { SendInvitationsModal } from '../components/guest/SendInvitationsModal';
+import { DeletedGuestsModal } from '../components/guest/DeletedGuestsModal';
+import { Plus, Users, Upload, Mail, Search, Trash2 } from 'lucide-react';
 import type { Guest } from '../types/guest';
 
 const PageContainer = styled.div`
@@ -274,11 +276,13 @@ const LoadingSpinner = styled.div`
 
 export const GuestManagementPage: React.FC = () => {
   const { wedding } = useWedding();
-  const { guests, loading, error, stats, refreshGuests } = useGuest(wedding?.id);
+  const { guests, loading, error, stats, refreshGuests, getDeletedGuests, restoreGuest } = useGuest(wedding?.id);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [isAddGuestModalOpen, setIsAddGuestModalOpen] = useState(false);
   const [isEditGuestModalOpen, setIsEditGuestModalOpen] = useState(false);
+  const [isSendInvitationsModalOpen, setIsSendInvitationsModalOpen] = useState(false);
+  const [isDeletedGuestsModalOpen, setIsDeletedGuestsModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
 
   // Modal handlers
@@ -297,8 +301,7 @@ export const GuestManagementPage: React.FC = () => {
   };
 
   const handleSendInvitations = () => {
-    // TODO: Implement send invitations functionality
-    alert('Send invitations functionality coming soon!');
+    setIsSendInvitationsModalOpen(true);
   };
 
   const handleGuestAdded = () => {
@@ -308,6 +311,10 @@ export const GuestManagementPage: React.FC = () => {
   const handleGuestUpdated = () => {
     refreshGuests(); // Refresh the guest list
     setSelectedGuest(null);
+  };
+
+  const handleInvitationsSent = () => {
+    refreshGuests(); // Refresh the guest list to update invitation status
   };
 
   // Filter guests based on search and status
@@ -379,6 +386,10 @@ export const GuestManagementPage: React.FC = () => {
             <ActionButton variant="secondary" onClick={handleSendInvitations}>
               <Mail size={16} />
               Send Invitations
+            </ActionButton>
+            <ActionButton variant="secondary" onClick={() => setIsDeletedGuestsModalOpen(true)}>
+              <Trash2 size={16} />
+              View Deleted
             </ActionButton>
             <ActionButton variant="primary" onClick={handleAddGuest}>
               <Plus size={16} />
@@ -512,6 +523,22 @@ export const GuestManagementPage: React.FC = () => {
           onClose={() => setIsEditGuestModalOpen(false)}
           guest={selectedGuest}
           onGuestUpdated={handleGuestUpdated}
+        />
+
+        {/* Send Invitations Modal */}
+        <SendInvitationsModal
+          isOpen={isSendInvitationsModalOpen}
+          onClose={() => setIsSendInvitationsModalOpen(false)}
+          guests={guests}
+          onInvitationsSent={handleInvitationsSent}
+        />
+
+        {/* Deleted Guests Modal */}
+        <DeletedGuestsModal
+          isOpen={isDeletedGuestsModalOpen}
+          onClose={() => setIsDeletedGuestsModalOpen(false)}
+          getDeletedGuests={getDeletedGuests}
+          restoreGuest={restoreGuest}
         />
       </PageContainer>
     </Layout>

@@ -8,8 +8,7 @@ import {
   query, 
   where, 
   orderBy,
-  serverTimestamp,
-  deleteDoc
+  serverTimestamp
 } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Guest, GuestGroup, RSVP, GuestImport } from '../types';
@@ -78,33 +77,132 @@ export class GuestService {
 
   static async updateGuest(guestId: string, updates: Partial<Guest>): Promise<void> {
     try {
-      // Filter out undefined values to avoid Firestore errors
-      const filteredUpdates: Record<string, unknown> = {};
+      console.log('Original updates object:', updates);
+      
+      // Process updates to handle undefined values and empty strings properly
+      const processedUpdates: Record<string, unknown> = {};
+      
       Object.entries(updates).forEach(([key, value]) => {
         if (value !== undefined) {
-          filteredUpdates[key] = value;
+          // Handle empty strings for optional fields
+          if (typeof value === 'string' && value.trim() === '' && 
+              ['phone', 'dietaryRestrictions', 'specialRequests'].includes(key)) {
+            // Don't include empty optional string fields - this effectively removes them
+            console.log(`Skipping empty optional field: ${key}`);
+            return;
+          }
+          processedUpdates[key] = value;
+        } else {
+          console.log(`Filtering out undefined value for key: ${key}`);
         }
       });
 
+      console.log('Processed updates object:', processedUpdates);
+
+      if (Object.keys(processedUpdates).length === 0) {
+        console.log('No valid updates to apply');
+        return;
+      }
+
       const guestRef = doc(db, this.GUESTS_COLLECTION, guestId);
       await updateDoc(guestRef, {
-        ...filteredUpdates,
+        ...processedUpdates,
         updatedAt: serverTimestamp(),
       });
       console.log('Guest updated successfully');
     } catch (error) {
       console.error('Error updating guest:', error);
+      console.error('Updates that caused error:', updates);
       throw new Error('Failed to update guest');
     }
   }
 
   static async deleteGuest(guestId: string): Promise<void> {
     try {
-      await deleteDoc(doc(db, this.GUESTS_COLLECTION, guestId));
-      console.log('Guest deleted successfully');
+      // Instead of hard deleting, mark the guest as deleted (soft delete)
+      // This preserves the invite link and allows for recovery
+      const guestRef = doc(db, this.GUESTS_COLLECTION, guestId);
+      await updateDoc(guestRef, {
+        isDeleted: true,
+        deletedAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      console.log('Guest soft deleted successfully');
     } catch (error) {
       console.error('Error deleting guest:', error);
       throw new Error('Failed to delete guest');
+    }
+  }
+
+  static async restoreGuest(guestId: string): Promise<void> {
+    try {
+      // Restore a soft-deleted guest
+      const guestRef = doc(db, this.GUESTS_COLLECTION, guestId);
+      await updateDoc(guestRef, {
+        isDeleted: false,
+        deletedAt: null,
+        updatedAt: serverTimestamp(),
+      });
+      console.log('Guest restored successfully');
+    } catch (error) {
+      console.error('Error restoring guest:', error);
+      throw new Error('Failed to restore guest');
+    }
+  }
+
+  static async getDeletedGuests(weddingId: string): Promise<Guest[]> {
+    try {
+      // Get only deleted guests for recovery purposes
+      const q = query(
+        collection(db, this.GUESTS_COLLECTION),
+        where('weddingId', '==', weddingId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const deletedGuests: Guest[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        
+        // Only include deleted guests
+        if (data.isDeleted === true) {
+          const safeToDate = (dateField: unknown): Date => {
+            if (!dateField) return new Date();
+            if (dateField instanceof Date) return dateField;
+            
+            if (typeof dateField === 'object' && dateField !== null && 'toDate' in dateField) {
+              const timestamp = dateField as { toDate: () => Date };
+              if (typeof timestamp.toDate === 'function') {
+                return timestamp.toDate();
+              }
+            }
+            
+            if (typeof dateField === 'string') return new Date(dateField);
+            return new Date();
+          };
+          
+          deletedGuests.push({
+            id: doc.id,
+            ...data,
+            invitedAt: safeToDate(data.invitedAt),
+            rsvpDate: data.rsvpDate ? safeToDate(data.rsvpDate) : undefined,
+            deletedAt: data.deletedAt ? safeToDate(data.deletedAt) : undefined,
+            createdAt: safeToDate(data.createdAt),
+            updatedAt: safeToDate(data.updatedAt),
+          } as unknown as Guest);
+        }
+      });
+      
+      // Sort by deletion date (most recently deleted first)
+      return deletedGuests.sort((a, b) => {
+        const aDeleted = (a as unknown as Guest & { deletedAt?: Date }).deletedAt;
+        const bDeleted = (b as unknown as Guest & { deletedAt?: Date }).deletedAt;
+        if (!aDeleted || !bDeleted) return 0;
+        return bDeleted.getTime() - aDeleted.getTime();
+      });
+    } catch (error) {
+      console.error('Error fetching deleted guests:', error);
+      throw new Error('Failed to fetch deleted guests');
     }
   }
 
@@ -181,9 +279,10 @@ export class GuestService {
           ...data,
           invitedAt: safeToDate(data.invitedAt),
           rsvpDate: data.rsvpDate ? safeToDate(data.rsvpDate) : undefined,
+          deletedAt: data.deletedAt ? safeToDate(data.deletedAt) : undefined,
           createdAt: safeToDate(data.createdAt),
           updatedAt: safeToDate(data.updatedAt),
-        } as Guest;
+        } as unknown as Guest;
       }
       
       return null;
@@ -195,6 +294,7 @@ export class GuestService {
 
   static async getWeddingGuests(weddingId: string): Promise<Guest[]> {
     try {
+      // Use simple query without composite index requirement
       const q = query(
         collection(db, this.GUESTS_COLLECTION),
         where('weddingId', '==', weddingId)
@@ -205,6 +305,11 @@ export class GuestService {
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
+        
+        // Filter out deleted guests in JavaScript instead of Firestore query
+        if (data.isDeleted === true) {
+          return; // Skip deleted guests
+        }
         
         const safeToDate = (dateField: unknown): Date => {
           if (!dateField) return new Date();
@@ -226,9 +331,10 @@ export class GuestService {
           ...data,
           invitedAt: safeToDate(data.invitedAt),
           rsvpDate: data.rsvpDate ? safeToDate(data.rsvpDate) : undefined,
+          deletedAt: data.deletedAt ? safeToDate(data.deletedAt) : undefined,
           createdAt: safeToDate(data.createdAt),
           updatedAt: safeToDate(data.updatedAt),
-        } as Guest);
+        } as unknown as Guest);
       });
       
       // Sort guests by lastName in JavaScript since we removed orderBy to avoid index requirement

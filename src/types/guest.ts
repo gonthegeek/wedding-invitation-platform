@@ -16,6 +16,8 @@ export interface Guest {
   invitedAt: Date;
   remindersSent: number;
   groupId?: string; // For family groups
+  isDeleted?: boolean; // Soft delete flag
+  deletedAt?: Date; // When the guest was deleted
   createdAt: Date;
   updatedAt: Date;
 }

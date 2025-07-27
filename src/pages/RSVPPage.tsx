@@ -341,6 +341,14 @@ export const RSVPPage: React.FC = () => {
           return;
         }
 
+        // Check if guest has been deleted
+        const guestWithDeleteFlag = guestData as Guest & { isDeleted?: boolean };
+        if (guestWithDeleteFlag.isDeleted === true) {
+          setError('This invitation is no longer valid. Please contact the couple for assistance.');
+          setLoading(false);
+          return;
+        }
+
         // Get wedding details
         const weddingData = await WeddingService.getWedding(guestData.weddingId);
         if (!weddingData) {
