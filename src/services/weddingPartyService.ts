@@ -53,8 +53,19 @@ export class WeddingPartyService {
 
   static async deleteWeddingPartyMember(id: string): Promise<void> {
     try {
+      console.log('Attempting to delete wedding party member with ID:', id);
       const memberRef = doc(db, this.WEDDING_PARTY_COLLECTION, id);
+      
+      // First check if the document exists
+      const docSnap = await getDoc(memberRef);
+      if (!docSnap.exists()) {
+        console.error('Wedding party member not found:', id);
+        throw new Error('Wedding party member not found');
+      }
+      
+      console.log('Document exists, attempting delete...');
       await deleteDoc(memberRef);
+      console.log('Successfully deleted wedding party member:', id);
     } catch (error) {
       console.error('Error deleting wedding party member:', error);
       throw new Error('Failed to delete wedding party member');

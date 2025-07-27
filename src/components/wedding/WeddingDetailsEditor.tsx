@@ -208,32 +208,6 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 `;
 
 // Additional styled components for new sections
-const PadrinosList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const PadrinoItem = styled.div`
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 1rem;
-`;
-
-const PadrinoInputs = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr 1fr auto;
-  gap: 0.5rem;
-  align-items: center;
-  
-  select {
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 0.9rem;
-  }
-`;
-
 const GiftOptionsList = styled.div`
   display: flex;
   flex-direction: column;
@@ -412,36 +386,6 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
     } finally {
       setSaving(false);
     }
-  };
-
-  // Padrinos management functions
-  const addPadrino = () => {
-    const newPadrino = {
-      id: Date.now().toString(),
-      type: 'velacion' as const,
-      name: '',
-      lastName: ''
-    };
-    setSettings(prev => ({
-      ...prev,
-      padrinos: [...(prev.padrinos || []), newPadrino]
-    }));
-  };
-
-  const updatePadrino = (index: number, field: string, value: string) => {
-    setSettings(prev => ({
-      ...prev,
-      padrinos: prev.padrinos?.map((padrino, i) => 
-        i === index ? { ...padrino, [field]: value } : padrino
-      ) || []
-    }));
-  };
-
-  const removePadrino = (index: number) => {
-    setSettings(prev => ({
-      ...prev,
-      padrinos: prev.padrinos?.filter((_, i) => i !== index) || []
-    }));
   };
 
   // Gift options management functions
@@ -786,47 +730,6 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
           {activeTab === 'additional' && (
             <>
               <SectionTitle>
-                <Heart size={20} />
-                {t.customization.padrinos}
-              </SectionTitle>
-
-              <FormGroup>
-                <Label>{t.customization.addPadrinos}</Label>
-                <PadrinosList>
-                  {(settings.padrinos || []).map((padrino, index) => (
-                    <PadrinoItem key={padrino.id}>
-                      <PadrinoInputs>
-                        <select
-                          value={padrino.type}
-                          onChange={(e) => updatePadrino(index, 'type', e.target.value)}
-                        >
-                          <option value="velacion">{t.customization.padrinoVelacion}</option>
-                          <option value="anillos">{t.customization.padrinoAnillos}</option>
-                          <option value="arras">{t.customization.padrinoArras}</option>
-                          <option value="lazo">{t.customization.padrinoLazo}</option>
-                          <option value="biblia">{t.customization.padrinoBiblia}</option>
-                          <option value="cojines">{t.customization.padrinoCojines}</option>
-                          <option value="ramo">{t.customization.padrinoRamo}</option>
-                        </select>
-                        <Input
-                          placeholder={t.customization.padrinoName}
-                          value={padrino.name}
-                          onChange={(e) => updatePadrino(index, 'name', e.target.value)}
-                        />
-                        <Input
-                          placeholder={t.customization.padrinoLastName}
-                          value={padrino.lastName || ''}
-                          onChange={(e) => updatePadrino(index, 'lastName', e.target.value)}
-                        />
-                        <RemoveButton onClick={() => removePadrino(index)}>×</RemoveButton>
-                      </PadrinoInputs>
-                    </PadrinoItem>
-                  ))}
-                </PadrinosList>
-                <AddButton onClick={addPadrino}>{t.customization.addPadrino}</AddButton>
-              </FormGroup>
-
-              <SectionTitle style={{ marginTop: '3rem' }}>
                 <Heart size={20} />
                 {t.customization.giftOptions}
               </SectionTitle>

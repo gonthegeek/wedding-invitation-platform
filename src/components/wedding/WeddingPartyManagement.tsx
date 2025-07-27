@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
-import { Plus, Edit2, Trash2, GripVertical, Save, X, RefreshCw } from 'lucide-react';
+import { Plus, Edit2, Trash2, GripVertical, Save, X } from 'lucide-react';
 import { WeddingPartyService } from '../../services/weddingPartyService';
 import { StorageService } from '../../services/storageService';
 import { ImageUpload } from '../shared/ImageUpload';
@@ -295,40 +295,6 @@ const ActionButtons = styled.div`
   }
 `;
 
-const SyncButton = styled.button<{ $syncing: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: ${props => props.$syncing ? '#f0f8ff' : '#0066cc'};
-  color: ${props => props.$syncing ? '#0066cc' : 'white'};
-  border: 1px solid #0066cc;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: ${props => props.$syncing ? 'wait' : 'pointer'};
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    background: #0052a3;
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-
-  svg {
-    animation: ${props => props.$syncing ? 'spin 1s linear infinite' : 'none'};
-  }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-`;
-
 const ErrorMessage = styled.div`
   display: flex;
   justify-content: space-between;
@@ -405,7 +371,6 @@ export default function WeddingPartyManagement({
   const [showModal, setShowModal] = useState(false);
   const [editingMember, setEditingMember] = useState<WeddingParty | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [syncingPadrinos, setSyncingPadrinos] = useState(false);
   const [formData, setFormData] = useState<FormData>(defaultFormData);
 
   const loadMembers = useCallback(async () => {
@@ -420,74 +385,6 @@ export default function WeddingPartyManagement({
       setLoading(false);
     }
   }, [weddingId]);
-
-  // Sync padrinos from wedding settings to wedding party collection
-  const syncPadrinosToWeddingParty = async () => {
-    if (!wedding?.settings?.padrinos || wedding.settings.padrinos.length === 0) {
-      return;
-    }
-
-    setSyncingPadrinos(true);
-    try {
-      const existingMembers = await WeddingPartyService.getWeddingPartyMembers(weddingId);
-      const existingPadrinoIds = new Set(
-        existingMembers
-          .filter(m => m.isPadrino)
-          .map(m => m.padrinoId)
-          .filter(Boolean)
-      );
-
-      for (const padrino of wedding.settings.padrinos) {
-        // Skip if already synced
-        if (existingPadrinoIds.has(padrino.id)) continue;
-
-        const weddingPartyMember: Omit<WeddingParty, 'id'> = {
-          weddingId,
-          firstName: padrino.name,
-          lastName: padrino.lastName || '',
-          role: mapPadrinoTypeToRole(padrino.type),
-          relationship: padrino.type,
-          isPadrino: true,
-          padrinoId: padrino.id,
-          order: existingMembers.length + wedding.settings.padrinos.indexOf(padrino),
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-
-        await WeddingPartyService.addWeddingPartyMember(weddingId, weddingPartyMember);
-      }
-
-      await loadMembers();
-      onUpdate?.();
-    } catch (error) {
-      console.error('Error syncing padrinos:', error);
-      setError('Failed to sync padrinos from wedding settings');
-    } finally {
-      setSyncingPadrinos(false);
-    }
-  };
-
-  // Map padrino type to wedding party role
-  const mapPadrinoTypeToRole = (padrinoType: string): WeddingPartyRole => {
-    switch (padrinoType) {
-      case 'velacion':
-        return 'padrinos_velacion';
-      case 'anillos':
-        return 'padrinos_anillos';
-      case 'arras':
-        return 'padrinos_arras';
-      case 'lazo':
-        return 'padrinos_lazo';
-      case 'biblia':
-        return 'padrinos_biblia';
-      case 'cojines':
-        return 'padrinos_cojines';
-      case 'ramo':
-        return 'padrinos_ramo';
-      default:
-        return 'other';
-    }
-  };
 
   const handleAdd = () => {
     setEditingMember(null);
@@ -591,16 +488,6 @@ export default function WeddingPartyManagement({
             <Subtitle>Manage your bridesmaids, groomsmen, and other wedding party members</Subtitle>
           </HeaderContent>
           <ActionButtons>
-            {wedding?.settings?.padrinos && wedding.settings.padrinos.length > 0 && (
-              <SyncButton 
-                onClick={syncPadrinosToWeddingParty}
-                disabled={syncingPadrinos}
-                $syncing={syncingPadrinos}
-              >
-                <RefreshCw size={16} />
-                {syncingPadrinos ? 'Syncing...' : 'Sync Padrinos'}
-              </SyncButton>
-            )}
             <AddButton onClick={handleAdd}>
               <Plus size={16} />
               Add Wedding Party Member
