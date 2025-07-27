@@ -281,8 +281,8 @@ export class RSVPAnalyticsService {
     // In a real implementation, this would be stored in the wedding document
     
     try {
-      // TODO: Get actual wedding date and RSVP deadline from wedding document
-      // For now, return placeholder data
+      // For now, return placeholder data with configurable deadline
+      // In future: get actual wedding date and RSVP deadline from wedding document
       const deadline = new Date();
       deadline.setDate(deadline.getDate() + 30); // 30 days from now as placeholder
       

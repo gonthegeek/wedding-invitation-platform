@@ -296,7 +296,6 @@ export const GuestManagementPage: React.FC = () => {
   };
 
   const handleImportGuests = () => {
-    // TODO: Implement import guests functionality
     alert('Import guests functionality coming soon!');
   };
 

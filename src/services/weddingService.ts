@@ -28,8 +28,7 @@ export class WeddingService {
         isActive: true,
       };
 
-      const docRef = await addDoc(collection(db, this.COLLECTION), newWedding);
-      console.log('Wedding created with ID:', docRef.id);
+      const docRef = await addDoc(collection(db, 'weddings'), newWedding);
       return docRef.id;
     } catch (error) {
       console.error('Error creating wedding:', error);
@@ -194,13 +193,11 @@ export class WeddingService {
   // Update wedding
   static async updateWedding(weddingId: string, updates: Partial<Wedding>): Promise<void> {
     try {
-      console.log('WeddingService: Starting updateWedding', { weddingId, updates });
       const weddingRef = doc(db, this.COLLECTION, weddingId);
       await updateDoc(weddingRef, {
         ...updates,
         updatedAt: serverTimestamp(),
       });
-      console.log('WeddingService: Wedding updated successfully');
     } catch (error) {
       console.error('WeddingService: Error updating wedding:', error);
       throw new Error('Failed to update wedding');
