@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Save, Eye, Edit3, Heart, Palette, Settings, MapPin, Users } from 'lucide-react';
+import { useTranslation } from '../../hooks/useLanguage';
 import type { Wedding, WeddingSettings, SectionVisibility } from '../../types';
 import WeddingPartyManagement from './WeddingPartyManagement';
 import { ImageUpload } from '../shared/ImageUpload';
@@ -319,6 +320,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
   onWeddingUpdate,
   onPreview
 }) => {
+  const t = useTranslation();
   const [activeTab, setActiveTab] = useState<'content' | 'design' | 'additional' | 'venues' | 'weddingParty' | 'settings'>('content');
   const [wedding, setWedding] = useState<Wedding>(initialWedding);
   const [settings, setSettings] = useState<WeddingSettings>({
@@ -488,8 +490,8 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
   return (
     <EditorContainer>
       <Header>
-        <Title>Customize Your Wedding Invitation</Title>
-        <Subtitle>Make your invitation uniquely yours</Subtitle>
+        <Title>{t.customization.customizeInvitation}</Title>
+        <Subtitle>{t.customization.makeItYours}</Subtitle>
       </Header>
 
       <TabContainer>
@@ -498,42 +500,42 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
           onClick={() => setActiveTab('content')}
         >
           <Edit3 size={20} />
-          Content & Text
+          {t.customization.contentAndText}
         </Tab>
         <Tab 
           $active={activeTab === 'design'} 
           onClick={() => setActiveTab('design')}
         >
           <Palette size={20} />
-          Design & Colors
+          {t.customization.designAndColors}
         </Tab>
         <Tab 
           $active={activeTab === 'additional'} 
           onClick={() => setActiveTab('additional')}
         >
           <Heart size={20} />
-          Additional Sections
+          {t.customization.additionalSections}
         </Tab>
         <Tab 
           $active={activeTab === 'venues'} 
           onClick={() => setActiveTab('venues')}
         >
           <MapPin size={20} />
-          Venue Details
+          {t.customization.venueDetails}
         </Tab>
         <Tab 
           $active={activeTab === 'weddingParty'} 
           onClick={() => setActiveTab('weddingParty')}
         >
           <Users size={20} />
-          Wedding Party
+          {t.customization.weddingPartyTab}
         </Tab>
         <Tab 
           $active={activeTab === 'settings'} 
           onClick={() => setActiveTab('settings')}
         >
           <Settings size={20} />
-          Settings & Visibility
+          {t.customization.settingsAndVisibility}
         </Tab>
       </TabContainer>
 
@@ -543,119 +545,119 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
             <>
               <SectionTitle>
                 <Heart size={20} />
-                Invitation Content
+                {t.customization.invitationContent}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Love Quote</Label>
+                <Label>{t.customization.loveQuote}</Label>
                 <TextArea
                   value={settings.loveQuote || ''}
                   onChange={(e) => handleInputChange('loveQuote', e.target.value)}
-                  placeholder="A romantic quote for your invitation"
+                  placeholder={t.customization.welcomeMessagePlaceholder}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Bride's Father Name</Label>
+                <Label>{t.invitation.bridesFather}</Label>
                 <Input
                   value={settings.brideFatherName || ''}
                   onChange={(e) => handleInputChange('brideFatherName', e.target.value)}
-                  placeholder="Father's name"
+                  placeholder={t.customization.enterText}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Bride's Mother Name</Label>
+                <Label>{t.invitation.bridesMother}</Label>
                 <Input
                   value={settings.brideMotherName || ''}
                   onChange={(e) => handleInputChange('brideMotherName', e.target.value)}
-                  placeholder="Mother's name"
+                  placeholder={t.customization.enterText}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Groom's Father Name</Label>
+                <Label>{t.invitation.groomsFather}</Label>
                 <Input
                   value={settings.groomFatherName || ''}
                   onChange={(e) => handleInputChange('groomFatherName', e.target.value)}
-                  placeholder="Father's name"
+                  placeholder={t.customization.enterText}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Groom's Mother Name</Label>
+                <Label>{t.invitation.groomsMother}</Label>
                 <Input
                   value={settings.groomMotherName || ''}
                   onChange={(e) => handleInputChange('groomMotherName', e.target.value)}
-                  placeholder="Mother's name"
+                  placeholder={t.customization.enterText}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Dress Code</Label>
+                <Label>{t.customization.dressCode}</Label>
                 <Input
                   value={settings.dressCode || ''}
                   onChange={(e) => handleInputChange('dressCode', e.target.value)}
-                  placeholder="e.g., Formal, Cocktail, Black Tie"
+                  placeholder={t.customization.dressCodePlaceholder}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Dress Code Description</Label>
+                <Label>{t.customization.dressCodeDescription}</Label>
                 <TextArea
                   value={settings.dressCodeDescription || ''}
                   onChange={(e) => handleInputChange('dressCodeDescription', e.target.value)}
-                  placeholder="Detailed dress code instructions"
+                  placeholder={t.customization.dressCodeDescriptionPlaceholder}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>RSVP Title</Label>
+                <Label>{t.customization.rsvpTitle}</Label>
                 <Input
                   value={settings.rsvpTitle || ''}
                   onChange={(e) => handleInputChange('rsvpTitle', e.target.value)}
-                  placeholder="RSVP section title"
+                  placeholder={t.invitation.rsvpTitle}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>RSVP Message</Label>
+                <Label>{t.customization.rsvpMessage}</Label>
                 <TextArea
                   value={settings.rsvpMessage || ''}
                   onChange={(e) => handleInputChange('rsvpMessage', e.target.value)}
-                  placeholder="Message asking guests to confirm attendance"
+                  placeholder={t.invitation.rsvpMessage}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>RSVP Button Text</Label>
+                <Label>{t.customization.rsvpButtonText}</Label>
                 <Input
                   value={settings.rsvpButtonText || ''}
                   onChange={(e) => handleInputChange('rsvpButtonText', e.target.value)}
-                  placeholder="Text for the RSVP button"
+                  placeholder={t.invitation.confirmAttendance}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Gift Message</Label>
+                <Label>{t.customization.giftMessage}</Label>
                 <TextArea
                   value={settings.giftMessage || ''}
                   onChange={(e) => handleInputChange('giftMessage', e.target.value)}
-                  placeholder="Message about gifts"
+                  placeholder={t.customization.giftMessagePlaceholder}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Footer Message</Label>
+                <Label>{t.customization.footerMessage}</Label>
                 <TextArea
                   value={settings.footerMessage || ''}
                   onChange={(e) => handleInputChange('footerMessage', e.target.value)}
-                  placeholder="Thank you message for the footer"
+                  placeholder={t.customization.footerMessagePlaceholder}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Footer Signature</Label>
+                <Label>{t.customization.footerSignature}</Label>
                 <Input
                   value={settings.footerSignature || ''}
                   onChange={(e) => handleInputChange('footerSignature', e.target.value)}
@@ -669,11 +671,11 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
             <>
               <SectionTitle>
                 <Palette size={20} />
-                Colors & Theme
+                {t.customization.invitationDesign}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Primary Color</Label>
+                <Label>{t.customization.primaryColor}</Label>
                 <ColorInput
                   type="color"
                   value={settings.primaryColor || '#667eea'}
@@ -682,7 +684,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
               </FormGroup>
 
               <FormGroup>
-                <Label>Secondary Color</Label>
+                <Label>{t.customization.secondaryColor}</Label>
                 <ColorInput
                   type="color"
                   value={settings.secondaryColor || '#ff6b9d'}
@@ -692,46 +694,46 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               <SectionTitle style={{ marginTop: '2rem' }}>
                 <Heart size={20} />
-                Couple Photos
+                {t.customization.couplePhotos}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Bride Photo</Label>
+                <Label>{t.customization.bridePhoto}</Label>
                 <ImageUpload
                   value={settings.bridePhoto}
                   onChange={(imageUrl) => handleInputChange('bridePhoto', imageUrl || '')}
                   onUpload={(file) => StorageService.uploadCouplePhoto(wedding.id, file, 'bride')}
-                  label="Upload Bride Photo"
+                  label={t.customization.uploadBridePhoto}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Groom Photo</Label>
+                <Label>{t.customization.groomPhoto}</Label>
                 <ImageUpload
                   value={settings.groomPhoto}
                   onChange={(imageUrl) => handleInputChange('groomPhoto', imageUrl || '')}
                   onUpload={(file) => StorageService.uploadCouplePhoto(wedding.id, file, 'groom')}
-                  label="Upload Groom Photo"
+                  label={t.customization.uploadGroomPhoto}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Couple Photo</Label>
+                <Label>{t.customization.couplePhoto}</Label>
                 <ImageUpload
                   value={settings.couplePhoto}
                   onChange={(imageUrl) => handleInputChange('couplePhoto', imageUrl || '')}
                   onUpload={(file) => StorageService.uploadCouplePhoto(wedding.id, file, 'couple')}
-                  label="Upload Couple Photo"
+                  label={t.customization.uploadCouplePhoto}
                 />
               </FormGroup>
 
               <SectionTitle style={{ marginTop: '2rem' }}>
                 <Palette size={20} />
-                Photo Gallery
+                {t.customization.photoGallery}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Gallery Images</Label>
+                <Label>{t.customization.galleryImages}</Label>
                 <GalleryUpload
                   value={settings.photoGallery || []}
                   onChange={(images) => handleInputChange('photoGallery', images)}
@@ -741,7 +743,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
               </FormGroup>
 
               <FormGroup>
-                <Label>Font Family</Label>
+                <Label>{t.customization.fontFamily}</Label>
                 <select
                   value={settings.fontFamily || 'Georgia, serif'}
                   onChange={(e) => handleInputChange('fontFamily', e.target.value)}
@@ -754,28 +756,28 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     backgroundColor: 'white'
                   }}
                 >
-                  <option value="Georgia, serif">Georgia (Serif)</option>
-                  <option value="Times New Roman, serif">Times New Roman (Serif)</option>
-                  <option value="Playfair Display, serif">Playfair Display (Elegant Serif)</option>
-                  <option value="Merriweather, serif">Merriweather (Modern Serif)</option>
-                  <option value="Arial, sans-serif">Arial (Sans Serif)</option>
-                  <option value="Helvetica, sans-serif">Helvetica (Sans Serif)</option>
-                  <option value="Open Sans, sans-serif">Open Sans (Clean Sans Serif)</option>
-                  <option value="Lato, sans-serif">Lato (Friendly Sans Serif)</option>
-                  <option value="Montserrat, sans-serif">Montserrat (Modern Sans Serif)</option>
-                  <option value="Dancing Script, cursive">Dancing Script (Script)</option>
-                  <option value="Great Vibes, cursive">Great Vibes (Elegant Script)</option>
-                  <option value="Pacifico, cursive">Pacifico (Casual Script)</option>
-                  <option value="Satisfy, cursive">Satisfy (Handwritten)</option>
+                  <option value="Georgia, serif">{t.customization.fontGeorgia}</option>
+                  <option value="Times New Roman, serif">{t.customization.fontTimesNewRoman}</option>
+                  <option value="Playfair Display, serif">{t.customization.fontPlayfairDisplay}</option>
+                  <option value="Merriweather, serif">{t.customization.fontMerriweather}</option>
+                  <option value="Arial, sans-serif">{t.customization.fontArial}</option>
+                  <option value="Helvetica, sans-serif">{t.customization.fontHelvetica}</option>
+                  <option value="Open Sans, sans-serif">{t.customization.fontOpenSans}</option>
+                  <option value="Lato, sans-serif">{t.customization.fontLato}</option>
+                  <option value="Montserrat, sans-serif">{t.customization.fontMontserrat}</option>
+                  <option value="Dancing Script, cursive">{t.customization.fontDancingScript}</option>
+                  <option value="Great Vibes, cursive">{t.customization.fontGreatVibes}</option>
+                  <option value="Pacifico, cursive">{t.customization.fontPacifico}</option>
+                  <option value="Satisfy, cursive">{t.customization.fontSatisfy}</option>
                 </select>
               </FormGroup>
 
               <FormGroup>
-                <Label>Custom Message</Label>
+                <Label>{t.customization.customMessage}</Label>
                 <TextArea
                   value={settings.customMessage || ''}
                   onChange={(e) => handleInputChange('customMessage', e.target.value)}
-                  placeholder="Any additional custom message for your guests"
+                  placeholder={t.customization.customMessagePlaceholder}
                 />
               </FormGroup>
             </>
@@ -785,11 +787,11 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
             <>
               <SectionTitle>
                 <Heart size={20} />
-                Padrinos (Godparents)
+                {t.customization.padrinos}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Add Padrinos</Label>
+                <Label>{t.customization.addPadrinos}</Label>
                 <PadrinosList>
                   {(settings.padrinos || []).map((padrino, index) => (
                     <PadrinoItem key={padrino.id}>
@@ -798,21 +800,21 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                           value={padrino.type}
                           onChange={(e) => updatePadrino(index, 'type', e.target.value)}
                         >
-                          <option value="velacion">Velación</option>
-                          <option value="anillos">Anillos</option>
-                          <option value="arras">Arras</option>
-                          <option value="lazo">Lazo</option>
-                          <option value="biblia">Biblia y Rosario</option>
-                          <option value="cojines">Cojines</option>
-                          <option value="ramo">Ramo</option>
+                          <option value="velacion">{t.customization.padrinoVelacion}</option>
+                          <option value="anillos">{t.customization.padrinoAnillos}</option>
+                          <option value="arras">{t.customization.padrinoArras}</option>
+                          <option value="lazo">{t.customization.padrinoLazo}</option>
+                          <option value="biblia">{t.customization.padrinoBiblia}</option>
+                          <option value="cojines">{t.customization.padrinoCojines}</option>
+                          <option value="ramo">{t.customization.padrinoRamo}</option>
                         </select>
                         <Input
-                          placeholder="First Name"
+                          placeholder={t.customization.padrinoName}
                           value={padrino.name}
                           onChange={(e) => updatePadrino(index, 'name', e.target.value)}
                         />
                         <Input
-                          placeholder="Last Name (optional)"
+                          placeholder={t.customization.padrinoLastName}
                           value={padrino.lastName || ''}
                           onChange={(e) => updatePadrino(index, 'lastName', e.target.value)}
                         />
@@ -821,25 +823,25 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     </PadrinoItem>
                   ))}
                 </PadrinosList>
-                <AddButton onClick={addPadrino}>+ Add Padrino</AddButton>
+                <AddButton onClick={addPadrino}>{t.customization.addPadrino}</AddButton>
               </FormGroup>
 
               <SectionTitle style={{ marginTop: '3rem' }}>
                 <Heart size={20} />
-                Gift Options
+                {t.customization.giftOptions}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Gift Message</Label>
+                <Label>{t.customization.giftMessage}</Label>
                 <TextArea
                   value={settings.giftMessage || ''}
                   onChange={(e) => handleInputChange('giftMessage', e.target.value)}
-                  placeholder="Our best gift is sharing this great day with you..."
+                  placeholder={t.customization.giftMessagePlaceholder}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Gift Options</Label>
+                <Label>{t.customization.giftOptions}</Label>
                 <GiftOptionsList>
                   {(settings.giftOptions || []).map((gift, index) => (
                     <GiftOptionItem key={gift.id}>
@@ -849,18 +851,18 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                             value={gift.type}
                             onChange={(e) => updateGiftOption(index, 'type', e.target.value)}
                           >
-                            <option value="bank">Bank Transfer</option>
-                            <option value="store">Store Registry</option>
-                            <option value="cash">Cash</option>
-                            <option value="other">Other</option>
+                            <option value="bank">{t.customization.bankTransfer}</option>
+                            <option value="store">{t.customization.storeRegistry}</option>
+                            <option value="cash">{t.customization.cash}</option>
+                            <option value="other">{t.customization.other}</option>
                           </select>
                           <Input
-                            placeholder="Title"
+                            placeholder={t.customization.giftTitle}
                             value={gift.title}
                             onChange={(e) => updateGiftOption(index, 'title', e.target.value)}
                           />
                           <Input
-                            placeholder="Description"
+                            placeholder={t.customization.giftDescription}
                             value={gift.description || ''}
                             onChange={(e) => updateGiftOption(index, 'description', e.target.value)}
                           />
@@ -872,17 +874,17 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                             {gift.type === 'bank' && (
                               <>
                                 <Input
-                                  placeholder="Bank Name"
+                                  placeholder={t.customization.bankName}
                                   value={gift.bankName || ''}
                                   onChange={(e) => updateGiftOption(index, 'bankName', e.target.value)}
                                 />
                                 <Input
-                                  placeholder="Account Number"
+                                  placeholder={t.customization.accountNumber}
                                   value={gift.accountNumber || ''}
                                   onChange={(e) => updateGiftOption(index, 'accountNumber', e.target.value)}
                                 />
                                 <Input
-                                  placeholder="Account Holder"
+                                  placeholder={t.customization.accountHolder}
                                   value={gift.accountHolder || ''}
                                   onChange={(e) => updateGiftOption(index, 'accountHolder', e.target.value)}
                                   style={{ gridColumn: '1 / -1' }}
@@ -892,12 +894,12 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                             {gift.type === 'store' && (
                               <>
                                 <Input
-                                  placeholder="Store Name"
+                                  placeholder={t.customization.storeName}
                                   value={gift.storeName || ''}
                                   onChange={(e) => updateGiftOption(index, 'storeName', e.target.value)}
                                 />
                                 <Input
-                                  placeholder="Store URL"
+                                  placeholder={t.customization.storeUrl}
                                   value={gift.storeUrl || ''}
                                   onChange={(e) => updateGiftOption(index, 'storeUrl', e.target.value)}
                                 />
@@ -909,65 +911,65 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     </GiftOptionItem>
                   ))}
                 </GiftOptionsList>
-                <AddButton onClick={addGiftOption}>+ Add Gift Option</AddButton>
+                <AddButton onClick={addGiftOption}>{t.customization.addGiftOption}</AddButton>
               </FormGroup>
 
               <SectionTitle style={{ marginTop: '3rem' }}>
                 <Heart size={20} />
-                Hotel Information
+                {t.customization.hotelInformation}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Hotel Name</Label>
+                <Label>{t.customization.hotelName}</Label>
                 <Input
                   value={settings.hotelInfo?.name || ''}
                   onChange={(e) => updateHotelInfo('name', e.target.value)}
-                  placeholder="Hotel name"
+                  placeholder={t.customization.hotelName}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Address</Label>
+                <Label>{t.customization.hotelAddress}</Label>
                 <TextArea
                   value={settings.hotelInfo?.address || ''}
                   onChange={(e) => updateHotelInfo('address', e.target.value)}
-                  placeholder="Hotel address"
+                  placeholder={t.customization.hotelAddress}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Description</Label>
+                <Label>{t.customization.hotelDescription}</Label>
                 <TextArea
                   value={settings.hotelInfo?.description || ''}
                   onChange={(e) => updateHotelInfo('description', e.target.value)}
-                  placeholder="Hotel description for guests"
+                  placeholder={t.customization.hotelDescriptionPlaceholder}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Phone</Label>
+                <Label>{t.customization.hotelPhone}</Label>
                 <Input
                   value={settings.hotelInfo?.phone || ''}
                   onChange={(e) => updateHotelInfo('phone', e.target.value)}
-                  placeholder="Hotel phone number"
+                  placeholder={t.customization.hotelPhone}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Booking URL</Label>
+                <Label>{t.customization.bookingUrl}</Label>
                 <Input
                   value={settings.hotelInfo?.bookingUrl || ''}
                   onChange={(e) => updateHotelInfo('bookingUrl', e.target.value)}
-                  placeholder="Direct booking link"
+                  placeholder={t.customization.enterUrl}
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>Special Rate/Code</Label>
+                <Label>{t.customization.specialRate}</Label>
                 <Input
                   value={settings.hotelInfo?.specialRate || ''}
                   onChange={(e) => updateHotelInfo('specialRate', e.target.value)}
-                  placeholder="Special rate or booking code"
+                  placeholder={t.customization.specialRate}
                 />
               </FormGroup>
             </>
@@ -977,44 +979,44 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
             <>
               <SectionTitle>
                 <MapPin size={20} />
-                Venue Details
+                {t.customization.venueDetails}
               </SectionTitle>
 
               {/* Ceremony Location */}
               <FormGroup>
-                <Label>Ceremony Venue</Label>
+                <Label>{t.customization.ceremonyVenue}</Label>
                 <div style={{ display: 'grid', gap: '1rem' }}>
                   <Input
                     value={wedding.ceremonyLocation?.name || ''}
                     onChange={(e) => handleVenueChange('ceremony', 'name', e.target.value)}
-                    placeholder="Venue name"
+                    placeholder={t.customization.venueName}
                   />
                   <Input
                     value={wedding.ceremonyLocation?.address || ''}
                     onChange={(e) => handleVenueChange('ceremony', 'address', e.target.value)}
-                    placeholder="Address"
+                    placeholder={t.customization.venueAddress}
                   />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                     <Input
                       value={wedding.ceremonyLocation?.city || ''}
                       onChange={(e) => handleVenueChange('ceremony', 'city', e.target.value)}
-                      placeholder="City"
+                      placeholder={t.customization.city}
                     />
                     <Input
                       value={wedding.ceremonyLocation?.state || ''}
                       onChange={(e) => handleVenueChange('ceremony', 'state', e.target.value)}
-                      placeholder="State"
+                      placeholder={t.customization.state}
                     />
                     <Input
                       value={wedding.ceremonyLocation?.zipCode || ''}
                       onChange={(e) => handleVenueChange('ceremony', 'zipCode', e.target.value)}
-                      placeholder="Zip Code"
+                      placeholder={t.customization.zipCode}
                     />
                   </div>
                   <Input
                     value={wedding.ceremonyLocation?.googleMapsUrl || ''}
                     onChange={(e) => handleVenueChange('ceremony', 'googleMapsUrl', e.target.value)}
-                    placeholder="Google Maps link (optional)"
+                    placeholder={t.customization.googleMapsOptional}
                     type="url"
                   />
                 </div>
@@ -1022,7 +1024,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               {/* Ceremony Time */}
               <FormGroup>
-                <Label>Ceremony Time</Label>
+                <Label>{t.customization.ceremonyTime}</Label>
                 <Input
                   value={wedding.ceremonyTime || ''}
                   onChange={(e) => setWedding(prev => ({ ...prev, ceremonyTime: e.target.value }))}
@@ -1032,39 +1034,39 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               {/* Reception Location */}
               <FormGroup>
-                <Label>Reception Venue</Label>
+                <Label>{t.customization.receptionVenue}</Label>
                 <div style={{ display: 'grid', gap: '1rem' }}>
                   <Input
                     value={wedding.receptionLocation?.name || ''}
                     onChange={(e) => handleVenueChange('reception', 'name', e.target.value)}
-                    placeholder="Venue name"
+                    placeholder={t.customization.venueName}
                   />
                   <Input
                     value={wedding.receptionLocation?.address || ''}
                     onChange={(e) => handleVenueChange('reception', 'address', e.target.value)}
-                    placeholder="Address"
+                    placeholder={t.customization.venueAddress}
                   />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                     <Input
                       value={wedding.receptionLocation?.city || ''}
                       onChange={(e) => handleVenueChange('reception', 'city', e.target.value)}
-                      placeholder="City"
+                      placeholder={t.customization.city}
                     />
                     <Input
                       value={wedding.receptionLocation?.state || ''}
                       onChange={(e) => handleVenueChange('reception', 'state', e.target.value)}
-                      placeholder="State"
+                      placeholder={t.customization.state}
                     />
                     <Input
                       value={wedding.receptionLocation?.zipCode || ''}
                       onChange={(e) => handleVenueChange('reception', 'zipCode', e.target.value)}
-                      placeholder="Zip Code"
+                      placeholder={t.customization.zipCode}
                     />
                   </div>
                   <Input
                     value={wedding.receptionLocation?.googleMapsUrl || ''}
                     onChange={(e) => handleVenueChange('reception', 'googleMapsUrl', e.target.value)}
-                    placeholder="Google Maps link (optional)"
+                    placeholder={t.customization.googleMapsOptional}
                     type="url"
                   />
                 </div>
@@ -1072,7 +1074,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               {/* Reception Time */}
               <FormGroup>
-                <Label>Reception Time</Label>
+                <Label>{t.customization.receptionTime}</Label>
                 <Input
                   value={wedding.receptionTime || ''}
                   onChange={(e) => setWedding(prev => ({ ...prev, receptionTime: e.target.value }))}
@@ -1082,7 +1084,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               {/* Wedding Date */}
               <FormGroup>
-                <Label>Wedding Date</Label>
+                <Label>{t.customization.weddingDate}</Label>
                 <Input
                   type="date"
                   value={wedding.weddingDate ? new Date(wedding.weddingDate).toISOString().split('T')[0] : ''}
@@ -1110,25 +1112,25 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
             <>
               <SectionTitle>
                 <Settings size={20} />
-                Section Visibility & Background
+                {t.customization.sectionVisibility} & {t.customization.backgroundSettings}
               </SectionTitle>
 
               <FormGroup>
-                <Label>Section Visibility</Label>
+                <Label>{t.customization.sectionVisibility}</Label>
                 <div style={{ display: 'grid', gap: '0.5rem' }}>
                   {[
-                    { key: 'parents', label: 'Parents Names' },
-                    { key: 'weddingParty', label: 'Wedding Party' },
-                    { key: 'couplePhoto', label: 'Couple Photo' },
-                    { key: 'countdown', label: 'Countdown Timer' },
-                    { key: 'eventDetails', label: 'Event Details' },
+                    { key: 'parents', label: t.customization.parentsNames },
+                    { key: 'weddingParty', label: t.customization.weddingPartySection },
+                    { key: 'couplePhoto', label: t.customization.couplePhotoSection },
+                    { key: 'countdown', label: t.customization.countdownTimer },
+                    { key: 'eventDetails', label: t.customization.eventDetails },
                     { key: 'dressCode', label: 'Dress Code' },
-                    { key: 'rsvp', label: 'RSVP Section' },
+                    { key: 'rsvp', label: t.customization.rsvpSection },
                     { key: 'giftOptions', label: 'Gift Options' },
-                    { key: 'photoGallery', label: 'Photo Gallery' },
+                    { key: 'photoGallery', label: t.customization.photoGallerySection },
                     { key: 'hotelInfo', label: 'Hotel Information' },
-                    { key: 'loveQuote', label: 'Love Quote' },
-                    { key: 'specialInstructions', label: 'Special Instructions' }
+                    { key: 'loveQuote', label: t.customization.loveQuoteSection },
+                    { key: 'specialInstructions', label: t.customization.specialInstructionsSection }
                   ].map(section => (
                     <label key={section.key} style={{ 
                       display: 'flex', 
@@ -1155,7 +1157,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
               </FormGroup>
 
               <FormGroup>
-                <Label>Background Type</Label>
+                <Label>{t.customization.backgroundType}</Label>
                 <select
                   value={settings.backgroundType || 'gradient'}
                   onChange={(e) => handleInputChange('backgroundType', e.target.value)}
@@ -1167,27 +1169,28 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     width: '100%'
                   }}
                 >
-                  <option value="gradient">Gradient Background</option>
-                  <option value="image">Image Background</option>
+                  <option value="solid">{t.customization.solidBackground}</option>
+                  <option value="gradient">{t.customization.gradientBackground}</option>
+                  <option value="image">{t.customization.imageBackground}</option>
                 </select>
               </FormGroup>
 
               {settings.backgroundType === 'image' && (
                 <>
                   <FormGroup>
-                    <Label>Background Image</Label>
+                    <Label>{t.customization.backgroundImage}</Label>
                     <ImageUpload
                       value={settings.backgroundImageUrl || ''}
                       onChange={(imageUrl) => handleInputChange('backgroundImageUrl', imageUrl || '')}
                       onUpload={async (file: File) => {
                         return await StorageService.uploadImage(file, `weddings/${wedding.id}/backgrounds`);
                       }}
-                      label="Upload Background Image"
+                      label={t.customization.uploadBackgroundImage}
                     />
                   </FormGroup>
 
                   <FormGroup>
-                    <Label>Background Position</Label>
+                    <Label>{t.customization.backgroundPosition}</Label>
                     <select
                       value={settings.backgroundPosition || 'center'}
                       onChange={(e) => handleInputChange('backgroundPosition', e.target.value)}
@@ -1199,16 +1202,16 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                         width: '100%'
                       }}
                     >
-                      <option value="center">Center</option>
-                      <option value="top">Top</option>
-                      <option value="bottom">Bottom</option>
-                      <option value="left">Left</option>
-                      <option value="right">Right</option>
+                      <option value="center">{t.customization.centerPosition}</option>
+                      <option value="top">{t.customization.topPosition}</option>
+                      <option value="bottom">{t.customization.bottomPosition}</option>
+                      <option value="left">{t.customization.leftPosition}</option>
+                      <option value="right">{t.customization.rightPosition}</option>
                     </select>
                   </FormGroup>
 
                   <FormGroup>
-                    <Label>Background Size</Label>
+                    <Label>{t.customization.backgroundSize}</Label>
                     <select
                       value={settings.backgroundSize || 'cover'}
                       onChange={(e) => handleInputChange('backgroundSize', e.target.value)}
@@ -1220,9 +1223,9 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                         width: '100%'
                       }}
                     >
-                      <option value="cover">Cover</option>
-                      <option value="contain">Contain</option>
-                      <option value="auto">Auto</option>
+                      <option value="cover">{t.customization.coverSize}</option>
+                      <option value="contain">{t.customization.containSize}</option>
+                      <option value="auto">{t.customization.autoSize}</option>
                     </select>
                   </FormGroup>
                 </>
@@ -1520,11 +1523,11 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
       <ActionButtons>
         <Button variant="secondary" onClick={onPreview}>
           <Eye size={20} />
-          Preview Invitation
+          {t.customization.previewInvitation}
         </Button>
         <Button variant="primary" onClick={handleSave} disabled={saving}>
           <Save size={20} />
-          {saving ? 'Saving...' : 'Save Changes'}
+          {saving ? t.customization.saving : t.customization.saveChanges}
         </Button>
       </ActionButtons>
     </EditorContainer>

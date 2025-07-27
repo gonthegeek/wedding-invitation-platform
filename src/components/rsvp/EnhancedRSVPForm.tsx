@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Plus, Minus, Music, MessageSquare, UtensilsCrossed } from 'lucide-react';
+import { useTranslation } from '../../hooks/useLanguage';
 
 const FormSection = styled.div`
   margin-bottom: 2rem;
@@ -233,6 +234,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
   showSongRequests = true,
   allowPlusOnes = true,
 }) => {
+  const t = useTranslation();
   const {
     register,
     handleSubmit,
@@ -277,7 +279,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       {/* RSVP Status */}
       <FormSection>
-        <SectionTitle>Will you be attending?</SectionTitle>
+        <SectionTitle>{t.rsvp.willYouBeAttending}</SectionTitle>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
           <label style={{ 
             display: 'flex', 
@@ -292,14 +294,14 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
             <input
               type="radio"
               value="attending"
-              {...register('rsvpStatus', { required: 'Please select your attendance status' })}
+              {...register('rsvpStatus', { required: t.rsvp.pleaseSelectAttendanceStatus })}
             />
             <div>
               <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.875rem' }}>
-                Yes, I'll be there!
+                {t.rsvp.yesIllBeThere}
               </div>
               <div style={{ color: '#6b7280', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                Can't wait to celebrate with you
+                {t.rsvp.cantWaitToCelebrate}
               </div>
             </div>
           </label>
@@ -317,14 +319,14 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
             <input
               type="radio"
               value="not_attending"
-              {...register('rsvpStatus', { required: 'Please select your attendance status' })}
+              {...register('rsvpStatus', { required: t.rsvp.pleaseSelectAttendanceStatus })}
             />
             <div>
               <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.875rem' }}>
-                Sorry, can't make it
+                {t.rsvp.sorryCannotMakeIt}
               </div>
               <div style={{ color: '#6b7280', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                Will be there in spirit
+                {t.rsvp.willBeThereInSpirit}
               </div>
             </div>
           </label>
@@ -342,14 +344,14 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
             <input
               type="radio"
               value="maybe"
-              {...register('rsvpStatus', { required: 'Please select your attendance status' })}
+              {...register('rsvpStatus', { required: t.rsvp.pleaseSelectAttendanceStatus })}
             />
             <div>
               <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.875rem' }}>
-                Maybe
+                {t.rsvp.maybe}
               </div>
               <div style={{ color: '#6b7280', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                Still figuring it out
+                {t.rsvp.stillFiguringOut}
               </div>
             </div>
           </label>
@@ -362,21 +364,21 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       {/* Ceremony and Reception Attendance (only if attending) */}
       {isAttending && (
         <FormSection>
-          <SectionTitle>Which events will you attend?</SectionTitle>
+          <SectionTitle>{t.rsvp.whichEventsWillYouAttend}</SectionTitle>
           <CheckboxGroup>
             <CheckboxOption>
               <input
                 type="checkbox"
                 {...register('attendingCeremony')}
               />
-              Wedding Ceremony
+              {t.rsvp.weddingCeremony}
             </CheckboxOption>
             <CheckboxOption>
               <input
                 type="checkbox"
                 {...register('attendingReception')}
               />
-              Wedding Reception
+              {t.rsvp.weddingReception}
             </CheckboxOption>
           </CheckboxGroup>
         </FormSection>
@@ -386,30 +388,30 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       {isAttending && allowPlusOnes && (
         <FormSection>
           <SectionTitle>
-            <span>Plus Ones</span>
+            <span>{t.rsvp.plusOnes}</span>
             <span style={{ fontSize: '0.875rem', fontWeight: 'normal', color: '#6b7280' }}>
-              (Maximum {maxPlusOnes})
+              ({t.rsvp.maximum} {maxPlusOnes})
             </span>
           </SectionTitle>
           
           {fields.map((field, index) => (
             <PlusOneSection key={field.id}>
               <PlusOneHeader>
-                <PlusOneTitle>Plus One {index + 1}</PlusOneTitle>
+                <PlusOneTitle>{t.rsvp.plusOne} {index + 1}</PlusOneTitle>
                 <RemoveButton onClick={() => removePlusOne(index)} type="button">
                   <Minus size={14} />
-                  Remove
+                  {t.rsvp.remove}
                 </RemoveButton>
               </PlusOneHeader>
               
               <InputGroup>
                 <InputField>
-                  <Label>First Name *</Label>
+                  <Label>{t.rsvp.firstName} *</Label>
                   <Input
                     {...register(`plusOnes.${index}.firstName`, {
-                      required: 'First name is required',
+                      required: t.rsvp.firstNameRequired,
                     })}
-                    placeholder="Enter first name"
+                    placeholder={t.rsvp.enterFirstName}
                   />
                   {errors.plusOnes?.[index]?.firstName && (
                     <ErrorMessage>{errors.plusOnes[index]?.firstName?.message}</ErrorMessage>
@@ -417,12 +419,12 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
                 </InputField>
                 
                 <InputField>
-                  <Label>Last Name *</Label>
+                  <Label>{t.rsvp.lastName} *</Label>
                   <Input
                     {...register(`plusOnes.${index}.lastName`, {
-                      required: 'Last name is required',
+                      required: t.rsvp.lastNameRequired,
                     })}
-                    placeholder="Enter last name"
+                    placeholder={t.rsvp.enterLastName}
                   />
                   {errors.plusOnes?.[index]?.lastName && (
                     <ErrorMessage>{errors.plusOnes[index]?.lastName?.message}</ErrorMessage>
@@ -431,10 +433,10 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
               </InputGroup>
               
               <InputField>
-                <Label>Dietary Restrictions</Label>
+                <Label>{t.rsvp.dietaryRestrictionsOptional}</Label>
                 <Input
                   {...register(`plusOnes.${index}.dietaryRestrictions`)}
-                  placeholder="e.g., Vegetarian, Gluten-free, Allergies..."
+                  placeholder={t.rsvp.anyDietaryRestrictions}
                 />
               </InputField>
             </PlusOneSection>
@@ -443,7 +445,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
           {fields.length < maxPlusOnes && (
             <AddPlusOneButton onClick={addPlusOne} type="button">
               <Plus size={16} />
-              Add Plus One
+              {t.rsvp.addGuest}
             </AddPlusOneButton>
           )}
         </FormSection>
@@ -454,17 +456,17 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
         <FormSection>
           <SectionTitle>
             <UtensilsCrossed size={20} />
-            Dietary Restrictions & Allergies
+            {t.rsvp.dietaryRestrictionsOptional}
           </SectionTitle>
           <InputField>
-            <Label>Do you have any dietary restrictions or food allergies?</Label>
+            <Label>{t.rsvp.anyDietaryRestrictions}</Label>
             <TextArea
               {...register('dietaryRestrictions')}
-              placeholder="Please list any dietary restrictions, allergies, or special meal requests..."
+              placeholder={t.rsvp.anyDietaryRestrictions}
               rows={3}
             />
             <InfoText>
-              This helps us ensure everyone has a delicious meal they can enjoy!
+              {t.rsvp.dietaryInfo}
             </InfoText>
           </InputField>
         </FormSection>
@@ -475,17 +477,17 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
         <FormSection>
           <SectionTitle>
             <Music size={20} />
-            Song Requests
+            {t.rsvp.songRequests}
           </SectionTitle>
           <InputField>
-            <Label>Any songs you'd love to hear at the reception?</Label>
+            <Label>{t.rsvp.songRequestsPlaceholder}</Label>
             <TextArea
               {...register('songRequests')}
-              placeholder="Share your favorite songs that will get you on the dance floor..."
+              placeholder={t.rsvp.songRequestsPlaceholder}
               rows={3}
             />
             <InfoText>
-              Help us create the perfect playlist for an unforgettable celebration!
+              {t.rsvp.songInfo}
             </InfoText>
           </InputField>
         </FormSection>
@@ -494,21 +496,21 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       {/* Transportation */}
       {isAttending && showTransportation && (
         <FormSection>
-          <SectionTitle>Transportation</SectionTitle>
+          <SectionTitle>{t.rsvp.transportation}</SectionTitle>
           <CheckboxOption>
             <input
               type="checkbox"
               {...register('needsTransportation')}
             />
-            I would like information about transportation options
+            {t.rsvp.needTransportation}
           </CheckboxOption>
           
           {needsTransportation && (
             <InputField style={{ marginTop: '1rem' }}>
-              <Label>Transportation Details</Label>
+              <Label>{t.rsvp.transportationDetails}</Label>
               <TextArea
                 {...register('transportationDetails')}
-                placeholder="Let us know your transportation needs or questions..."
+                placeholder={t.rsvp.provideTransportationDetails}
                 rows={2}
               />
             </InputField>
@@ -519,21 +521,21 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       {/* Accommodation */}
       {isAttending && showAccommodation && (
         <FormSection>
-          <SectionTitle>Accommodation</SectionTitle>
+          <SectionTitle>{t.rsvp.accommodation}</SectionTitle>
           <CheckboxOption>
             <input
               type="checkbox"
               {...register('needsAccommodation')}
             />
-            I would like information about recommended accommodations
+            {t.rsvp.needAccommodation}
           </CheckboxOption>
           
           {needsAccommodation && (
             <InputField style={{ marginTop: '1rem' }}>
-              <Label>Accommodation Preferences</Label>
+              <Label>{t.rsvp.accommodationDetails}</Label>
               <TextArea
                 {...register('accommodationDetails')}
-                placeholder="Let us know your accommodation preferences or special needs..."
+                placeholder={t.rsvp.provideAccommodationDetails}
                 rows={2}
               />
             </InputField>
@@ -543,13 +545,13 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
 
       {/* Contact Preference */}
       <FormSection>
-        <SectionTitle>Contact Preference</SectionTitle>
+        <SectionTitle>{t.rsvp.contactPreference}</SectionTitle>
         <InputField>
-          <Label>How would you prefer to receive wedding updates?</Label>
+          <Label>{t.rsvp.contactPreferenceLabel}</Label>
           <Select {...register('contactPreference')}>
-            <option value="email">Email</option>
-            <option value="phone">Phone Call</option>
-            <option value="text">Text Message</option>
+            <option value="email">{t.rsvp.email}</option>
+            <option value="phone">{t.rsvp.phoneCall}</option>
+            <option value="text">{t.rsvp.textMessage}</option>
           </Select>
         </InputField>
       </FormSection>
@@ -557,20 +559,20 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       {/* Emergency Contact (if attending) */}
       {isAttending && (
         <FormSection>
-          <SectionTitle>Emergency Contact (Optional)</SectionTitle>
+          <SectionTitle>{t.rsvp.emergencyContactOptional}</SectionTitle>
           <InputGroup>
             <InputField>
-              <Label>Emergency Contact Name</Label>
+              <Label>{t.rsvp.emergencyContactName}</Label>
               <Input
                 {...register('emergencyContactName')}
-                placeholder="Enter name"
+                placeholder={t.rsvp.enterName}
               />
             </InputField>
             <InputField>
-              <Label>Emergency Contact Phone</Label>
+              <Label>{t.rsvp.emergencyContactPhone}</Label>
               <Input
                 {...register('emergencyContactPhone')}
-                placeholder="Enter phone number"
+                placeholder={t.rsvp.enterPhoneNumber}
                 type="tel"
               />
             </InputField>
@@ -580,12 +582,12 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
 
       {/* Special Requests */}
       <FormSection>
-        <SectionTitle>Special Requests</SectionTitle>
+        <SectionTitle>{t.rsvp.specialRequestsTitle}</SectionTitle>
         <InputField>
-          <Label>Any special requests or accommodations needed?</Label>
+          <Label>{t.rsvp.specialRequestsLabel}</Label>
           <TextArea
             {...register('specialRequests')}
-            placeholder="Accessibility needs, seating preferences, or any other special requests..."
+            placeholder={t.rsvp.specialRequestsPlaceholder}
             rows={3}
           />
         </InputField>
@@ -595,17 +597,17 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       <FormSection>
         <SectionTitle>
           <MessageSquare size={20} />
-          Message for the Couple
+          {t.rsvp.additionalMessage}
         </SectionTitle>
         <InputField>
-          <Label>Share a message, memory, or well wishes (Optional)</Label>
+          <Label>{t.rsvp.shareSpecialMessage}</Label>
           <TextArea
             {...register('message')}
-            placeholder="Share your excitement, a favorite memory, or well wishes for the happy couple..."
+            placeholder={t.rsvp.shareSpecialMessage}
             rows={4}
           />
           <InfoText>
-            Your heartfelt words mean the world to us! ❤️
+            {t.rsvp.heartfeltMessage}
           </InfoText>
         </InputField>
       </FormSection>
@@ -627,7 +629,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
           marginTop: '1rem',
         }}
       >
-        {isSubmitting ? 'Submitting RSVP...' : 'Submit RSVP'}
+        {isSubmitting ? t.rsvp.submitting : t.rsvp.submit}
       </button>
     </form>
   );

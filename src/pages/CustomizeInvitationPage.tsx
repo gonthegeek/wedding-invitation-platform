@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ArrowLeft, Eye, Save, AlertCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from '../hooks/useLanguage';
 import { WeddingService } from '../services/weddingService';
 import { WeddingDetailsEditor } from '../components/wedding/WeddingDetailsEditor';
 import type { Wedding, WeddingSettings } from '../types';
@@ -144,6 +145,7 @@ const SuccessMessage = styled.div`
 export const CustomizeInvitationPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const t = useTranslation();
   const [wedding, setWedding] = useState<Wedding | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -160,21 +162,21 @@ export const CustomizeInvitationPage: React.FC = () => {
         // Get the user's wedding
         const weddingData = await WeddingService.getWeddingByCouple(currentUser.uid);
         if (!weddingData) {
-          setError('No wedding found. Please create a wedding first.');
+          setError(t.customization.noWeddingFound);
           return;
         }
 
         setWedding(weddingData);
       } catch (err) {
         console.error('Error fetching wedding:', err);
-        setError('Failed to load wedding details. Please try again.');
+        setError(t.customization.failedToLoad);
       } finally {
         setLoading(false);
       }
     };
 
     fetchWedding();
-  }, [currentUser]);
+  }, [currentUser, t]);
 
   const handleSave = async (settings: WeddingSettings) => {
     if (!wedding) return;
@@ -203,7 +205,7 @@ export const CustomizeInvitationPage: React.FC = () => {
 
     } catch (err) {
       console.error('Error saving wedding settings:', err);
-      setError('Failed to save changes. Please try again.');
+      setError(t.customization.failedToSave);
     }
   };
 
@@ -230,7 +232,7 @@ export const CustomizeInvitationPage: React.FC = () => {
 
     } catch (err) {
       console.error('Error updating wedding:', err);
-      setError('Failed to save changes. Please try again.');
+      setError(t.customization.failedToSave);
     }
   };
 
@@ -253,16 +255,16 @@ export const CustomizeInvitationPage: React.FC = () => {
           <HeaderContent>
             <BackButton onClick={handleBack}>
               <ArrowLeft size={16} />
-              Back to Dashboard
+              {t.customization.backToDashboard}
             </BackButton>
             <HeaderTitle>
-              <Title>Customize Invitation</Title>
-              <Subtitle>Loading wedding details...</Subtitle>
+              <Title>{t.customization.customizeInvitation}</Title>
+              <Subtitle>{t.customization.loadingWeddingDetails}</Subtitle>
             </HeaderTitle>
           </HeaderContent>
         </Header>
         <LoadingContainer>
-          Loading your wedding details...
+          {t.customization.loadingWeddingDetails}
         </LoadingContainer>
       </PageContainer>
     );
@@ -275,20 +277,20 @@ export const CustomizeInvitationPage: React.FC = () => {
           <HeaderContent>
             <BackButton onClick={handleBack}>
               <ArrowLeft size={16} />
-              Back to Dashboard
+              {t.customization.backToDashboard}
             </BackButton>
             <HeaderTitle>
-              <Title>Customize Invitation</Title>
-              <Subtitle>Error loading wedding details</Subtitle>
+              <Title>{t.customization.customizeInvitation}</Title>
+              <Subtitle>{t.customization.errorLoadingDetails}</Subtitle>
             </HeaderTitle>
           </HeaderContent>
         </Header>
         <ErrorContainer>
           <AlertCircle size={48} style={{ margin: '0 auto 1rem' }} />
-          <h3 style={{ margin: '0 0 1rem', fontSize: '1.2rem' }}>Unable to Load Wedding</h3>
+          <h3 style={{ margin: '0 0 1rem', fontSize: '1.2rem' }}>{t.customization.unableToLoadWedding}</h3>
           <p style={{ margin: '0 0 1rem' }}>{error}</p>
           <Button onClick={() => window.location.reload()}>
-            Try Again
+            {t.customization.tryAgain}
           </Button>
         </ErrorContainer>
       </PageContainer>
@@ -305,19 +307,19 @@ export const CustomizeInvitationPage: React.FC = () => {
               Back to Dashboard
             </BackButton>
             <HeaderTitle>
-              <Title>Customize Invitation</Title>
-              <Subtitle>No wedding found</Subtitle>
+              <Title>{t.customization.customizeInvitation}</Title>
+              <Subtitle>{t.customization.noWeddingFound}</Subtitle>
             </HeaderTitle>
           </HeaderContent>
         </Header>
         <ErrorContainer>
           <AlertCircle size={48} style={{ margin: '0 auto 1rem' }} />
-          <h3 style={{ margin: '0 0 1rem', fontSize: '1.2rem' }}>No Wedding Found</h3>
+          <h3 style={{ margin: '0 0 1rem', fontSize: '1.2rem' }}>{t.customization.noWeddingFound}</h3>
           <p style={{ margin: '0 0 1rem' }}>
-            Please create a wedding first before customizing your invitation.
+            {t.customization.createWeddingFirst}
           </p>
           <Button onClick={() => navigate('/couple/create-wedding')}>
-            Create Wedding
+            {t.customization.createWedding}
           </Button>
         </ErrorContainer>
       </PageContainer>
@@ -329,7 +331,7 @@ export const CustomizeInvitationPage: React.FC = () => {
       {showSuccess && (
         <SuccessMessage>
           <Save size={16} style={{ display: 'inline', marginRight: '0.5rem' }} />
-          Wedding settings saved successfully!
+          {t.customization.settingsSavedSuccessfully}
         </SuccessMessage>
       )}
 
@@ -337,18 +339,18 @@ export const CustomizeInvitationPage: React.FC = () => {
         <HeaderContent>
           <BackButton onClick={handleBack}>
             <ArrowLeft size={16} />
-            Back to Dashboard
+            {t.customization.backToDashboard}
           </BackButton>
           <HeaderTitle>
-            <Title>Customize Invitation</Title>
+            <Title>{t.customization.customizeInvitation}</Title>
             <Subtitle>
-              Personalize your wedding invitation for {wedding.brideFirstName} & {wedding.groomFirstName}
+              {t.customization.personalizeInvitation} {wedding.brideFirstName} & {wedding.groomFirstName}
             </Subtitle>
           </HeaderTitle>
           <ActionButtons>
             <Button variant="secondary" onClick={handlePreview}>
               <Eye size={16} />
-              Preview
+              {t.customization.preview}
             </Button>
           </ActionButtons>
         </HeaderContent>

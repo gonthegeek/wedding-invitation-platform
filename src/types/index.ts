@@ -71,6 +71,8 @@ export interface WeddingSettings {
   isPublic?: boolean;
   requireApproval?: boolean;
   templateStyle?: 'classic' | 'modern' | 'rustic' | 'elegant';
+  // Language preference
+  language?: 'en' | 'es';
   // Couple photos
   bridePhoto?: string;
   groomPhoto?: string;

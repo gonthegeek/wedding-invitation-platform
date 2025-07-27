@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
+import { LanguageSelector } from './LanguageSelector';
 import { LogOut, User, Crown, Heart, Menu, ChevronRight } from 'lucide-react';
 
 const HeaderContainer = styled.header`
@@ -237,6 +238,8 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
       </HeaderLeft>
       
       <HeaderRight>
+        <LanguageSelector />
+        
         <UserInfo>
           <UserAvatar>
             {getRoleIcon()}

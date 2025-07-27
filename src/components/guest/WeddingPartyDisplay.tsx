@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { WeddingPartyService } from '../../services/weddingPartyService';
+import { useTranslation } from '../../hooks/useLanguage';
 import type { WeddingParty, WeddingPartyRole } from '../../types';
+import type { TranslationKeys } from '../../types/i18n';
 
 const WeddingPartySection = styled.section`
   padding: 4rem 2rem;
@@ -129,23 +131,23 @@ const SideTitle = styled.h3.withConfig({
 `;
 
 // Helper functions
-const getRoleDisplayName = (role: WeddingPartyRole): string => {
+const getRoleDisplayName = (role: WeddingPartyRole, t: TranslationKeys): string => {
   const roleNames = {
-    maid_of_honor: 'Maid of Honor',
-    best_man: 'Best Man',
-    bridesmaid: 'Bridesmaids',
-    groomsman: 'Groomsmen',
-    flower_girl: 'Flower Girls',
-    ring_bearer: 'Ring Bearers',
-    officiant: 'Officiant',
-    padrinos_velacion: 'Padrinos de Velación',
-    padrinos_anillos: 'Padrinos de Anillos',
-    padrinos_arras: 'Padrinos de Arras',
-    padrinos_lazo: 'Padrinos de Lazo',
-    padrinos_biblia: 'Padrinos de Biblia y Rosario',
-    padrinos_cojines: 'Padrinos de Cojines',
-    padrinos_ramo: 'Padrinos de Ramo',
-    other: 'Wedding Party'
+    maid_of_honor: t.weddingParty.maidOfHonor,
+    best_man: t.weddingParty.bestMan,
+    bridesmaid: t.weddingParty.bridesmaids,
+    groomsman: t.weddingParty.groomsmen,
+    flower_girl: t.weddingParty.flowerGirls,
+    ring_bearer: t.weddingParty.ringBearers,
+    officiant: t.weddingParty.officiant,
+    padrinos_velacion: t.weddingParty.padrinosVelacion,
+    padrinos_anillos: t.weddingParty.padrinosAnillos,
+    padrinos_arras: t.weddingParty.padrinosArras,
+    padrinos_lazo: t.weddingParty.padrinosLazo,
+    padrinos_biblia: t.weddingParty.padrinosBiblia,
+    padrinos_cojines: t.weddingParty.padrinosCojines,
+    padrinos_ramo: t.weddingParty.padrinosRamo,
+    other: t.weddingParty.other
   };
   return roleNames[role] || role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
@@ -190,6 +192,7 @@ export const WeddingPartyDisplay: React.FC<WeddingPartyDisplayProps> = ({
 }) => {
   const [weddingParty, setWeddingParty] = useState<WeddingParty[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslation();
 
   useEffect(() => {
     const fetchWeddingParty = async () => {
@@ -212,7 +215,7 @@ export const WeddingPartyDisplay: React.FC<WeddingPartyDisplayProps> = ({
   if (loading) {
     return (
       <WeddingPartySection>
-        <SectionTitle>Loading Wedding Party...</SectionTitle>
+        <SectionTitle>{t.weddingParty.loadingWeddingParty}</SectionTitle>
       </WeddingPartySection>
     );
   }
@@ -239,14 +242,14 @@ export const WeddingPartyDisplay: React.FC<WeddingPartyDisplayProps> = ({
 
   return (
     <WeddingPartySection>
-      <SectionTitle>Our Wedding Party</SectionTitle>
+      <SectionTitle>{t.weddingParty.ourWeddingParty}</SectionTitle>
       <WeddingPartyContainer>
         {showByRole ? (
           // Group by role
           Object.entries(groupMembersByRole(weddingParty)).map(([role, members]) => (
             <RoleSection key={role}>
               <RoleTitle primaryColor={primaryColor}>
-                {getRoleDisplayName(role as WeddingPartyRole)}
+                {getRoleDisplayName(role as WeddingPartyRole, t)}
               </RoleTitle>
               <MembersGrid>
                 {members.map(renderMember)}
@@ -261,7 +264,7 @@ export const WeddingPartyDisplay: React.FC<WeddingPartyDisplayProps> = ({
               <>
                 {bride.length > 0 && (
                   <SideSection>
-                    <SideTitle primaryColor={primaryColor}>Bride's Party</SideTitle>
+                    <SideTitle primaryColor={primaryColor}>{t.weddingParty.bridesParty}</SideTitle>
                     <MembersGrid>
                       {bride.map(renderMember)}
                     </MembersGrid>
@@ -269,7 +272,7 @@ export const WeddingPartyDisplay: React.FC<WeddingPartyDisplayProps> = ({
                 )}
                 {groom.length > 0 && (
                   <SideSection>
-                    <SideTitle primaryColor={primaryColor}>Groom's Party</SideTitle>
+                    <SideTitle primaryColor={primaryColor}>{t.weddingParty.groomsParty}</SideTitle>
                     <MembersGrid>
                       {groom.map(renderMember)}
                     </MembersGrid>
@@ -277,7 +280,7 @@ export const WeddingPartyDisplay: React.FC<WeddingPartyDisplayProps> = ({
                 )}
                 {couple.length > 0 && (
                   <SideSection>
-                    <SideTitle primaryColor={primaryColor}>Wedding Party</SideTitle>
+                    <SideTitle primaryColor={primaryColor}>{t.weddingParty.weddingParty}</SideTitle>
                     <MembersGrid>
                       {couple.map(renderMember)}
                     </MembersGrid>
