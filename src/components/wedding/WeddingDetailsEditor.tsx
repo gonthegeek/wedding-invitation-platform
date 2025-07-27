@@ -742,11 +742,32 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               <FormGroup>
                 <Label>Font Family</Label>
-                <Input
-                  value={settings.fontFamily || ''}
+                <select
+                  value={settings.fontFamily || 'Georgia, serif'}
                   onChange={(e) => handleInputChange('fontFamily', e.target.value)}
-                  placeholder="e.g., Georgia, Times New Roman, Arial"
-                />
+                  style={{
+                    padding: '0.75rem',
+                    border: '2px solid #e0e0e0',
+                    borderRadius: '10px',
+                    fontSize: '1rem',
+                    width: '100%',
+                    backgroundColor: 'white'
+                  }}
+                >
+                  <option value="Georgia, serif">Georgia (Serif)</option>
+                  <option value="Times New Roman, serif">Times New Roman (Serif)</option>
+                  <option value="Playfair Display, serif">Playfair Display (Elegant Serif)</option>
+                  <option value="Merriweather, serif">Merriweather (Modern Serif)</option>
+                  <option value="Arial, sans-serif">Arial (Sans Serif)</option>
+                  <option value="Helvetica, sans-serif">Helvetica (Sans Serif)</option>
+                  <option value="Open Sans, sans-serif">Open Sans (Clean Sans Serif)</option>
+                  <option value="Lato, sans-serif">Lato (Friendly Sans Serif)</option>
+                  <option value="Montserrat, sans-serif">Montserrat (Modern Sans Serif)</option>
+                  <option value="Dancing Script, cursive">Dancing Script (Script)</option>
+                  <option value="Great Vibes, cursive">Great Vibes (Elegant Script)</option>
+                  <option value="Pacifico, cursive">Pacifico (Casual Script)</option>
+                  <option value="Satisfy, cursive">Satisfy (Handwritten)</option>
+                </select>
               </FormGroup>
 
               <FormGroup>
@@ -1097,7 +1118,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                 <div style={{ display: 'grid', gap: '0.5rem' }}>
                   {[
                     { key: 'parents', label: 'Parents Names' },
-                    { key: 'padrinos', label: 'Padrinos' },
+                    { key: 'weddingParty', label: 'Wedding Party' },
                     { key: 'couplePhoto', label: 'Couple Photo' },
                     { key: 'countdown', label: 'Countdown Timer' },
                     { key: 'eventDetails', label: 'Event Details' },

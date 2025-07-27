@@ -5,6 +5,7 @@ import { GuestService } from '../services/guestService';
 import styled, { keyframes } from 'styled-components';
 import { MapPin, Heart, MessageCircle, Check, X } from 'lucide-react';
 import { EnhancedRSVPForm, type EnhancedRSVPFormData } from '../components/rsvp/EnhancedRSVPForm';
+import { WeddingPartyDisplay } from '../components/guest/WeddingPartyDisplay';
 import type { Wedding, Guest } from '../types';
 
 // Animations
@@ -20,7 +21,7 @@ const heartBeat = keyframes`
 
 // Main Container
 const InvitationContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['primaryColor', 'secondaryColor', 'backgroundType', 'backgroundImageUrl', 'backgroundPosition', 'backgroundSize'].includes(prop)
+  shouldForwardProp: (prop) => !['primaryColor', 'secondaryColor', 'backgroundType', 'backgroundImageUrl', 'backgroundPosition', 'backgroundSize', 'fontFamily'].includes(prop)
 })<{ 
   primaryColor?: string; 
   secondaryColor?: string;
@@ -28,6 +29,7 @@ const InvitationContainer = styled.div.withConfig({
   backgroundImageUrl?: string;
   backgroundPosition?: string;
   backgroundSize?: string;
+  fontFamily?: string;
 }>`
   min-height: 100vh;
   ${props => {
@@ -44,7 +46,7 @@ const InvitationContainer = styled.div.withConfig({
       background: linear-gradient(135deg, ${props.primaryColor || '#667eea'} 0%, ${props.secondaryColor || '#764ba2'} 100%);
     `;
   }}
-  font-family: 'Georgia', serif;
+  font-family: ${props => props.fontFamily || 'Georgia, serif'};
   position: relative;
   overflow-x: hidden;
 `;
@@ -516,75 +518,7 @@ const GalleryImageCaption = styled.p`
   font-style: italic;
 `;
 
-// Padrinos Section
-const PadrinosSection = styled(Section)`
-  background: #f8f9fa;
-`;
-
-const PadrinosGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-`;
-
-const PadrinoCard = styled.div`
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  text-align: center;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-  }
-`;
-
-const PadrinoIcon = styled.div`
-  font-size: 3rem;
-  margin-bottom: 1rem;
-`;
-
-const PadrinoType = styled.h4`
-  font-size: 1.3rem;
-  color: #333;
-  margin-bottom: 1rem;
-  font-weight: 600;
-  text-transform: capitalize;
-`;
-
-const PadrinoName = styled.p`
-  font-size: 1.1rem;
-  color: #666;
-  margin: 0.5rem 0;
-  font-weight: 500;
-`;
-
-const PadrinoGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
-`;
-
-const PadrinoPerson = styled.div`
-  padding: 0.5rem;
-  border-radius: 8px;
-  background: rgba(102, 126, 234, 0.05);
-  
-  &:not(:last-child) {
-    border-bottom: 1px solid #eee;
-    margin-bottom: 0.5rem;
-  }
-`;
+// Couple Section
 
 // Gift Options Section
 const GiftSection = styled(Section)`
@@ -748,33 +682,6 @@ const Footer = styled.footer`
   padding: 2rem;
 `;
 
-// Helper functions for Padrinos
-const getDefaultIcon = (type: string): string => {
-  const icons = {
-    velacion: '🕯️',
-    anillos: '💍',
-    arras: '🪙',
-    lazo: '🎀',
-    biblia: '📖',
-    cojines: '🛏️',
-    ramo: '💐'
-  };
-  return icons[type as keyof typeof icons] || '🤝';
-};
-
-const getTypeDisplayName = (type: string): string => {
-  const names = {
-    velacion: 'Velación',
-    anillos: 'Anillos',
-    arras: 'Arras',
-    lazo: 'Lazo',
-    biblia: 'Biblia y Rosario',
-    cojines: 'Cojines',
-    ramo: 'Ramo'
-  };
-  return names[type as keyof typeof names] || type;
-};
-
 const getGiftIcon = (type: string): string => {
   const icons = {
     bank: '🏦',
@@ -783,18 +690,6 @@ const getGiftIcon = (type: string): string => {
     other: '🎁'
   };
   return icons[type as keyof typeof icons] || '🎁';
-};
-
-// Helper function to group padrinos by type
-const groupPadrinosByType = (padrinos: { id: string; type: string; name: string; lastName?: string; icon?: string }[]) => {
-  const grouped: Record<string, { id: string; type: string; name: string; lastName?: string; icon?: string }[]> = {};
-  padrinos.forEach(padrino => {
-    if (!grouped[padrino.type]) {
-      grouped[padrino.type] = [];
-    }
-    grouped[padrino.type].push(padrino);
-  });
-  return grouped;
 };
 
 export const PublicWeddingInvitation: React.FC = () => {
@@ -1000,6 +895,7 @@ export const PublicWeddingInvitation: React.FC = () => {
       backgroundImageUrl={wedding.settings?.backgroundImageUrl}
       backgroundPosition={wedding.settings?.backgroundPosition}
       backgroundSize={wedding.settings?.backgroundSize}
+      fontFamily={wedding.settings?.fontFamily}
     >
       {/* Demo Banner */}
       {isDemo && (
@@ -1052,31 +948,6 @@ export const PublicWeddingInvitation: React.FC = () => {
         </ParentsSection>
       )}
 
-      {/* Padrinos Section */}
-      {(wedding.settings?.sectionVisibility?.padrinos !== false) && wedding.settings?.padrinos && wedding.settings.padrinos.length > 0 && (
-        <PadrinosSection>
-          <SectionTitle>Nuestros Padrinos</SectionTitle>
-          <PadrinosGrid>
-            {Object.entries(groupPadrinosByType(wedding.settings.padrinos)).map(([type, padrinos]) => (
-              <PadrinoCard key={type}>
-                <PadrinoIcon>
-                  {padrinos[0].icon || getDefaultIcon(type)}
-                </PadrinoIcon>
-                <PadrinoType>{getTypeDisplayName(type)}</PadrinoType>
-                <PadrinoGroup>
-                  {padrinos.map((padrino) => (
-                    <PadrinoPerson key={padrino.id}>
-                      <PadrinoName>{padrino.name}</PadrinoName>
-                      {padrino.lastName && <PadrinoName style={{ fontSize: '1rem', fontWeight: '400' }}>{padrino.lastName}</PadrinoName>}
-                    </PadrinoPerson>
-                  ))}
-                </PadrinoGroup>
-              </PadrinoCard>
-            ))}
-          </PadrinosGrid>
-        </PadrinosSection>
-      )}
-
       {/* Couple Section */}
       <CoupleSection>
         <SectionTitle>Nosotros</SectionTitle>
@@ -1119,6 +990,15 @@ export const PublicWeddingInvitation: React.FC = () => {
             alt={`${wedding.brideFirstName} and ${wedding.groomFirstName}`}
           />
         </CouplePhotoSection>
+      )}
+
+      {/* Wedding Party Section */}
+      {(wedding.settings?.sectionVisibility?.weddingParty !== false) && (
+        <WeddingPartyDisplay 
+          weddingId={wedding.id} 
+          primaryColor={primaryColor} 
+          secondaryColor={secondaryColor} 
+        />
       )}
 
       {/* Countdown Section */}

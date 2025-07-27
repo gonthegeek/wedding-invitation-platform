@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Plus, Edit2, Trash2, GripVertical, Save, X, RefreshCw } from 'lucide-react';
 import { WeddingPartyService } from '../../services/weddingPartyService';
+import { StorageService } from '../../services/storageService';
+import { ImageUpload } from '../shared/ImageUpload';
 import type { WeddingParty, WeddingPartyRole, Wedding } from '../../types';
 
 const Container = styled.div`
@@ -717,12 +719,12 @@ export default function WeddingPartyManagement({
               </FormGroup>
 
               <FormGroup>
-                <Label>Photo URL</Label>
-                <Input
-                  type="url"
+                <Label>Photo</Label>
+                <ImageUpload
                   value={formData.photo}
-                  onChange={(e) => setFormData(prev => ({ ...prev, photo: e.target.value }))}
-                  placeholder="https://example.com/photo.jpg"
+                  onChange={(imageUrl) => setFormData(prev => ({ ...prev, photo: imageUrl || '' }))}
+                  onUpload={(file) => StorageService.uploadWeddingPartyPhoto(wedding?.id || '', file, editingMember?.id || 'temp')}
+                  label="Upload Photo"
                 />
               </FormGroup>
 

@@ -55,6 +55,12 @@ export class StorageService {
     return this.uploadImage(file, path);
   }
 
+  // Upload wedding party photos
+  static async uploadWeddingPartyPhoto(weddingId: string, file: File, memberId: string): Promise<string> {
+    const path = `weddings/${weddingId}/wedding-party/${memberId}`;
+    return this.uploadImage(file, path);
+  }
+
   // Upload gallery photos
   static async uploadGalleryPhoto(weddingId: string, file: File): Promise<string> {
     const path = `weddings/${weddingId}/gallery`;

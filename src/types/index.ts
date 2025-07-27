@@ -101,7 +101,7 @@ export interface WeddingSettings {
 
 export interface SectionVisibility {
   parents?: boolean;
-  padrinos?: boolean;
+  weddingParty?: boolean;
   couplePhoto?: boolean;
   countdown?: boolean;
   eventDetails?: boolean;
