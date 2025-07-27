@@ -4,8 +4,22 @@ import { Layout } from '../components/shared/Layout';
 import { WeddingService } from '../services/weddingService';
 import { GuestService } from '../services/guestService';
 import styled from 'styled-components';
-import { Heart, Users, BarChart3, Calendar, Trash2, Eye } from 'lucide-react';
-import type { Wedding } from '../types';
+import { 
+  Heart, 
+  Users, 
+  BarChart3, 
+  Calendar, 
+  Trash2, 
+  Eye, 
+  Search,
+  Filter,
+  Download,
+  UserCheck,
+  Mail,
+  TrendingUp,
+  Activity
+} from 'lucide-react';
+import type { Wedding, User } from '../types';
 
 const AdminContainer = styled.div`
   padding: 2rem;
@@ -151,23 +165,163 @@ const LoadingSpinner = styled.div`
   color: #6b7280;
 `;
 
+const SearchAndFilters = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
+  min-width: 300px;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+`;
+
+const SearchWrapper = styled.div`
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+`;
+
+const SearchIcon = styled(Search)`
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  width: 1rem;
+  height: 1rem;
+`;
+
+const FilterSelect = styled.select`
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: white;
+  
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+`;
+
+const ExportButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: #059669;
+  }
+`;
+
+const MetricsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+`;
+
+const MetricCard = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const MetricHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+`;
+
+const MetricIcon = styled.div<{ color: string }>`
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+  background: ${props => props.color};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+`;
+
+const MetricTitle = styled.h3`
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+`;
+
+const MetricValue = styled.div`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+`;
+
+const MetricSubtext = styled.div`
+  font-size: 0.75rem;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
 interface AdminStats {
   totalWeddings: number;
   activeCouples: number;
   totalRSVPs: number;
   totalGuests: number;
+  upcomingWeddings: number;
+  completedWeddings: number;
+  averageGuestsPerWedding: number;
+  rsvpRate: number;
 }
 
 interface WeddingWithStats extends Wedding {
   guestCount?: number;
+  rsvpCount?: number;
+  rsvpRate?: number;
 }
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [weddings, setWeddings] = useState<WeddingWithStats[]>([]);
+  const [filteredWeddings, setFilteredWeddings] = useState<WeddingWithStats[]>([]);
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'upcoming' | 'inactive'>('all');
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -185,43 +339,46 @@ export const AdminDashboard: React.FC = () => {
               const weddingStats = await GuestService.getWeddingStats(wedding.id);
               return {
                 ...wedding,
-                guestCount: weddingStats.totalGuests
+                guestCount: weddingStats.totalGuests,
+                rsvpCount: weddingStats.respondedCount,
+                rsvpRate: weddingStats.totalGuests > 0 ? (weddingStats.respondedCount / weddingStats.totalGuests) * 100 : 0
               };
             } catch (error) {
               console.error(`Error fetching stats for wedding ${wedding.id}:`, error);
               return {
                 ...wedding,
-                guestCount: 0
+                guestCount: 0,
+                rsvpCount: 0,
+                rsvpRate: 0
               };
             }
           })
         );
         
         setWeddings(weddingsWithStats);
+        setFilteredWeddings(weddingsWithStats);
 
-        // Calculate stats
+        // Calculate comprehensive stats
         const totalWeddings = weddingsWithStats.length;
         const activeCouples = weddingsWithStats.filter(w => w.isActive).length;
+        const totalGuests = weddingsWithStats.reduce((sum, w) => sum + (w.guestCount || 0), 0);
+        const totalRSVPs = weddingsWithStats.reduce((sum, w) => sum + (w.rsvpCount || 0), 0);
         
-        // Get total RSVPs and guests count
-        let totalRSVPs = 0;
-        let totalGuests = 0;
-        
-        for (const wedding of weddingsWithStats) {
-          try {
-            const weddingStats = await GuestService.getWeddingStats(wedding.id);
-            totalRSVPs += weddingStats.respondedCount;
-            totalGuests += weddingStats.totalGuests;
-          } catch (error) {
-            console.error(`Error fetching RSVP stats for wedding ${wedding.id}:`, error);
-          }
-        }
+        const now = new Date();
+        const upcomingWeddings = weddingsWithStats.filter(w => new Date(w.weddingDate) > now).length;
+        const completedWeddings = weddingsWithStats.filter(w => new Date(w.weddingDate) <= now).length;
+        const averageGuestsPerWedding = totalWeddings > 0 ? Math.round(totalGuests / totalWeddings) : 0;
+        const rsvpRate = totalGuests > 0 ? Math.round((totalRSVPs / totalGuests) * 100) : 0;
 
         setStats({
           totalWeddings,
           activeCouples,
           totalRSVPs,
           totalGuests,
+          upcomingWeddings,
+          completedWeddings,
+          averageGuestsPerWedding,
+          rsvpRate
         });
 
       } catch (err) {
@@ -287,6 +444,60 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Filter and search functionality
+  useEffect(() => {
+    let filtered = weddings;
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(wedding => 
+        wedding.brideFirstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        wedding.groomFirstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        wedding.subdomain.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(wedding => {
+        const status = getWeddingStatus(wedding);
+        return status === statusFilter;
+      });
+    }
+
+    setFilteredWeddings(filtered);
+  }, [weddings, searchTerm, statusFilter]);
+
+  const exportWeddingData = () => {
+    const csvData = filteredWeddings.map(wedding => ({
+      'Bride Name': wedding.brideFirstName + ' ' + wedding.brideLastName,
+      'Groom Name': wedding.groomFirstName + ' ' + wedding.groomLastName,
+      'Wedding Date': formatDate(wedding.weddingDate.toISOString()),
+      'Subdomain': wedding.subdomain,
+      'Status': getWeddingStatus(wedding),
+      'Guest Count': wedding.guestCount || 0,
+      'RSVP Count': wedding.rsvpCount || 0,
+      'RSVP Rate': wedding.rsvpRate ? `${wedding.rsvpRate.toFixed(1)}%` : '0%',
+      'Active': wedding.isActive ? 'Yes' : 'No'
+    }));
+
+    const headers = Object.keys(csvData[0] || {});
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => headers.map(header => `"${row[header]}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `wedding_data_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -322,39 +533,146 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {stats && (
-          <StatsGrid>
-            <StatCard>
-              <StatIcon color="#3b82f6">
-                <Heart size={20} />
-              </StatIcon>
-              <StatValue>{stats.totalWeddings}</StatValue>
-              <StatLabel>Total Weddings</StatLabel>
-            </StatCard>
+          <>
+            <SearchAndFilters>
+              <SearchWrapper>
+                <SearchIcon />
+                <SearchInput
+                  type="text"
+                  placeholder="Search weddings by couple names or subdomain..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </SearchWrapper>
+              <FilterSelect 
+                value={statusFilter} 
+                onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'upcoming' | 'inactive')}
+              >
+                <option value="all">All Weddings</option>
+                <option value="active">Active</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="inactive">Inactive</option>
+              </FilterSelect>
+              <ExportButton onClick={exportWeddingData}>
+                <Download size={16} />
+                Export Data
+              </ExportButton>
+            </SearchAndFilters>
 
-            <StatCard>
-              <StatIcon color="#10b981">
-                <Users size={20} />
-              </StatIcon>
-              <StatValue>{stats.activeCouples}</StatValue>
-              <StatLabel>Active Couples</StatLabel>
-            </StatCard>
+            <MetricsGrid>
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#3b82f6">
+                    <Heart size={20} />
+                  </MetricIcon>
+                  <MetricTitle>Total Weddings</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.totalWeddings}</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  Platform weddings
+                </MetricSubtext>
+              </MetricCard>
 
-            <StatCard>
-              <StatIcon color="#f59e0b">
-                <BarChart3 size={20} />
-              </StatIcon>
-              <StatValue>{stats.totalRSVPs}</StatValue>
-              <StatLabel>Total RSVPs</StatLabel>
-            </StatCard>
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#10b981">
+                    <Activity size={20} />
+                  </MetricIcon>
+                  <MetricTitle>Active Couples</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.activeCouples}</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  Currently active
+                </MetricSubtext>
+              </MetricCard>
 
-            <StatCard>
-              <StatIcon color="#8b5cf6">
-                <Calendar size={20} />
-              </StatIcon>
-              <StatValue>{stats.totalGuests}</StatValue>
-              <StatLabel>Total Guests</StatLabel>
-            </StatCard>
-          </StatsGrid>
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#f59e0b">
+                    <Calendar size={20} />
+                  </MetricIcon>
+                  <MetricTitle>Upcoming Events</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.upcomingWeddings}</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  In the future
+                </MetricSubtext>
+              </MetricCard>
+
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#8b5cf6">
+                    <Users size={20} />
+                  </MetricIcon>
+                  <MetricTitle>Total Guests</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.totalGuests}</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  All guest lists
+                </MetricSubtext>
+              </MetricCard>
+
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#ef4444">
+                    <UserCheck size={20} />
+                  </MetricIcon>
+                  <MetricTitle>Total RSVPs</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.totalRSVPs}</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  Responses received
+                </MetricSubtext>
+              </MetricCard>
+
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#06b6d4">
+                    <BarChart3 size={20} />
+                  </MetricIcon>
+                  <MetricTitle>RSVP Rate</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.rsvpRate}%</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  Response rate
+                </MetricSubtext>
+              </MetricCard>
+
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#84cc16">
+                    <BarChart3 size={20} />
+                  </MetricIcon>
+                  <MetricTitle>Avg Guests</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.averageGuestsPerWedding}</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  Per wedding
+                </MetricSubtext>
+              </MetricCard>
+
+              <MetricCard>
+                <MetricHeader>
+                  <MetricIcon color="#64748b">
+                    <Calendar size={20} />
+                  </MetricIcon>
+                  <MetricTitle>Completed</MetricTitle>
+                </MetricHeader>
+                <MetricValue>{stats.completedWeddings}</MetricValue>
+                <MetricSubtext>
+                  <TrendingUp size={12} />
+                  Past events
+                </MetricSubtext>
+              </MetricCard>
+            </MetricsGrid>
+          </>
         )}
 
         <WeddingsTable>
@@ -366,8 +684,8 @@ export const AdminDashboard: React.FC = () => {
             <div>Actions</div>
           </TableHeader>
 
-          {weddings.length > 0 ? (
-            weddings.map((wedding) => (
+          {filteredWeddings.length > 0 ? (
+            filteredWeddings.map((wedding) => (
               <TableRow key={wedding.id}>
                 <WeddingInfo>
                   <WeddingTitle>

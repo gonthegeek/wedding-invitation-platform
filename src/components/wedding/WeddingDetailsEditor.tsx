@@ -1074,6 +1074,8 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
           {activeTab === 'weddingParty' && (
             <WeddingPartyManagement 
               weddingId={wedding.id}
+              currentUserId={wedding.coupleId}
+              wedding={wedding}
               onUpdate={() => {
                 // Refresh any data if needed
                 // This could trigger a parent component refresh

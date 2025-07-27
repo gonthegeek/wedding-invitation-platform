@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
-import { Plus, Edit2, Trash2, GripVertical, Save, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, GripVertical, Save, X, RefreshCw } from 'lucide-react';
 import { WeddingPartyService } from '../../services/weddingPartyService';
-import type { WeddingParty, WeddingPartyRole } from '../../types';
+import type { WeddingParty, WeddingPartyRole, Wedding, Padrino } from '../../types';
 
 const Container = styled.div`
   background: white;
@@ -15,6 +15,15 @@ const Header = styled.div`
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   background: #f9fafb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
 `;
 
 const Title = styled.h3`
@@ -269,8 +278,86 @@ const EmptyIcon = styled.div`
   margin-bottom: 1rem;
 `;
 
+const HeaderContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const SyncButton = styled.button<{ $syncing: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: ${props => props.$syncing ? '#f0f8ff' : '#0066cc'};
+  color: ${props => props.$syncing ? '#0066cc' : 'white'};
+  border: 1px solid #0066cc;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: ${props => props.$syncing ? 'wait' : 'pointer'};
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #0052a3;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  svg {
+    animation: ${props => props.$syncing ? 'spin 1s linear infinite' : 'none'};
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+
+const ErrorMessage = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 16px;
+
+  button {
+    background: none;
+    border: none;
+    color: #dc2626;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+`;
+
 interface WeddingPartyManagementProps {
   weddingId: string;
+  currentUserId: string;
+  wedding?: Wedding;
   onUpdate?: () => void;
 }
 
@@ -307,32 +394,172 @@ const weddingPartyRoles: { value: WeddingPartyRole; label: string }[] = [
   { value: 'padrinos_ramo', label: 'Padrinos de Ramo' },
 ];
 
-export const WeddingPartyManagement: React.FC<WeddingPartyManagementProps> = ({
+export default function WeddingPartyManagement({
   weddingId,
+  currentUserId,
+  wedding,
   onUpdate
-}) => {
+}: WeddingPartyManagementProps) {
   const [members, setMembers] = useState<WeddingParty[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingMember, setEditingMember] = useState<WeddingParty | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [syncingPadrinos, setSyncingPadrinos] = useState(false);
   const [formData, setFormData] = useState<FormData>(defaultFormData);
-  const [saving, setSaving] = useState(false);
 
-  const fetchMembers = useCallback(async () => {
+  const loadMembers = useCallback(async () => {
     try {
       setLoading(true);
-      const fetchedMembers = await WeddingPartyService.getWeddingPartyMembers(weddingId);
-      setMembers(fetchedMembers);
+      const weddingPartyMembers = await WeddingPartyService.getWeddingPartyMembers(weddingId);
+      setMembers(weddingPartyMembers);
     } catch (error) {
-      console.error('Error fetching wedding party members:', error);
+      console.error('Error loading wedding party members:', error);
+      setError('Failed to load wedding party members');
     } finally {
       setLoading(false);
     }
   }, [weddingId]);
 
-  useEffect(() => {
-    fetchMembers();
-  }, [fetchMembers]);
+  // Sync padrinos from wedding settings to wedding party collection
+  const syncPadrinosToWeddingParty = async () => {
+    if (!wedding?.settings?.padrinos || wedding.settings.padrinos.length === 0) {
+      return;
+    }
+
+    setSyncingPadrinos(true);
+    try {
+      const existingMembers = await WeddingPartyService.getWeddingPartyMembers(weddingId);
+      const existingPadrinoIds = new Set(
+        existingMembers
+          .filter(m => m.isPadrino)
+          .map(m => m.padrinoId)
+          .filter(Boolean)
+      );
+
+      for (const padrino of wedding.settings.padrinos) {
+        // Skip if already synced
+        if (existingPadrinoIds.has(padrino.id)) continue;
+
+        const weddingPartyMember: Omit<WeddingParty, 'id'> = {
+          weddingId,
+          firstName: padrino.name,
+          lastName: padrino.lastName || '',
+          role: mapPadrinoTypeToRole(padrino.type),
+          relationship: padrino.type,
+          isPadrino: true,
+          padrinoId: padrino.id,
+          order: existingMembers.length + wedding.settings.padrinos.indexOf(padrino),
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+
+        await WeddingPartyService.addWeddingPartyMember(weddingId, weddingPartyMember);
+      }
+
+      await loadMembers();
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error syncing padrinos:', error);
+      setError('Failed to sync padrinos from wedding settings');
+    } finally {
+      setSyncingPadrinos(false);
+    }
+  };
+
+  // Map padrino type to wedding party role
+  const mapPadrinoTypeToRole = (padrinoType: string): WeddingPartyRole => {
+    switch (padrinoType) {
+      case 'velacion':
+        return 'padrinos_velacion';
+      case 'anillos':
+        return 'padrinos_anillos';
+      case 'arras':
+        return 'padrinos_arras';
+      case 'lazo':
+        return 'padrinos_lazo';
+      case 'biblia':
+        return 'padrinos_biblia';
+      case 'cojines':
+        return 'padrinos_cojines';
+      case 'ramo':
+        return 'padrinos_ramo';
+      default:
+        return 'other';
+    }
+  };
+
+  const handleAdd = () => {
+    setEditingMember(null);
+    setFormData(defaultFormData);
+    setShowModal(true);
+  };
+
+  const handleEdit = (member: WeddingParty) => {
+    setEditingMember(member);
+    setFormData({
+      firstName: member.firstName,
+      lastName: member.lastName,
+      role: member.role,
+      relationship: member.relationship || '',
+      photo: member.photo || '',
+    });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this wedding party member?')) return;
+    
+    try {
+      await WeddingPartyService.deleteWeddingPartyMember(id);
+      await loadMembers();
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error deleting member:', error);
+      setError('Failed to delete wedding party member');
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      setError('First name and last name are required');
+      return;
+    }
+
+    try {
+      if (editingMember) {
+        await WeddingPartyService.updateWeddingPartyMember(editingMember.id, {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          role: formData.role,
+          relationship: formData.relationship,
+          photo: formData.photo,
+        });
+      } else {
+        await WeddingPartyService.addWeddingPartyMember(weddingId, {
+          weddingId,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          role: formData.role,
+          relationship: formData.relationship,
+          photo: formData.photo,
+          order: members.length,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+      
+      setShowModal(false);
+      setFormData(defaultFormData);
+      await loadMembers();
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error saving member:', error);
+      setError('Failed to save wedding party member');
+    }
+  };
 
   const handleAdd = () => {
     setEditingMember(null);
@@ -409,6 +636,10 @@ export const WeddingPartyManagement: React.FC<WeddingPartyManagementProps> = ({
     setFormData(defaultFormData);
   };
 
+  useEffect(() => {
+    loadMembers();
+  }, [loadMembers]);
+
   if (loading) {
     return (
       <Container>
@@ -424,16 +655,36 @@ export const WeddingPartyManagement: React.FC<WeddingPartyManagementProps> = ({
     <>
       <Container>
         <Header>
-          <Title>Wedding Party</Title>
-          <Subtitle>Manage your bridesmaids, groomsmen, and other wedding party members</Subtitle>
+          <HeaderContent>
+            <Title>Wedding Party</Title>
+            <Subtitle>Manage your bridesmaids, groomsmen, and other wedding party members</Subtitle>
+          </HeaderContent>
+          <ActionButtons>
+            {wedding?.settings?.padrinos && wedding.settings.padrinos.length > 0 && (
+              <SyncButton 
+                onClick={syncPadrinosToWeddingParty}
+                disabled={syncingPadrinos}
+                $syncing={syncingPadrinos}
+              >
+                <RefreshCw size={16} />
+                {syncingPadrinos ? 'Syncing...' : 'Sync Padrinos'}
+              </SyncButton>
+            )}
+            <AddButton onClick={handleAdd}>
+              <Plus size={16} />
+              Add Wedding Party Member
+            </AddButton>
+          </ActionButtons>
         </Header>
+
+        {error && (
+          <ErrorMessage>
+            {error}
+            <button onClick={() => setError(null)}>×</button>
+          </ErrorMessage>
+        )}
         
         <Content>
-          <AddButton onClick={handleAdd}>
-            <Plus size={16} />
-            Add Wedding Party Member
-          </AddButton>
-
           {members.length > 0 ? (
             <MembersList>
               {members.map((member) => (

@@ -221,6 +221,13 @@ export interface WeddingParty {
   relationship?: string;
   photo?: string;
   order: number;
+  isPadrino?: boolean;
+  padrinoId?: string;
+  side?: 'bride' | 'groom' | 'couple';
+  email?: string;
+  phone?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type WeddingPartyRole = 
@@ -237,7 +244,8 @@ export type WeddingPartyRole =
   | 'padrinos_lazo'
   | 'padrinos_biblia'
   | 'padrinos_cojines'
-  | 'padrinos_ramo';
+  | 'padrinos_ramo'
+  | 'other';
 
 export interface GiftRegistry {
   id: string;
