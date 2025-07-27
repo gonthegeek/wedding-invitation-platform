@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { BarChart3, Users, UserPlus, Send, Calendar, Download, Filter, RefreshCw, Upload, Trash2 } from 'lucide-react';
+import { BarChart3, Users, UserPlus, Send, Calendar, Download, Filter, RefreshCw, Upload, Trash2, MessageSquare } from 'lucide-react';
 import { Layout } from '../components/shared/Layout';
 import { RSVPDashboard } from '../components/rsvp/RSVPDashboard';
+import { DetailedRSVPResponses } from '../components/rsvp/DetailedRSVPResponses';
 import { GuestManagementContent } from '../components/guest/GuestManagementSection';
 import { AddGuestModal } from '../components/guest/AddGuestModal';
 import { EditGuestModal } from '../components/guest/EditGuestModal';
@@ -150,7 +151,7 @@ const StatusFilter = styled.select`
 `;
 
 const WeddingManagementPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'guests'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'guests' | 'responses'>('dashboard');
   const [statusFilter, setStatusFilter] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
   
@@ -275,7 +276,14 @@ const WeddingManagementPage: React.FC = () => {
             onClick={() => setActiveTab('dashboard')}
           >
             <BarChart3 size={16} />
-            RSVP Dashboard
+            RSVP Analytics
+          </Tab>
+          <Tab 
+            $active={activeTab === 'responses'} 
+            onClick={() => setActiveTab('responses')}
+          >
+            <MessageSquare size={16} />
+            Detailed Responses
           </Tab>
           <Tab 
             $active={activeTab === 'guests'} 
@@ -319,6 +327,10 @@ const WeddingManagementPage: React.FC = () => {
 
             <RSVPDashboard weddingId={weddingId} />
           </>
+        )}
+
+        {activeTab === 'responses' && (
+          <DetailedRSVPResponses weddingId={weddingId} />
         )}
 
         {activeTab === 'guests' && (

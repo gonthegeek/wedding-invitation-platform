@@ -68,6 +68,10 @@ export class WeddingService {
           weddingDate: safeToDate(data.weddingDate),
           createdAt: safeToDate(data.createdAt),
           updatedAt: safeToDate(data.updatedAt),
+          settings: data.settings ? {
+            ...data.settings,
+            requireRSVPDeadline: safeToDate(data.settings.requireRSVPDeadline),
+          } : data.settings,
         } as Wedding;
       }
       
@@ -117,6 +121,10 @@ export class WeddingService {
           weddingDate: safeToDate(data.weddingDate),
           createdAt: safeToDate(data.createdAt),
           updatedAt: safeToDate(data.updatedAt),
+          settings: data.settings ? {
+            ...data.settings,
+            requireRSVPDeadline: safeToDate(data.settings.requireRSVPDeadline),
+          } : data.settings,
         } as Wedding;
       }
       

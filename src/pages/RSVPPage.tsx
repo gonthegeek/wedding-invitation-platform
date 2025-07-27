@@ -269,8 +269,25 @@ export const RSVPPage: React.FC = () => {
     }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
+  const formatDate = (date: Date | { toDate: () => Date } | string | unknown) => {
+    // Handle Firestore Timestamp objects
+    let jsDate: Date;
+    
+    if (!date) {
+      jsDate = new Date();
+    } else if (date instanceof Date) {
+      jsDate = date;
+    } else if (typeof date === 'object' && date !== null && 'toDate' in date) {
+      // Firestore Timestamp object
+      const timestamp = date as { toDate: () => Date };
+      jsDate = timestamp.toDate();
+    } else if (typeof date === 'string') {
+      jsDate = new Date(date);
+    } else {
+      jsDate = new Date();
+    }
+    
+    return jsDate.toLocaleDateString('en-US', { 
       weekday: 'long', 
       year: 'numeric', 
       month: 'long', 
