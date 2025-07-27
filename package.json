@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "build:prod": "cp .env.production .env && npm run build && rm .env",
     "lint": "eslint .",
+    "type-check": "tsc --noEmit",
     "preview": "vite preview",
     "functions:build": "cd functions && npm run build",
     "functions:serve": "cd functions && npm run serve",
