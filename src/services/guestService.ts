@@ -448,7 +448,7 @@ export class GuestService {
 
       const docRef = await addDoc(collection(db, this.RSVPS_COLLECTION), newRSVP);
       
-      // Update guest's RSVP status
+      // Update guest's RSVP status with all enhanced fields
       await this.updateGuest(rsvpData.guestId, {
         rsvpStatus: rsvpData.rsvpStatus,
         rsvpDate: new Date(),
@@ -457,6 +457,16 @@ export class GuestService {
         plusOnes: rsvpData.plusOnes,
         dietaryRestrictions: rsvpData.dietaryRestrictions,
         specialRequests: rsvpData.specialRequests,
+        message: rsvpData.message,
+        // Enhanced Phase 3A fields
+        songRequests: rsvpData.songRequests,
+        needsTransportation: rsvpData.needsTransportation,
+        transportationDetails: rsvpData.transportationDetails,
+        needsAccommodation: rsvpData.needsAccommodation,
+        accommodationDetails: rsvpData.accommodationDetails,
+        contactPreference: rsvpData.contactPreference,
+        emergencyContactName: rsvpData.emergencyContactName,
+        emergencyContactPhone: rsvpData.emergencyContactPhone,
       });
       
       console.log('RSVP submitted with ID:', docRef.id);

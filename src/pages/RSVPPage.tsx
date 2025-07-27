@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useForm } from 'react-hook-form';
 import { Heart, MapPin, Clock, Users, Check, X } from 'lucide-react';
 import { WeddingService } from '../services/weddingService';
 import { GuestService } from '../services/guestService';
+import { EnhancedRSVPForm, type EnhancedRSVPFormData } from '../components/rsvp/EnhancedRSVPForm';
 import type { Wedding, Guest } from '../types';
 
 const PageContainer = styled.div`
@@ -135,138 +135,6 @@ const RSVPTitle = styled.h2`
   font-weight: 600;
 `;
 
-const FormGroup = styled.div`
-  margin-bottom: 1.5rem;
-`;
-
-const Label = styled.label`
-  display: block;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-`;
-
-const RadioGroup = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-`;
-
-const RadioOption = styled.label<{ isSelected?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  border: 2px solid ${props => props.isSelected ? '#3b82f6' : '#e5e7eb'};
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: ${props => props.isSelected ? '#eff6ff' : 'white'};
-  
-  &:hover {
-    border-color: #3b82f6;
-  }
-`;
-
-const RadioInput = styled.input`
-  margin: 0;
-`;
-
-const RadioText = styled.div`
-  flex: 1;
-`;
-
-const RadioTitle = styled.div`
-  font-weight: 600;
-  color: #1f2937;
-  font-size: 0.875rem;
-`;
-
-const RadioDescription = styled.div`
-  color: #6b7280;
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 1rem;
-  
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 1rem;
-  resize: vertical;
-  min-height: 100px;
-  
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const CheckboxGroup = styled.div`
-  display: flex;
-  gap: 2rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
-`;
-
-const CheckboxOption = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: #374151;
-`;
-
-const SubmitButton = styled.button`
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  margin-top: 1rem;
-  
-  &:hover:not(:disabled) {
-    background: #2563eb;
-  }
-  
-  &:disabled {
-    background: #9ca3af;
-    cursor: not-allowed;
-  }
-`;
-
-const ErrorMessage = styled.div`
-  color: #dc2626;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-`;
-
 const SuccessMessage = styled.div`
   text-align: center;
   padding: 3rem 2rem;
@@ -293,15 +161,6 @@ const LoadingSpinner = styled.div`
   }
 `;
 
-interface RSVPFormData {
-  rsvpStatus: string;
-  attendingCeremony: boolean;
-  attendingReception: boolean;
-  dietaryRestrictions?: string;
-  specialRequests?: string;
-  message?: string;
-}
-
 export const RSVPPage: React.FC = () => {
   const { inviteCode } = useParams<{ inviteCode: string }>();
   const [wedding, setWedding] = useState<Wedding | null>(null);
@@ -310,16 +169,6 @@ export const RSVPPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RSVPFormData>({
-    defaultValues: {
-      rsvpStatus: '',
-      attendingCeremony: true,
-      attendingReception: true,
-    },
-  });
-
-  const rsvpStatus = watch('rsvpStatus');
 
   useEffect(() => {
     const fetchInvitationData = async () => {
@@ -370,7 +219,7 @@ export const RSVPPage: React.FC = () => {
     fetchInvitationData();
   }, [inviteCode]);
 
-  const onSubmit = async (data: RSVPFormData) => {
+  const onSubmit = async (data: EnhancedRSVPFormData) => {
     if (!guest || !wedding) return;
     
     // Basic validation
@@ -389,10 +238,26 @@ export const RSVPPage: React.FC = () => {
         rsvpStatus: data.rsvpStatus as 'pending' | 'attending' | 'not_attending' | 'maybe',
         attendingCeremony: data.attendingCeremony,
         attendingReception: data.attendingReception,
-        plusOnes: [], // TODO: Handle plus ones
+        plusOnes: (data.plusOnes || []).map((plusOne, index) => ({
+          id: `${guest.id}-plus-${index}`,
+          firstName: plusOne.firstName,
+          lastName: plusOne.lastName,
+          dietaryRestrictions: plusOne.dietaryRestrictions,
+          attendingCeremony: data.attendingCeremony,
+          attendingReception: data.attendingReception,
+        })),
         dietaryRestrictions: data.dietaryRestrictions,
         specialRequests: data.specialRequests,
         message: data.message,
+        // Enhanced Phase 3A fields
+        songRequests: data.songRequests,
+        needsTransportation: data.needsTransportation,
+        transportationDetails: data.transportationDetails,
+        needsAccommodation: data.needsAccommodation,
+        accommodationDetails: data.accommodationDetails,
+        contactPreference: data.contactPreference,
+        emergencyContactName: data.emergencyContactName,
+        emergencyContactPhone: data.emergencyContactPhone,
       });
 
       setSubmitted(true);
@@ -546,102 +411,32 @@ export const RSVPPage: React.FC = () => {
         <RSVPSection>
           <RSVPTitle>Please Respond by {formatDate(wedding.settings.requireRSVPDeadline)}</RSVPTitle>
           
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormGroup>
-              <Label>Will you be attending?</Label>
-              <RadioGroup>
-                <RadioOption isSelected={rsvpStatus === 'attending'}>
-                  <RadioInput
-                    type="radio"
-                    value="attending"
-                    {...register('rsvpStatus')}
-                  />
-                  <RadioText>
-                    <RadioTitle>Yes, I'll be there!</RadioTitle>
-                    <RadioDescription>Can't wait to celebrate with you</RadioDescription>
-                  </RadioText>
-                </RadioOption>
-                
-                <RadioOption isSelected={rsvpStatus === 'not_attending'}>
-                  <RadioInput
-                    type="radio"
-                    value="not_attending"
-                    {...register('rsvpStatus')}
-                  />
-                  <RadioText>
-                    <RadioTitle>Sorry, can't make it</RadioTitle>
-                    <RadioDescription>Will be there in spirit</RadioDescription>
-                  </RadioText>
-                </RadioOption>
-              </RadioGroup>
-              {errors.rsvpStatus && (
-                <ErrorMessage>{errors.rsvpStatus.message}</ErrorMessage>
-              )}
-            </FormGroup>
-
-            {rsvpStatus === 'attending' && (
-              <>
-                <FormGroup>
-                  <Label>Which events will you attend?</Label>
-                  <CheckboxGroup>
-                    <CheckboxOption>
-                      <input
-                        type="checkbox"
-                        {...register('attendingCeremony')}
-                      />
-                      Ceremony
-                    </CheckboxOption>
-                    <CheckboxOption>
-                      <input
-                        type="checkbox"
-                        {...register('attendingReception')}
-                      />
-                      Reception
-                    </CheckboxOption>
-                  </CheckboxGroup>
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Dietary Restrictions</Label>
-                  <Input
-                    type="text"
-                    placeholder="Any dietary restrictions or allergies?"
-                    {...register('dietaryRestrictions')}
-                  />
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Special Requests</Label>
-                  <Input
-                    type="text"
-                    placeholder="Any special accommodations needed?"
-                    {...register('specialRequests')}
-                  />
-                </FormGroup>
-              </>
-            )}
-
-            <FormGroup>
-              <Label>Message to the Couple (Optional)</Label>
-              <TextArea
-                placeholder="Leave a special message for the happy couple..."
-                {...register('message')}
-              />
-              {errors.message && (
-                <ErrorMessage>{errors.message.message}</ErrorMessage>
-              )}
-            </FormGroup>
-
-            {error && (
-              <ErrorMessage style={{ textAlign: 'center', marginTop: '1rem' }}>
-                {error}
-              </ErrorMessage>
-            )}
-
-            <SubmitButton type="submit" disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Submit RSVP'}
-            </SubmitButton>
-          </form>
+          <EnhancedRSVPForm
+            onSubmit={onSubmit}
+            isSubmitting={submitting}
+            defaultValues={{
+              rsvpStatus: guest.rsvpStatus === 'pending' ? '' : guest.rsvpStatus,
+              attendingCeremony: guest.attendingCeremony,
+              attendingReception: guest.attendingReception,
+              plusOnes: guest.plusOnes || [],
+              dietaryRestrictions: guest.dietaryRestrictions || '',
+              specialRequests: guest.specialRequests || '',
+              message: guest.message || '',
+              songRequests: guest.songRequests || '',
+              needsTransportation: guest.needsTransportation || false,
+              transportationDetails: guest.transportationDetails || '',
+              needsAccommodation: guest.needsAccommodation || false,
+              accommodationDetails: guest.accommodationDetails || '',
+              contactPreference: guest.contactPreference || 'email',
+              emergencyContactName: guest.emergencyContactName || '',
+              emergencyContactPhone: guest.emergencyContactPhone || '',
+            }}
+            maxPlusOnes={2}
+            allowPlusOnes={true}
+            showTransportation={true}
+            showAccommodation={true}
+            showSongRequests={true}
+          />
         </RSVPSection>
       </InvitationCard>
     </PageContainer>

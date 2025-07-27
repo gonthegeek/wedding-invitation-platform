@@ -80,6 +80,18 @@ export interface Guest {
   plusOnes: PlusOne[];
   dietaryRestrictions?: string;
   specialRequests?: string;
+  
+  // Enhanced Phase 3A fields
+  songRequests?: string;
+  needsTransportation?: boolean;
+  transportationDetails?: string;
+  needsAccommodation?: boolean;
+  accommodationDetails?: string;
+  contactPreference?: 'email' | 'phone' | 'text';
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  message?: string;
+  
   invitedAt: Date;
   remindersSent: number;
 }
@@ -103,6 +115,17 @@ export interface RSVP {
   dietaryRestrictions?: string;
   specialRequests?: string;
   message?: string;
+  
+  // Enhanced Phase 3A features
+  songRequests?: string;
+  needsTransportation?: boolean;
+  transportationDetails?: string;
+  needsAccommodation?: boolean;
+  accommodationDetails?: string;
+  contactPreference?: 'email' | 'phone' | 'text';
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  
   submittedAt: Date;
   updatedAt: Date;
 }

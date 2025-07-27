@@ -224,9 +224,9 @@ export const CoupleDashboard: React.FC = () => {
                 </p>
               </div>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#1f2937' }}>👥 Manage Guests</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#1f2937' }}>👥 Wedding Management</h4>
                 <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>
-                  Add guests, track RSVPs, and send invitations
+                  Manage guests, track RSVPs, and send invitations
                 </p>
               </div>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
@@ -283,14 +283,14 @@ export const CoupleDashboard: React.FC = () => {
         <ActionSection>
           <h3>Manage Your Wedding</h3>
           <ActionButtons>
-            <ActionButton to="/couple/customize" variant="primary">
+            <ActionButton to="/couple/wedding-management" variant="primary">
+              Wedding Management Hub
+            </ActionButton>
+            <ActionButton to="/couple/rsvp-dashboard" variant="primary">
+              RSVP Analytics Dashboard
+            </ActionButton>
+            <ActionButton to="/couple/customize" variant="secondary">
               Customize Invitation
-            </ActionButton>
-            <ActionButton to="/couple/guests" variant="secondary">
-              Manage Guest List
-            </ActionButton>
-            <ActionButton to="/couple/rsvps" variant="secondary">
-              View RSVPs
             </ActionButton>
             <ActionButton to={`/invitation/${wedding.subdomain}`} variant="secondary" target="_blank">
               Preview Invitation

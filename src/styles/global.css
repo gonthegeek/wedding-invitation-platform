@@ -46,6 +46,10 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
+  
+  /* Navigation */
+  --sidebar-width: 280px;
+  --header-height: 64px;
 }
 
 /* CSS Reset */
@@ -562,6 +566,42 @@ p {
   
   .main-content {
     padding: var(--spacing-md);
+  }
+}
+
+/* Navigation Styles */
+.app-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: white;
+  border-right: 1px solid var(--border);
+  transition: transform 0.3s ease;
+}
+
+.app-header {
+  height: var(--header-height);
+  background: white;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-lg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Mobile Navigation */
+@media (max-width: var(--breakpoint-lg)) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: -var(--sidebar-width);
+    z-index: 1000;
+  }
+  
+  .app-sidebar.open {
+    transform: translateX(var(--sidebar-width));
   }
 }
 
