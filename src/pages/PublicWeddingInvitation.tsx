@@ -20,10 +20,26 @@ const heartBeat = keyframes`
 
 // Main Container
 const InvitationContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['primaryColor', 'secondaryColor'].includes(prop)
-})<{ primaryColor?: string; secondaryColor?: string }>`
+  shouldForwardProp: (prop) => !['primaryColor', 'secondaryColor', 'backgroundType', 'backgroundImageUrl', 'backgroundPosition', 'backgroundSize'].includes(prop)
+})<{ 
+  primaryColor?: string; 
+  secondaryColor?: string;
+  backgroundType?: string;
+  backgroundImageUrl?: string;
+  backgroundPosition?: string;
+  backgroundSize?: string;
+}>`
   min-height: 100vh;
-  background: linear-gradient(135deg, ${props => props.primaryColor || '#667eea'} 0%, ${props => props.secondaryColor || '#764ba2'} 100%);
+  background: ${props => {
+    if (props.backgroundType === 'image' && props.backgroundImageUrl) {
+      return `url(${props.backgroundImageUrl})`;
+    }
+    return `linear-gradient(135deg, ${props.primaryColor || '#667eea'} 0%, ${props.secondaryColor || '#764ba2'} 100%)`;
+  }};
+  background-position: ${props => props.backgroundPosition || 'center'};
+  background-size: ${props => props.backgroundSize || 'cover'};
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: 'Georgia', serif;
   position: relative;
   overflow-x: hidden;
@@ -973,7 +989,14 @@ export const PublicWeddingInvitation: React.FC = () => {
   const secondaryColor = wedding?.settings?.secondaryColor || '#ff6b9d';
 
   return (
-    <InvitationContainer primaryColor={primaryColor} secondaryColor={secondaryColor}>
+    <InvitationContainer 
+      primaryColor={primaryColor} 
+      secondaryColor={secondaryColor}
+      backgroundType={wedding.settings?.backgroundType}
+      backgroundImageUrl={wedding.settings?.backgroundImageUrl}
+      backgroundPosition={wedding.settings?.backgroundPosition}
+      backgroundSize={wedding.settings?.backgroundSize}
+    >
       {/* Demo Banner */}
       {isDemo && (
         <DemoBanner primaryColor={primaryColor} secondaryColor={secondaryColor}>
@@ -989,9 +1012,11 @@ export const PublicWeddingInvitation: React.FC = () => {
         <WeddingDate>
           {formatWeddingDate(wedding.weddingDate)}
         </WeddingDate>
-        <LoveQuote>
-          {wedding.settings?.loveQuote || "The best type of love is the one that awakens the soul and makes us reach for more."}
-        </LoveQuote>
+        {(wedding.settings?.sectionVisibility?.loveQuote !== false) && (
+          <LoveQuote>
+            {wedding.settings?.loveQuote || "The best type of love is the one that awakens the soul and makes us reach for more."}
+          </LoveQuote>
+        )}
         <HeartIcon size={48} secondaryColor={secondaryColor} />
         <ScrollIndicator>
           <div>Desliza para ver nuestra invitación</div>
@@ -1000,29 +1025,31 @@ export const PublicWeddingInvitation: React.FC = () => {
       </HeroSection>
 
       {/* Parents Section */}
-      <ParentsSection>
-        <SectionTitle>
-          We have the honor of inviting you to celebrate our marriage
-          <br />
-          with the blessing of God and our parents
-        </SectionTitle>
-        <ParentsContainer>
-          <ParentsNames>
-            <ParentGroup>
-              <ParentName>{wedding.settings?.brideMotherName || "Bride's Mother"}</ParentName>
-              <ParentName>{wedding.settings?.brideFatherName || "Bride's Father"}</ParentName>
-            </ParentGroup>
-            <HeartIcon size={32} secondaryColor={secondaryColor} />
-            <ParentGroup>
-              <ParentName>{wedding.settings?.groomMotherName || "Groom's Mother"}</ParentName>
-              <ParentName>{wedding.settings?.groomFatherName || "Groom's Father"}</ParentName>
-            </ParentGroup>
-          </ParentsNames>
-        </ParentsContainer>
-      </ParentsSection>
+      {(wedding.settings?.sectionVisibility?.parents !== false) && (
+        <ParentsSection>
+          <SectionTitle>
+            We have the honor of inviting you to celebrate our marriage
+            <br />
+            with the blessing of God and our parents
+          </SectionTitle>
+          <ParentsContainer>
+            <ParentsNames>
+              <ParentGroup>
+                <ParentName>{wedding.settings?.brideMotherName || "Bride's Mother"}</ParentName>
+                <ParentName>{wedding.settings?.brideFatherName || "Bride's Father"}</ParentName>
+              </ParentGroup>
+              <HeartIcon size={32} secondaryColor={secondaryColor} />
+              <ParentGroup>
+                <ParentName>{wedding.settings?.groomMotherName || "Groom's Mother"}</ParentName>
+                <ParentName>{wedding.settings?.groomFatherName || "Groom's Father"}</ParentName>
+              </ParentGroup>
+            </ParentsNames>
+          </ParentsContainer>
+        </ParentsSection>
+      )}
 
       {/* Padrinos Section */}
-      {wedding.settings?.padrinos && wedding.settings.padrinos.length > 0 && (
+      {(wedding.settings?.sectionVisibility?.padrinos !== false) && wedding.settings?.padrinos && wedding.settings.padrinos.length > 0 && (
         <PadrinosSection>
           <SectionTitle>Nuestros Padrinos</SectionTitle>
           <PadrinosGrid>
@@ -1081,7 +1108,7 @@ export const PublicWeddingInvitation: React.FC = () => {
       </CoupleSection>
 
       {/* Couple Photo Section */}
-      {wedding.settings?.couplePhoto && (
+      {(wedding.settings?.sectionVisibility?.couplePhoto !== false) && wedding.settings?.couplePhoto && (
         <CouplePhotoSection>
           <CouplePhoto 
             src={wedding.settings.couplePhoto} 
@@ -1091,85 +1118,92 @@ export const PublicWeddingInvitation: React.FC = () => {
       )}
 
       {/* Countdown Section */}
-      <CountdownSection>
-        <SectionTitle style={{ color: 'white' }}>Time Until Our Wedding:</SectionTitle>
-        <CountdownContainer>
-          <CountdownTimer>
-            <CountdownItem>
-              <CountdownNumber secondaryColor={secondaryColor}>{countdown.days.toString().padStart(2, '0')}</CountdownNumber>
-              <CountdownLabel>Days</CountdownLabel>
-            </CountdownItem>
-            <CountdownItem>
-              <CountdownNumber secondaryColor={secondaryColor}>{countdown.hours.toString().padStart(2, '0')}</CountdownNumber>
-              <CountdownLabel>Hrs</CountdownLabel>
-            </CountdownItem>
-            <CountdownItem>
-              <CountdownNumber secondaryColor={secondaryColor}>{countdown.minutes.toString().padStart(2, '0')}</CountdownNumber>
-              <CountdownLabel>Min</CountdownLabel>
-            </CountdownItem>
-            <CountdownItem>
-              <CountdownNumber secondaryColor={secondaryColor}>{countdown.seconds.toString().padStart(2, '0')}</CountdownNumber>
-              <CountdownLabel>Sec</CountdownLabel>
-            </CountdownItem>
-          </CountdownTimer>
-        </CountdownContainer>
-      </CountdownSection>
+      {(wedding.settings?.sectionVisibility?.countdown !== false) && (
+        <CountdownSection>
+          <SectionTitle style={{ color: 'white' }}>Time Until Our Wedding:</SectionTitle>
+          <CountdownContainer>
+            <CountdownTimer>
+              <CountdownItem>
+                <CountdownNumber secondaryColor={secondaryColor}>{countdown.days.toString().padStart(2, '0')}</CountdownNumber>
+                <CountdownLabel>Days</CountdownLabel>
+              </CountdownItem>
+              <CountdownItem>
+                <CountdownNumber secondaryColor={secondaryColor}>{countdown.hours.toString().padStart(2, '0')}</CountdownNumber>
+                <CountdownLabel>Hrs</CountdownLabel>
+              </CountdownItem>
+              <CountdownItem>
+                <CountdownNumber secondaryColor={secondaryColor}>{countdown.minutes.toString().padStart(2, '0')}</CountdownNumber>
+                <CountdownLabel>Min</CountdownLabel>
+              </CountdownItem>
+              <CountdownItem>
+                <CountdownNumber secondaryColor={secondaryColor}>{countdown.seconds.toString().padStart(2, '0')}</CountdownNumber>
+                <CountdownLabel>Sec</CountdownLabel>
+              </CountdownItem>
+            </CountdownTimer>
+          </CountdownContainer>
+        </CountdownSection>
+      )}
 
       {/* Event Details Section */}
-      <EventDetailsSection primaryColor={primaryColor} secondaryColor={secondaryColor}>
-        <SectionTitle style={{ color: 'white' }}>Event Details</SectionTitle>
-        <EventsContainer>
-          <EventCard>
-            <EventIcon>📅</EventIcon>
-            <EventTitle>When?</EventTitle>
-            <EventTime>{formatWeddingDate(wedding.weddingDate)}</EventTime>
-          </EventCard>
+      {(wedding.settings?.sectionVisibility?.eventDetails !== false) && (
+        <EventDetailsSection primaryColor={primaryColor} secondaryColor={secondaryColor}>
+          <SectionTitle style={{ color: 'white' }}>Event Details</SectionTitle>
+          <EventsContainer>
+            <EventCard>
+              <EventIcon>📅</EventIcon>
+              <EventTitle>When?</EventTitle>
+              <EventTime>{formatWeddingDate(wedding.weddingDate)}</EventTime>
+            </EventCard>
 
-          <EventCard>
-            <EventIcon>⛪</EventIcon>
-            <EventTitle>Ceremony</EventTitle>
-            <EventTime>{wedding.ceremonyTime}</EventTime>
-            <EventLocation>
-              {wedding.ceremonyLocation.name}
-              <br />
-              {wedding.ceremonyLocation.address}
-            </EventLocation>
-            <MapButton href={wedding.ceremonyLocation.googleMapsUrl || "#"} target="_blank">
-              <MapPin size={16} />
-              VIEW ON MAPS
-            </MapButton>
-          </EventCard>
+            <EventCard>
+              <EventIcon>⛪</EventIcon>
+              <EventTitle>Ceremony</EventTitle>
+              <EventTime>{wedding.ceremonyTime}</EventTime>
+              <EventLocation>
+                {wedding.ceremonyLocation.name}
+                <br />
+                {wedding.ceremonyLocation.address}
+              </EventLocation>
+              <MapButton href={wedding.ceremonyLocation.googleMapsUrl || "#"} target="_blank">
+                <MapPin size={16} />
+                VIEW ON MAPS
+              </MapButton>
+            </EventCard>
 
-          <EventCard>
-            <EventIcon>🎉</EventIcon>
-            <EventTitle>Reception</EventTitle>
-            <EventTime>{wedding.receptionTime}</EventTime>
-            <EventLocation>
-              {wedding.receptionLocation.name}
-              <br />
-              {wedding.receptionLocation.address}
-            </EventLocation>
-            <MapButton href={wedding.receptionLocation.googleMapsUrl || "#"} target="_blank">
-              <MapPin size={16} />
-              VIEW ON MAPS
-            </MapButton>
-          </EventCard>
+            <EventCard>
+              <EventIcon>🎉</EventIcon>
+              <EventTitle>Reception</EventTitle>
+              <EventTime>{wedding.receptionTime}</EventTime>
+              <EventLocation>
+                {wedding.receptionLocation.name}
+                <br />
+                {wedding.receptionLocation.address}
+              </EventLocation>
+              <MapButton href={wedding.receptionLocation.googleMapsUrl || "#"} target="_blank">
+                <MapPin size={16} />
+                VIEW ON MAPS
+              </MapButton>
+            </EventCard>
 
-          <EventCard>
-            <EventIcon>👔</EventIcon>
-            <EventTitle>Dress Code</EventTitle>
-            <EventTime>{wedding.settings?.dressCode || "Formal"}</EventTime>
-            <EventLocation>
-              {wedding.settings?.dressCodeDescription || "Men: Suit\nWomen: Cocktail Dress"}
-              <br />
-              <small>*Please avoid wearing white (reserved for the bride)*</small>
-            </EventLocation>
-          </EventCard>
-        </EventsContainer>
-      </EventDetailsSection>
+            {(wedding.settings?.sectionVisibility?.dressCode !== false) && (
+              <EventCard>
+                <EventIcon>👔</EventIcon>
+                <EventTitle>Dress Code</EventTitle>
+                <EventTime>{wedding.settings?.dressCode || "Formal"}</EventTime>
+                <EventLocation>
+                  {wedding.settings?.dressCodeDescription || "Men: Suit\nWomen: Cocktail Dress"}
+                  <br />
+                  <small>*Please avoid wearing white (reserved for the bride)*</small>
+                </EventLocation>
+              </EventCard>
+            )}
+          </EventsContainer>
+        </EventDetailsSection>
+      )}
 
       {/* RSVP Section */}
-      <RSVPSection>
+      {(wedding.settings?.sectionVisibility?.rsvp !== false) && (
+        <RSVPSection>
         <SectionTitle>{wedding.settings?.rsvpTitle || "We Want to Share This Special Moment With You!"}</SectionTitle>
         <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem auto' }}>
           {wedding.settings?.rsvpMessage || "Please help us by confirming your attendance."}
@@ -1253,9 +1287,10 @@ export const PublicWeddingInvitation: React.FC = () => {
           {wedding.settings?.childrenNoteDetails || "but we ask that you take care of them during the event."}
         </div>
       </RSVPSection>
+      )}
 
       {/* Gift Options Section */}
-      {wedding.settings?.giftOptions && wedding.settings.giftOptions.length > 0 && (
+      {(wedding.settings?.sectionVisibility?.giftOptions !== false) && wedding.settings?.giftOptions && wedding.settings.giftOptions.length > 0 && (
         <GiftSection>
           <SectionTitle>Gift Options</SectionTitle>
           <GiftContainer>
@@ -1301,7 +1336,7 @@ export const PublicWeddingInvitation: React.FC = () => {
       )}
 
       {/* Photo Gallery */}
-      {wedding.settings?.photoGallery && wedding.settings.photoGallery.length > 0 && (
+      {(wedding.settings?.sectionVisibility?.photoGallery !== false) && wedding.settings?.photoGallery && wedding.settings.photoGallery.length > 0 && (
         <GallerySection>
           <SectionTitle>Our Memories</SectionTitle>
           <GalleryContainer>
@@ -1327,7 +1362,7 @@ export const PublicWeddingInvitation: React.FC = () => {
       )}
 
       {/* Hotel Section */}
-      {wedding.settings?.hotelInfo && (
+      {(wedding.settings?.sectionVisibility?.hotelInfo !== false) && wedding.settings?.hotelInfo && (
         <HotelSection>
           <SectionTitle>Accommodation</SectionTitle>
           <HotelContainer>

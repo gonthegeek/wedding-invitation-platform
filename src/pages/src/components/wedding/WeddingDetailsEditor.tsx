@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Save, Eye, Edit3, Heart, Palette, Settings } from 'lucide-react';
-import type { Wedding, WeddingSettings, SectionVisibility } from '../../types';
+import { Save, Eye, Edit3, Heart, Palette } from 'lucide-react';
+import type { Wedding, WeddingSettings } from '../../types';
 import { ImageUpload } from '../shared/ImageUpload';
 import { GalleryUpload } from '../shared/GalleryUpload';
 import { StorageService } from '../../services/storageService';
@@ -316,7 +316,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
   onSave,
   onPreview
 }) => {
-  const [activeTab, setActiveTab] = useState<'content' | 'design' | 'additional' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'design' | 'additional'>('content');
   const [settings, setSettings] = useState<WeddingSettings>({
     ...wedding.settings,
     // Ensure all customizable fields have default values
@@ -365,17 +365,10 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
     });
   }, [wedding]);
 
-    const handleInputChange = (field: string, value: string | string[]) => {
-    setSettings(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSectionVisibilityChange = (newVisibility: Partial<SectionVisibility>) => {
-    setSettings(prev => ({ 
-      ...prev, 
-      sectionVisibility: {
-        ...prev.sectionVisibility,
-        ...newVisibility
-      }
+  const handleInputChange = (field: keyof WeddingSettings, value: string | string[]) => {
+    setSettings(prev => ({
+      ...prev,
+      [field]: value
     }));
   };
 
@@ -492,13 +485,6 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
         >
           <Heart size={20} />
           Additional Sections
-        </Tab>
-        <Tab 
-          $active={activeTab === 'settings'} 
-          onClick={() => setActiveTab('settings')}
-        >
-          <Settings size={20} />
-          Settings & Visibility
         </Tab>
       </TabContainer>
 
@@ -916,130 +902,6 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
               </FormGroup>
             </>
           )}
-
-          {activeTab === 'settings' && (
-            <>
-              <SectionTitle>
-                <Settings size={20} />
-                Section Visibility & Background
-              </SectionTitle>
-
-              <FormGroup>
-                <Label>Section Visibility</Label>
-                <div style={{ display: 'grid', gap: '0.5rem' }}>
-                  {[
-                    { key: 'parents', label: 'Parents Names' },
-                    { key: 'padrinos', label: 'Padrinos' },
-                    { key: 'couplePhoto', label: 'Couple Photo' },
-                    { key: 'countdown', label: 'Countdown Timer' },
-                    { key: 'eventDetails', label: 'Event Details' },
-                    { key: 'dressCode', label: 'Dress Code' },
-                    { key: 'rsvp', label: 'RSVP Section' },
-                    { key: 'giftOptions', label: 'Gift Options' },
-                    { key: 'photoGallery', label: 'Photo Gallery' },
-                    { key: 'hotelInfo', label: 'Hotel Information' },
-                    { key: 'loveQuote', label: 'Love Quote' },
-                    { key: 'specialInstructions', label: 'Special Instructions' }
-                  ].map(section => (
-                    <label key={section.key} style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.5rem',
-                      padding: '0.5rem',
-                      backgroundColor: '#f8f9fa',
-                      borderRadius: '5px'
-                    }}>
-                      <input
-                        type="checkbox"
-                        checked={settings.sectionVisibility?.[section.key as keyof SectionVisibility] ?? true}
-                        onChange={(e) => {
-                          const newVisibility = {
-                            [section.key]: e.target.checked
-                          };
-                          handleSectionVisibilityChange(newVisibility);
-                        }}
-                      />
-                      {section.label}
-                    </label>
-                  ))}
-                </div>
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Background Type</Label>
-                <select
-                  value={settings.backgroundType || 'gradient'}
-                  onChange={(e) => handleInputChange('backgroundType', e.target.value)}
-                  style={{
-                    padding: '0.75rem',
-                    border: '2px solid #e0e0e0',
-                    borderRadius: '10px',
-                    fontSize: '1rem',
-                    width: '100%'
-                  }}
-                >
-                  <option value="gradient">Gradient Background</option>
-                  <option value="image">Image Background</option>
-                </select>
-              </FormGroup>
-
-              {settings.backgroundType === 'image' && (
-                <>
-                  <FormGroup>
-                    <Label>Background Image</Label>
-                    <ImageUpload
-                      value={settings.backgroundImageUrl || ''}
-                      onChange={(imageUrl) => handleInputChange('backgroundImageUrl', imageUrl || '')}
-                      onUpload={async (file: File) => {
-                        return await StorageService.uploadImage(file, `weddings/${wedding.id}/backgrounds`);
-                      }}
-                      label="Upload Background Image"
-                    />
-                  </FormGroup>
-
-                  <FormGroup>
-                    <Label>Background Position</Label>
-                    <select
-                      value={settings.backgroundPosition || 'center'}
-                      onChange={(e) => handleInputChange('backgroundPosition', e.target.value)}
-                      style={{
-                        padding: '0.75rem',
-                        border: '2px solid #e0e0e0',
-                        borderRadius: '10px',
-                        fontSize: '1rem',
-                        width: '100%'
-                      }}
-                    >
-                      <option value="center">Center</option>
-                      <option value="top">Top</option>
-                      <option value="bottom">Bottom</option>
-                      <option value="left">Left</option>
-                      <option value="right">Right</option>
-                    </select>
-                  </FormGroup>
-
-                  <FormGroup>
-                    <Label>Background Size</Label>
-                    <select
-                      value={settings.backgroundSize || 'cover'}
-                      onChange={(e) => handleInputChange('backgroundSize', e.target.value)}
-                      style={{
-                        padding: '0.75rem',
-                        border: '2px solid #e0e0e0',
-                        borderRadius: '10px',
-                        fontSize: '1rem',
-                        width: '100%'
-                      }}
-                    >
-                      <option value="cover">Cover</option>
-                      <option value="contain">Contain</option>
-                      <option value="auto">Auto</option>
-                    </select>
-                  </FormGroup>
-                </>
-              )}
-            </>
-          )}
         </FormSection>
 
         <PreviewSection>
@@ -1185,59 +1047,6 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     fontSize: '0.8rem'
                   }}>
                     Details
-                  </div>
-                </div>
-              </PreviewCard>
-            </>
-          )}
-
-          {activeTab === 'settings' && (
-            <>
-              <PreviewTitle style={{ color: settings.primaryColor }}>Preview Settings</PreviewTitle>
-              <PreviewCard>
-                <div style={{
-                  padding: '1rem',
-                  background: settings.backgroundType === 'image' && settings.backgroundImageUrl
-                    ? `url(${settings.backgroundImageUrl})`
-                    : `linear-gradient(45deg, ${settings.primaryColor}, ${settings.secondaryColor})`,
-                  backgroundPosition: settings.backgroundPosition || 'center',
-                  backgroundSize: settings.backgroundSize || 'cover',
-                  backgroundRepeat: 'no-repeat',
-                  borderRadius: '10px',
-                  color: 'white',
-                  textAlign: 'center',
-                  marginBottom: '1rem',
-                  minHeight: '150px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                      {wedding.brideFirstName} & {wedding.groomFirstName}
-                    </div>
-                    <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>
-                      Background Preview
-                    </div>
-                  </div>
-                </div>
-                
-                <div style={{ fontSize: '0.9rem', color: '#666', padding: '1rem' }}>
-                  <strong>Visible Sections:</strong>
-                  <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                    {Object.entries(settings.sectionVisibility || {})
-                      .filter(([, visible]) => visible)
-                      .map(([key]) => (
-                        <span key={key} style={{
-                          padding: '0.25rem 0.5rem',
-                          backgroundColor: settings.primaryColor,
-                          color: 'white',
-                          borderRadius: '12px',
-                          fontSize: '0.7rem'
-                        }}>
-                          {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                        </span>
-                      ))}
                   </div>
                 </div>
               </PreviewCard>

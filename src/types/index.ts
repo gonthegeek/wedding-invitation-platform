@@ -90,6 +90,28 @@ export interface WeddingSettings {
   giftOptions?: GiftOption[];
   // Hotel information
   hotelInfo?: HotelInfo;
+  // Section visibility controls
+  sectionVisibility?: SectionVisibility;
+  // Background customization
+  backgroundType?: 'gradient' | 'image';
+  backgroundImageUrl?: string;
+  backgroundPosition?: 'center' | 'top' | 'bottom';
+  backgroundSize?: 'cover' | 'contain' | 'auto';
+}
+
+export interface SectionVisibility {
+  parents?: boolean;
+  padrinos?: boolean;
+  couplePhoto?: boolean;
+  countdown?: boolean;
+  eventDetails?: boolean;
+  dressCode?: boolean;
+  rsvp?: boolean;
+  giftOptions?: boolean;
+  photoGallery?: boolean;
+  hotelInfo?: boolean;
+  loveQuote?: boolean;
+  specialInstructions?: boolean;
 }
 
 export interface Padrino {
