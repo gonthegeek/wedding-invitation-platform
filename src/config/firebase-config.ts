@@ -10,14 +10,13 @@ const firebaseConfigs = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
   },
   production: {
-    // Replace these with your actual production Firebase config
-    apiKey: "AIza...", // Your actual API key
-    authDomain: "wedding-invitation-platform.firebaseapp.com",
-    projectId: "wedding-invitation-platform",
-    storageBucket: "wedding-invitation-platform.appspot.com",
-    messagingSenderId: "123456789", // Your actual sender ID
-    appId: "1:123456789:web:abcdef", // Your actual app ID
-    measurementId: "G-ABCDEFGHIJ" // Your actual measurement ID
+    apiKey: "your_firebase_api_key",
+    authDomain: "your-project-id.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project-id.appspot.com",
+    messagingSenderId: "your_messaging_sender_id",
+    appId: "your_firebase_app_id",
+    measurementId: "your_measurement_id"
   }
 };
 
