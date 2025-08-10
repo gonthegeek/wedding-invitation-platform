@@ -23,19 +23,19 @@ const Header = styled.div`
 const Title = styled.h1`
   font-size: 2.5rem;
   font-weight: 300;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 1rem;
 `;
 
 const Subtitle = styled.p`
   font-size: 1.2rem;
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   font-style: italic;
 `;
 
 const TabContainer = styled.div`
   display: flex;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid ${(p) => p.theme.colors.border};
   margin-bottom: 2rem;
   gap: 1rem;
 `;
@@ -43,8 +43,8 @@ const TabContainer = styled.div`
 const Tab = styled.button<{ $active: boolean }>`
   padding: 1rem 2rem;
   border: none;
-  background: ${props => props.$active ? '#667eea' : 'transparent'};
-  color: ${props => props.$active ? 'white' : '#666'};
+  background: ${(props) => (props.$active ? props.theme.colors.primary : 'transparent')};
+  color: ${(props) => (props.$active ? 'white' : props.theme.colors.textSecondary)};
   font-size: 1rem;
   font-weight: 500;
   border-radius: 8px 8px 0 0;
@@ -55,7 +55,7 @@ const Tab = styled.button<{ $active: boolean }>`
   gap: 0.5rem;
   
   &:hover {
-    background: ${props => props.$active ? '#667eea' : '#f3f4f6'};
+    background: ${(props) => (props.$active ? props.theme.colors.primary : props.theme.colors.surfaceAlt)};
   }
 `;
 
@@ -70,14 +70,14 @@ const ContentGrid = styled.div`
 `;
 
 const FormSection = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 15px;
   padding: 2rem;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 `;
 
 const PreviewSection = styled.div`
-  background: #f8f9fa;
+  background: ${(p) => p.theme.colors.surfaceAlt};
   border-radius: 15px;
   padding: 2rem;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -86,7 +86,7 @@ const PreviewSection = styled.div`
 const SectionTitle = styled.h3`
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
@@ -101,28 +101,32 @@ const Label = styled.label`
   display: block;
   font-size: 1rem;
   font-weight: 500;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 0.5rem;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.3s ease;
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   border-radius: 8px;
   font-size: 1rem;
   min-height: 100px;
@@ -131,14 +135,14 @@ const TextArea = styled.textarea`
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const ColorInput = styled.input`
   width: 100px;
   height: 40px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   cursor: pointer;
   
@@ -153,7 +157,7 @@ const ColorInput = styled.input`
 `;
 
 const PreviewCard = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 10px;
   padding: 1.5rem;
   margin-bottom: 1rem;
@@ -163,12 +167,12 @@ const PreviewCard = styled.div`
 const PreviewTitle = styled.h4`
   font-size: 1.2rem;
   font-weight: 600;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 1rem;
 `;
 
 const PreviewText = styled.p`
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   line-height: 1.6;
   margin-bottom: 0.5rem;
 `;
@@ -182,9 +186,9 @@ const ActionButtons = styled.div`
 
 const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   padding: 1rem 2rem;
-  border: ${props => props.variant === 'primary' ? 'none' : '2px solid #667eea'};
-  background: ${props => props.variant === 'primary' ? '#667eea' : 'white'};
-  color: ${props => props.variant === 'primary' ? 'white' : '#667eea'};
+  border: ${(props) => (props.variant === 'primary' ? 'none' : `2px solid ${props.theme.colors.primary}`)};
+  background: ${(props) => (props.variant === 'primary' ? props.theme.colors.primary : props.theme.colors.surface)};
+  color: ${(props) => (props.variant === 'primary' ? 'white' : props.theme.colors.primary)};
   font-size: 1rem;
   font-weight: 600;
   border-radius: 25px;
@@ -215,7 +219,7 @@ const GiftOptionsList = styled.div`
 `;
 
 const GiftOptionItem = styled.div`
-  background: #f8f9fa;
+  background: ${(p) => p.theme.colors.surfaceAlt};
   border-radius: 10px;
   padding: 1rem;
 `;
@@ -238,14 +242,16 @@ const GiftInputs = styled.div`
     gap: 0.5rem;
     margin-top: 0.5rem;
     padding: 1rem;
-    background: white;
+    background: ${(p) => p.theme.colors.surface};
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid ${(p) => p.theme.colors.border};
   }
   
   select {
     padding: 0.5rem;
-    border: 1px solid #ddd;
+    border: 1px solid ${(p) => p.theme.colors.border};
+    background: ${(p) => p.theme.colors.surface};
+    color: ${(p) => p.theme.colors.textPrimary};
     border-radius: 5px;
     font-size: 0.9rem;
   }
@@ -283,6 +289,21 @@ const RemoveButton = styled.button`
   &:hover {
     background: #c82333;
   }
+`;
+
+const VisibilityItem = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: ${(p) => p.theme.colors.surfaceAlt};
+  color: ${(p) => p.theme.colors.textPrimary};
+  border: 1px solid ${(p) => p.theme.colors.border};
+`;
+
+const VisibilityItemText = styled.span`
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 interface WeddingDetailsEditorProps {
@@ -1041,14 +1062,11 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     { key: 'loveQuote', label: t.customization.loveQuoteSection },
                     { key: 'specialInstructions', label: t.customization.specialInstructionsSection }
                   ].map(section => (
-                    <label key={section.key} style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.5rem',
-                      padding: '0.5rem',
-                      backgroundColor: '#f8f9fa',
-                      borderRadius: '5px'
-                    }}>
+                    <VisibilityItem key={section.key}>
+                      <div>
+                        <SectionTitle as="h4">{section.label}</SectionTitle>
+                        <VisibilityItemText>{/* description if any */}</VisibilityItemText>
+                      </div>
                       <input
                         type="checkbox"
                         checked={settings.sectionVisibility?.[section.key as keyof SectionVisibility] ?? true}
@@ -1059,8 +1077,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                           handleSectionVisibilityChange(newVisibility);
                         }}
                       />
-                      {section.label}
-                    </label>
+                    </VisibilityItem>
                   ))}
                 </div>
               </FormGroup>
@@ -1084,14 +1101,8 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     { key: 'specialRequests', label: 'Special requests' },
                     { key: 'message', label: 'Personal message to couple' },
                   ].map(item => (
-                    <label key={item.key} style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.5rem',
-                      padding: '0.5rem',
-                      backgroundColor: '#f8f9fa',
-                      borderRadius: '5px'
-                    }}>
+                    <VisibilityItem key={item.key}>
+                      <VisibilityItemText>{item.label}</VisibilityItemText>
                       <input
                         type="checkbox"
                         checked={settings.rsvpFormVisibility?.[item.key as keyof NonNullable<typeof settings.rsvpFormVisibility>] ?? true}
@@ -1113,8 +1124,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                           }
                         }))}
                       />
-                      {item.label}
-                    </label>
+                    </VisibilityItem>
                   ))}
                 </div>
               </FormGroup>
@@ -1381,12 +1391,12 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                       <div>{wedding.ceremonyTime || 'Ceremony Time'}</div>
                       <div style={{ fontSize: '0.8rem', color: '#666' }}>
                         {wedding.ceremonyLocation?.address && (
-                          <>
+                          <span>
                             {wedding.ceremonyLocation.address}
                             {wedding.ceremonyLocation.city && `, ${wedding.ceremonyLocation.city}`}
                             {wedding.ceremonyLocation.state && `, ${wedding.ceremonyLocation.state}`}
                             {wedding.ceremonyLocation.zipCode && ` ${wedding.ceremonyLocation.zipCode}`}
-                          </>
+                          </span>
                         )}
                       </div>
                       {wedding.ceremonyLocation?.googleMapsUrl && (
@@ -1412,12 +1422,12 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                       <div>{wedding.receptionTime || 'Reception Time'}</div>
                       <div style={{ fontSize: '0.8rem', color: '#666' }}>
                         {wedding.receptionLocation?.address && (
-                          <>
+                          <span>
                             {wedding.receptionLocation.address}
                             {wedding.receptionLocation.city && `, ${wedding.receptionLocation.city}`}
                             {wedding.receptionLocation.state && `, ${wedding.receptionLocation.state}`}
                             {wedding.receptionLocation.zipCode && ` ${wedding.receptionLocation.zipCode}`}
-                          </>
+                          </span>
                         )}
                       </div>
                       {wedding.receptionLocation?.googleMapsUrl && (

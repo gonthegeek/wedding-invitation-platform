@@ -3,11 +3,12 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import { LanguageSelector } from './LanguageSelector';
-import { LogOut, User, Crown, Heart, Menu, ChevronRight } from 'lucide-react';
+import { LogOut, User, Crown, Heart, Menu, ChevronRight, SunMedium, Moon } from 'lucide-react';
+import { useThemeContext } from '../../contexts/ThemeContext';
 
 const HeaderContainer = styled.header`
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: ${(p) => p.theme.colors.surface};
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
   padding: 0 1.5rem;
   height: 64px;
   display: flex;
@@ -32,14 +33,14 @@ const MenuButton = styled.button`
   height: 40px;
   border: none;
   background: none;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   
   &:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: ${(p) => p.theme.colors.surfaceAlt};
+    color: ${(p) => p.theme.colors.textPrimary};
   }
   
   @media (min-width: 1024px) {
@@ -52,12 +53,12 @@ const Breadcrumbs = styled.div`
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const BreadcrumbItem = styled.span<{ $isLast?: boolean }>`
-  color: ${props => props.$isLast ? '#1f2937' : '#6b7280'};
-  font-weight: ${props => props.$isLast ? '600' : '400'};
+  color: ${(p) => (p.$isLast ? p.theme.colors.textPrimary : p.theme.colors.textSecondary)};
+  font-weight: ${(p) => (p.$isLast ? 600 : 400)};
 `;
 
 const HeaderRight = styled.div`
@@ -72,7 +73,7 @@ const UserInfo = styled.div`
   gap: 0.75rem;
   padding: 0.5rem;
   border-radius: 8px;
-  background: #f9fafb;
+  background: ${(p) => p.theme.colors.surfaceAlt};
 `;
 
 const UserAvatar = styled.div`
@@ -98,12 +99,12 @@ const UserDetails = styled.div`
 const UserName = styled.span`
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const UserRole = styled.span`
   font-size: 0.75rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   text-transform: capitalize;
 `;
 
@@ -113,16 +114,16 @@ const LogoutButton = styled.button`
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: none;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
   
   &:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+    background: ${(p) => p.theme.colors.surfaceAlt};
+    border-color: ${(p) => p.theme.colors.textSecondary};
   }
   
   span {
@@ -132,6 +133,21 @@ const LogoutButton = styled.button`
   }
 `;
 
+const ThemeToggle = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
+  cursor: pointer;
+  transition: background 0.2s ease;
+  &:hover { background: ${(p) => p.theme.colors.surfaceAlt}; }
+`;
+
 interface HeaderProps {
   onMenuToggle: () => void;
 }
@@ -139,6 +155,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   const { currentUser, logout } = useAuth();
   const location = useLocation();
+  const { mode, setMode } = useThemeContext();
 
   const handleLogout = async () => {
     try {
@@ -174,7 +191,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
 
   const getBreadcrumbs = () => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
-    const breadcrumbs = [];
+    const breadcrumbs: string[] = [];
     
     if (pathSegments[0] === 'admin') {
       breadcrumbs.push('Admin');
@@ -216,10 +233,14 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
 
   const breadcrumbs = getBreadcrumbs();
 
+  const cycleMode = () => {
+    setMode(mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system');
+  };
+
   return (
     <HeaderContainer>
       <HeaderLeft>
-        <MenuButton onClick={onMenuToggle}>
+        <MenuButton onClick={onMenuToggle} aria-label="Toggle menu">
           <Menu size={20} />
         </MenuButton>
         
@@ -238,6 +259,9 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
       </HeaderLeft>
       
       <HeaderRight>
+        <ThemeToggle onClick={cycleMode} aria-label="Toggle theme">
+          {mode === 'dark' ? <SunMedium size={18} /> : <Moon size={18} />}
+        </ThemeToggle>
         <LanguageSelector />
         
         <UserInfo>

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { WeddingService } from '../services/weddingService';
 import { GuestService } from '../services/guestService';
 import styled, { keyframes } from 'styled-components';
-import { MapPin, Heart, MessageCircle, Check, X } from 'lucide-react';
+import { MapPin, Heart, MessageCircle, Check, X, Sun, Moon, Monitor } from 'lucide-react';
 import { EnhancedRSVPForm, type EnhancedRSVPFormData } from '../components/rsvp/EnhancedRSVPForm';
 import { WeddingPartyDisplay } from '../components/guest/WeddingPartyDisplay';
 import { LanguageSelector } from '../components/shared/LanguageSelector';
@@ -11,6 +11,7 @@ import { FloatingLanguageSelector } from '../components/shared/FloatingLanguageS
 import { useTranslation, useLanguage } from '../hooks/useLanguage';
 import { formatDate, formatTime } from '../utils/i18nUtils';
 import type { Wedding, Guest } from '../types';
+import { useThemeContext } from '../contexts/ThemeContext';
 
 // Animations
 const fadeIn = keyframes`
@@ -26,8 +27,8 @@ const heartBeat = keyframes`
 // Main Container
 const InvitationContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['primaryColor', 'secondaryColor', 'backgroundType', 'backgroundImageUrl', 'backgroundPosition', 'backgroundSize', 'fontFamily'].includes(prop)
-})<{ 
-  primaryColor?: string; 
+})<{
+  primaryColor?: string;
   secondaryColor?: string;
   backgroundType?: string;
   backgroundImageUrl?: string;
@@ -53,6 +54,32 @@ const InvitationContainer = styled.div.withConfig({
   font-family: ${props => props.fontFamily || 'Georgia, serif'};
   position: relative;
   overflow-x: hidden;
+`;
+
+// Floating Theme Toggle
+const ThemeToggleWrapper = styled.div`
+  position: fixed;
+  top: 20px; /* align with language selector */
+  right: 200px; /* move further left to avoid overlap */
+  z-index: 999; /* keep below language selector (1000) */
+
+  @media (max-width: 768px) {
+    top: 15px;
+    right: 160px; /* adjust spacing on mobile */
+  }
+`;
+
+const ThemeToggleButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
+  border: 1px solid ${(p) => p.theme.colors.border};
+  border-radius: 9999px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  cursor: pointer;
 `;
 
 // Hero Section
@@ -144,25 +171,33 @@ const ScrollIndicator = styled.div`
 
 // Content Sections
 const Section = styled.section`
-  padding: 4rem 2rem;
-  background: white;
+  padding: 4rem 1rem;
+  background: transparent;
   position: relative;
 `;
 
 const SectionTitle = styled.h2`
   text-align: center;
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 3rem;
-  font-weight: 300;
-  
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
+  font-size: 2rem;
+  color: ${(p) => p.theme.colors.textPrimary};
+  margin: 0 0 2rem 0;
+  font-weight: 500;
+`;
+
+// Card-like inner container to match RSVP form styling
+const SectionInner = styled.div`
+  background: ${(p) => p.theme.colors.surface};
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin: 0 auto;
+  max-width: 1000px;
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const ParentsSection = styled(Section)`
-  background: #f8f9fa;
+  background: transparent;
 `;
 
 const ParentsContainer = styled.div`
@@ -191,7 +226,7 @@ const ParentGroup = styled.div`
 const ParentName = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 0.5rem;
 `;
 
@@ -214,7 +249,7 @@ const CoupleContainer = styled.div`
 const PersonCard = styled.div`
   text-align: center;
   padding: 2rem;
-  background: #f8f9fa;
+  background: ${(p) => p.theme.colors.surfaceAlt};
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 `;
@@ -247,7 +282,7 @@ const PersonPhoto = styled.div.withConfig({
 
 const PersonName = styled.h3`
   font-size: 1.5rem;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 0.5rem;
   font-weight: 400;
 `;
@@ -255,7 +290,7 @@ const PersonName = styled.h3`
 // Couple Photo Section
 const CouplePhotoSection = styled(Section)`
   padding: 2rem 1rem;
-  background: #f8f9fa;
+  background: ${(p) => p.theme.colors.surfaceAlt};
 `;
 
 const CouplePhoto = styled.img`
@@ -339,6 +374,30 @@ const MapButton = styled.a`
   }
 `;
 
+// Add a booking button style similar to RSVP button, used in Hotel section
+const BookingButton = styled.a<{ primaryColor?: string; secondaryColor?: string }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(
+    135deg,
+    ${p => p.primaryColor || '#667eea'} 0%,
+    ${p => p.secondaryColor || '#764ba2'} 100%
+  );
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  }
+`;
+
 // Countdown Section
 const CountdownSection = styled(Section)`
   background: #1f2937;
@@ -363,7 +422,8 @@ const CountdownTimer = styled.div`
 `;
 
 const CountdownItem = styled.div`
-  background: rgba(255, 255, 255, 0.1);
+  background: ${(p) => p.theme.colors.surfaceAlt};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 10px;
   padding: 1.5rem 1rem;
 `;
@@ -378,19 +438,19 @@ const CountdownNumber = styled.div.withConfig({
 
 const CountdownLabel = styled.div`
   font-size: 0.9rem;
-  opacity: 0.8;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-top: 0.5rem;
 `;
 
 // RSVP Section
 const RSVPSection = styled(Section)`
-  background: #f8f9fa;
+  background: ${(p) => p.theme.colors.surfaceAlt};
   text-align: center;
 `;
 
 // RSVP Form Section (replaces button when guest is authenticated)
 const RSVPFormSection = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 20px;
   padding: 3rem 2rem;
   margin: 2rem auto;
@@ -404,13 +464,13 @@ const RSVPFormTitle = styled.h3`
   font-size: 2rem;
   font-weight: 300;
   margin: 0 0 2rem;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const GuestWelcomeMessage = styled.div`
   text-align: center;
   font-size: 1.2rem;
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-bottom: 2rem;
   font-style: italic;
 `;
@@ -470,7 +530,7 @@ const DemoBanner = styled.div.withConfig({
 
 // Photo Gallery
 const GallerySection = styled(Section)`
-  background: #f8f9fa;
+  background: transparent;
 `;
 
 const GalleryContainer = styled.div`
@@ -487,7 +547,7 @@ const GalleryContainer = styled.div`
 `;
 
 const GalleryCard = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -512,12 +572,12 @@ const GalleryImage = styled.img`
 const GalleryCardFooter = styled.div`
   padding: 1rem;
   text-align: center;
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
 `;
 
 const GalleryImageCaption = styled.p`
   margin: 0;
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   font-size: 0.9rem;
   font-style: italic;
 `;
@@ -526,18 +586,12 @@ const GalleryImageCaption = styled.p`
 
 // Gift Options Section
 const GiftSection = styled(Section)`
-  background: white;
-`;
-
-const GiftContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
+  background: transparent;
 `;
 
 const GiftMessage = styled.p`
   font-size: 1.2rem;
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-bottom: 3rem;
   line-height: 1.6;
 `;
@@ -550,7 +604,7 @@ const GiftOptionsGrid = styled.div`
 `;
 
 const GiftOptionCard = styled.div`
-  background: #f8f9fa;
+  background: ${(p) => p.theme.colors.surfaceAlt};
   border-radius: 15px;
   padding: 2rem;
   text-align: center;
@@ -571,29 +625,29 @@ const GiftIcon = styled.div`
 
 const GiftTitle = styled.h4`
   font-size: 1.3rem;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 1rem;
 `;
 
 const GiftDescription = styled.p`
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-bottom: 1rem;
   font-size: 0.9rem;
   line-height: 1.5;
 `;
 
 const GiftDetails = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 10px;
   padding: 1rem;
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #555;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 // Hotel Section
 const HotelSection = styled(Section)`
-  background: #f8f9fa;
+  background: transparent;
 `;
 
 const HotelContainer = styled.div`
@@ -602,7 +656,7 @@ const HotelContainer = styled.div`
 `;
 
 const HotelCard = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -625,18 +679,18 @@ const HotelInfo = styled.div``;
 
 const HotelName = styled.h3`
   font-size: 2rem;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 1rem;
 `;
 
 const HotelAddress = styled.p`
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-bottom: 1rem;
   line-height: 1.5;
 `;
 
 const HotelDescription = styled.p`
-  color: #555;
+  color: ${(p) => p.theme.colors.textPrimary};
   line-height: 1.6;
   margin-bottom: 1.5rem;
 `;
@@ -659,23 +713,6 @@ const HotelPhoto = styled.img`
   height: 150px;
   object-fit: cover;
   border-radius: 10px;
-`;
-
-const BookingButton = styled.a`
-  display: inline-block;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 30px;
-  text-decoration: none;
-  font-weight: 600;
-  margin-top: 1rem;
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    color: white;
-  }
 `;
 
 // Footer
@@ -715,6 +752,13 @@ export const PublicWeddingInvitation: React.FC = () => {
   // Translation hooks
   const t = useTranslation();
   const { language } = useLanguage();
+  const { mode, resolvedMode, setMode } = useThemeContext();
+
+  const cycleTheme = () => {
+    const next = mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system';
+    setMode(next);
+  };
+  const ThemeIcon = resolvedMode === 'dark' ? Moon : resolvedMode === 'light' ? Sun : Monitor;
 
   useEffect(() => {
     const fetchWeddingAndGuest = async () => {
@@ -916,6 +960,14 @@ export const PublicWeddingInvitation: React.FC = () => {
         <LanguageSelector />
       </FloatingLanguageSelector>
 
+      {/* Theme Toggle */}
+      <ThemeToggleWrapper>
+        <ThemeToggleButton onClick={cycleTheme} aria-label="Toggle theme">
+          <ThemeIcon size={16} />
+          {mode === 'system' ? 'System' : resolvedMode === 'dark' ? 'Dark' : 'Light'}
+        </ThemeToggleButton>
+      </ThemeToggleWrapper>
+
       {/* Demo Banner */}
       {isDemo && (
         <DemoBanner primaryColor={primaryColor} secondaryColor={secondaryColor}>
@@ -946,292 +998,310 @@ export const PublicWeddingInvitation: React.FC = () => {
       {/* Parents Section */}
       {(wedding.settings?.sectionVisibility?.parents !== false) && (
         <ParentsSection>
-          <SectionTitle>
-            {t.invitation.honorInvitation}
-            <br />
-            {t.invitation.withBlessing}
-          </SectionTitle>
-          <ParentsContainer>
-            <ParentsNames>
-              <ParentGroup>
-                <ParentName>{wedding.settings?.brideMotherName || t.invitation.bridesMother}</ParentName>
-                <ParentName>{wedding.settings?.brideFatherName || t.invitation.bridesFather}</ParentName>
-              </ParentGroup>
-              <HeartIcon size={32} secondaryColor={secondaryColor} />
-              <ParentGroup>
-                <ParentName>{wedding.settings?.groomMotherName || t.invitation.groomsMother}</ParentName>
-                <ParentName>{wedding.settings?.groomFatherName || t.invitation.groomsFather}</ParentName>
-              </ParentGroup>
-            </ParentsNames>
-          </ParentsContainer>
+          <SectionInner>
+            <SectionTitle>
+              {t.invitation.honorInvitation}
+              <br />
+              {t.invitation.withBlessing}
+            </SectionTitle>
+            <ParentsContainer>
+              <ParentsNames>
+                <ParentGroup>
+                  <ParentName>{wedding.settings?.brideMotherName || t.invitation.bridesMother}</ParentName>
+                  <ParentName>{wedding.settings?.brideFatherName || t.invitation.bridesFather}</ParentName>
+                </ParentGroup>
+                <HeartIcon size={32} secondaryColor={secondaryColor} />
+                <ParentGroup>
+                  <ParentName>{wedding.settings?.groomMotherName || t.invitation.groomsMother}</ParentName>
+                  <ParentName>{wedding.settings?.groomFatherName || t.invitation.groomsFather}</ParentName>
+                </ParentGroup>
+              </ParentsNames>
+            </ParentsContainer>
+          </SectionInner>
         </ParentsSection>
       )}
 
       {/* Couple Section */}
       <CoupleSection>
-        <SectionTitle>{t.invitation.usTitle}</SectionTitle>
-        <CoupleContainer>
-          <PersonCard>
-            <PersonPhoto 
-              primaryColor={primaryColor} 
-              secondaryColor={secondaryColor}
-              imageUrl={wedding.settings?.bridePhoto}
-            >
-              {!wedding.settings?.bridePhoto && wedding.brideFirstName.charAt(0)}
-            </PersonPhoto>
-            <PersonName>
-              {wedding.brideFirstName} {wedding.brideLastName}
-            </PersonName>
-          </PersonCard>
-          
-          <HeartIcon size={48} secondaryColor={secondaryColor} />
-          
-          <PersonCard>
-            <PersonPhoto 
-              primaryColor={primaryColor} 
-              secondaryColor={secondaryColor}
-              imageUrl={wedding.settings?.groomPhoto}
-            >
-              {!wedding.settings?.groomPhoto && wedding.groomFirstName.charAt(0)}
-            </PersonPhoto>
-            <PersonName>
-              {wedding.groomFirstName} {wedding.groomLastName}
-            </PersonName>
-          </PersonCard>
-        </CoupleContainer>
+        <SectionInner>
+          <SectionTitle>{t.invitation.usTitle}</SectionTitle>
+          <CoupleContainer>
+            <PersonCard>
+              <PersonPhoto 
+                primaryColor={primaryColor} 
+                secondaryColor={secondaryColor}
+                imageUrl={wedding.settings?.bridePhoto}
+              >
+                {!wedding.settings?.bridePhoto && wedding.brideFirstName.charAt(0)}
+              </PersonPhoto>
+              <PersonName>
+                {wedding.brideFirstName} {wedding.brideLastName}
+              </PersonName>
+            </PersonCard>
+            
+            <HeartIcon size={48} secondaryColor={secondaryColor} />
+            
+            <PersonCard>
+              <PersonPhoto 
+                primaryColor={primaryColor} 
+                secondaryColor={secondaryColor}
+                imageUrl={wedding.settings?.groomPhoto}
+              >
+                {!wedding.settings?.groomPhoto && wedding.groomFirstName.charAt(0)}
+              </PersonPhoto>
+              <PersonName>
+                {wedding.groomFirstName} {wedding.groomLastName}
+              </PersonName>
+            </PersonCard>
+          </CoupleContainer>
+        </SectionInner>
       </CoupleSection>
 
       {/* Couple Photo Section */}
       {(wedding.settings?.sectionVisibility?.couplePhoto !== false) && wedding.settings?.couplePhoto && (
         <CouplePhotoSection>
-          <CouplePhoto 
-            src={wedding.settings.couplePhoto} 
-            alt={`${wedding.brideFirstName} and ${wedding.groomFirstName}`}
-          />
+          <SectionInner>
+            <CouplePhoto 
+              src={wedding.settings.couplePhoto} 
+              alt={`${wedding.brideFirstName} and ${wedding.groomFirstName}`}
+            />
+          </SectionInner>
         </CouplePhotoSection>
       )}
 
       {/* Wedding Party Section */}
       {(wedding.settings?.sectionVisibility?.weddingParty !== false) && (
-        <WeddingPartyDisplay 
-          weddingId={wedding.id} 
-          primaryColor={primaryColor} 
-          secondaryColor={secondaryColor} 
-        />
+        <Section>
+          <SectionInner>
+            <WeddingPartyDisplay 
+              weddingId={wedding.id} 
+              primaryColor={primaryColor} 
+              secondaryColor={secondaryColor} 
+            />
+          </SectionInner>
+        </Section>
       )}
 
       {/* Countdown Section */}
       {(wedding.settings?.sectionVisibility?.countdown !== false) && (
         <CountdownSection>
-          <SectionTitle style={{ color: 'white' }}>{t.invitation.timeUntilWedding}</SectionTitle>
-          <CountdownContainer>
-            <CountdownTimer>
-              <CountdownItem>
-                <CountdownNumber secondaryColor={secondaryColor}>{countdown.days.toString().padStart(2, '0')}</CountdownNumber>
-                <CountdownLabel>{t.invitation.days}</CountdownLabel>
-              </CountdownItem>
-              <CountdownItem>
-                <CountdownNumber secondaryColor={secondaryColor}>{countdown.hours.toString().padStart(2, '0')}</CountdownNumber>
-                <CountdownLabel>{t.invitation.hours}</CountdownLabel>
-              </CountdownItem>
-              <CountdownItem>
-                <CountdownNumber secondaryColor={secondaryColor}>{countdown.minutes.toString().padStart(2, '0')}</CountdownNumber>
-                <CountdownLabel>{t.invitation.minutes}</CountdownLabel>
-              </CountdownItem>
-              <CountdownItem>
-                <CountdownNumber secondaryColor={secondaryColor}>{countdown.seconds.toString().padStart(2, '0')}</CountdownNumber>
-                <CountdownLabel>{t.invitation.seconds}</CountdownLabel>
-              </CountdownItem>
-            </CountdownTimer>
-          </CountdownContainer>
+          <SectionInner>
+            <SectionTitle style={{ color: 'inherit' }}>{t.invitation.timeUntilWedding}</SectionTitle>
+            <CountdownContainer>
+              <CountdownTimer>
+                <CountdownItem>
+                  <CountdownNumber secondaryColor={secondaryColor}>{countdown.days.toString().padStart(2, '0')}</CountdownNumber>
+                  <CountdownLabel>{t.invitation.days}</CountdownLabel>
+                </CountdownItem>
+                <CountdownItem>
+                  <CountdownNumber secondaryColor={secondaryColor}>{countdown.hours.toString().padStart(2, '0')}</CountdownNumber>
+                  <CountdownLabel>{t.invitation.hours}</CountdownLabel>
+                </CountdownItem>
+                <CountdownItem>
+                  <CountdownNumber secondaryColor={secondaryColor}>{countdown.minutes.toString().padStart(2, '0')}</CountdownNumber>
+                  <CountdownLabel>{t.invitation.minutes}</CountdownLabel>
+                </CountdownItem>
+                <CountdownItem>
+                  <CountdownNumber secondaryColor={secondaryColor}>{countdown.seconds.toString().padStart(2, '0')}</CountdownNumber>
+                  <CountdownLabel>{t.invitation.seconds}</CountdownLabel>
+                </CountdownItem>
+              </CountdownTimer>
+            </CountdownContainer>
+          </SectionInner>
         </CountdownSection>
       )}
 
       {/* Event Details Section */}
       {(wedding.settings?.sectionVisibility?.eventDetails !== false) && (
         <EventDetailsSection primaryColor={primaryColor} secondaryColor={secondaryColor}>
-          <SectionTitle style={{ color: 'white' }}>{t.invitation.eventDetails}</SectionTitle>
-          <EventsContainer>
-            <EventCard>
-              <EventIcon>📅</EventIcon>
-              <EventTitle>{t.invitation.whenQuestion}</EventTitle>
-              <EventTime>{formatWeddingDate(wedding.weddingDate)}</EventTime>
-            </EventCard>
-
-            <EventCard>
-              <EventIcon>⛪</EventIcon>
-              <EventTitle>{t.invitation.ceremony}</EventTitle>
-              <EventTime>{formatTime(wedding.ceremonyTime, language)}</EventTime>
-              <EventLocation>
-                {wedding.ceremonyLocation.name}
-                <br />
-                {wedding.ceremonyLocation.address}
-              </EventLocation>
-              {wedding.ceremonyLocation.googleMapsUrl && (
-                <MapButton href={wedding.ceremonyLocation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
-                  <MapPin size={16} />
-                  {t.invitation.viewOnMap}
-                </MapButton>
-              )}
-            </EventCard>
-
-            <EventCard>
-              <EventIcon>🎉</EventIcon>
-              <EventTitle>{t.invitation.reception}</EventTitle>
-              <EventTime>{formatTime(wedding.receptionTime, language)}</EventTime>
-              <EventLocation>
-                {wedding.receptionLocation.name}
-                <br />
-                {wedding.receptionLocation.address}
-              </EventLocation>
-              {wedding.receptionLocation.googleMapsUrl && (
-                <MapButton href={wedding.receptionLocation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
-                  <MapPin size={16} />
-                  {t.invitation.viewOnMap}
-                </MapButton>
-              )}
-            </EventCard>
-
-            {(wedding.settings?.sectionVisibility?.dressCode !== false) && (
+          <SectionInner style={{ background: 'transparent', border: 'none', boxShadow: 'none', maxWidth: '1200px' }}>
+            <SectionTitle style={{ color: 'white' }}>{t.invitation.eventDetails}</SectionTitle>
+            <EventsContainer>
               <EventCard>
-                <EventIcon>👔</EventIcon>
-                <EventTitle>{t.invitation.dressCodeTitle}</EventTitle>
-                <EventTime>{wedding.settings?.dressCode || t.wedding.dressCode}</EventTime>
-                <EventLocation>
-                  {wedding.settings?.dressCodeDescription && (
-                    <>
-                      {wedding.settings.dressCodeDescription}
-                      <br />
-                    </>
-                  )}
-                  <small>*{t.invitation.dressCodeNote}*</small>
-                </EventLocation>
+                <EventIcon>📅</EventIcon>
+                <EventTitle>{t.invitation.whenQuestion}</EventTitle>
+                <EventTime>{formatWeddingDate(wedding.weddingDate)}</EventTime>
               </EventCard>
-            )}
-          </EventsContainer>
+
+              <EventCard>
+                <EventIcon>⛪</EventIcon>
+                <EventTitle>{t.invitation.ceremony}</EventTitle>
+                <EventTime>{formatTime(wedding.ceremonyTime, language)}</EventTime>
+                <EventLocation>
+                  {wedding.ceremonyLocation.name}
+                  <br />
+                  {wedding.ceremonyLocation.address}
+                </EventLocation>
+                {wedding.ceremonyLocation.googleMapsUrl && (
+                  <MapButton href={wedding.ceremonyLocation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
+                    <MapPin size={16} />
+                    {t.invitation.viewOnMap}
+                  </MapButton>
+                )}
+              </EventCard>
+
+              <EventCard>
+                <EventIcon>🎉</EventIcon>
+                <EventTitle>{t.invitation.reception}</EventTitle>
+                <EventTime>{formatTime(wedding.receptionTime, language)}</EventTime>
+                <EventLocation>
+                  {wedding.receptionLocation.name}
+                  <br />
+                  {wedding.receptionLocation.address}
+                </EventLocation>
+                {wedding.receptionLocation.googleMapsUrl && (
+                  <MapButton href={wedding.receptionLocation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
+                    <MapPin size={16} />
+                    {t.invitation.viewOnMap}
+                  </MapButton>
+                )}
+              </EventCard>
+
+              {(wedding.settings?.sectionVisibility?.dressCode !== false) && (
+                <EventCard>
+                  <EventIcon>👔</EventIcon>
+                  <EventTitle>{t.invitation.dressCodeTitle}</EventTitle>
+                  <EventTime>{wedding.settings?.dressCode || t.wedding.dressCode}</EventTime>
+                  <EventLocation>
+                    {wedding.settings?.dressCodeDescription && (
+                      <>
+                        {wedding.settings.dressCodeDescription}
+                        <br />
+                      </>
+                    )}
+                    <small>*{t.invitation.dressCodeNote}*</small>
+                  </EventLocation>
+                </EventCard>
+              )}
+            </EventsContainer>
+          </SectionInner>
         </EventDetailsSection>
       )}
 
       {/* Optional custom message from Design & Colors */}
       {wedding.settings?.customMessage && (
         <Section>
-          <div style={{ maxWidth: 800, margin: '0 auto', fontSize: '1.1rem', color: '#555', lineHeight: 1.7, textAlign: 'center' }}>
-            {wedding.settings.customMessage}
-          </div>
+          <SectionInner>
+            <div style={{ maxWidth: 800, margin: '0 auto', fontSize: '1.1rem', color: '#555', lineHeight: 1.7, textAlign: 'center' }}>
+              {wedding.settings.customMessage}
+            </div>
+          </SectionInner>
         </Section>
       )}
 
       {/* RSVP Section */}
       {(wedding.settings?.sectionVisibility?.rsvp !== false) && (
         <RSVPSection>
-        <SectionTitle>{wedding.settings?.rsvpTitle || t.invitation.rsvpTitle}</SectionTitle>
-        <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem auto' }}>
-          {wedding.settings?.rsvpMessage || t.invitation.rsvpMessage}
-        </p>
-
-        {/* Show RSVP Form for authenticated guests */}
-        {guest && !submitted && (
-          <RSVPFormSection>
-            <RSVPFormTitle>{t.invitation.rsvpFor} {guest.firstName} {guest.lastName}</RSVPFormTitle>
-            {error && (
-              <RSVPErrorMessage>
-                <X size={24} style={{ margin: '0 auto 1rem', display: 'block' }} />
-                {error}
-              </RSVPErrorMessage>
-            )}
-            <GuestWelcomeMessage>
-              {t.invitation.dearGuest.replace('{name}', guest.firstName)}
-            </GuestWelcomeMessage>
-            <EnhancedRSVPForm
-              onSubmit={handleRSVPSubmit}
-              isSubmitting={submitting}
-              defaultValues={{
-                rsvpStatus: guest.rsvpStatus === 'pending' ? '' : guest.rsvpStatus,
-                attendingCeremony: guest.attendingCeremony,
-                attendingReception: guest.attendingReception,
-                plusOnes: guest.plusOnes || [],
-                dietaryRestrictions: guest.dietaryRestrictions || '',
-                specialRequests: guest.specialRequests || '',
-                message: guest.message || '',
-                songRequests: guest.songRequests || '',
-                needsTransportation: guest.needsTransportation || false,
-                transportationDetails: guest.transportationDetails || '',
-                needsAccommodation: guest.needsAccommodation || false,
-                accommodationDetails: guest.accommodationDetails || '',
-                contactPreference: guest.contactPreference || 'email',
-                emergencyContactName: guest.emergencyContactName || '',
-                emergencyContactPhone: guest.emergencyContactPhone || '',
-              }}
-              {
-                ...(() => {
-                  const rawMax = guest.maxPlusOnes ?? 0;
-                  const hasExplicitMax = typeof guest.maxPlusOnes === 'number' && rawMax > 0;
-                  const allowedFlag = guest.allowPlusOnes === true;
-                  const allow = allowedFlag || hasExplicitMax;
-                  const max = allow ? (hasExplicitMax ? rawMax : 1) : 0;
-                  return { allowPlusOnes: allow, maxPlusOnes: max };
-                })()
-              }
-              showAttendanceEvents={wedding.settings?.rsvpFormVisibility?.attendanceEvents ?? true}
-              showPlusOnes={wedding.settings?.rsvpFormVisibility?.plusOnes ?? true}
-              showDietaryRestrictions={wedding.settings?.rsvpFormVisibility?.dietaryRestrictions ?? true}
-              showSongRequests={wedding.settings?.rsvpFormVisibility?.songRequests ?? true}
-              showTransportation={wedding.settings?.rsvpFormVisibility?.transportation ?? true}
-              showAccommodation={wedding.settings?.rsvpFormVisibility?.accommodation ?? true}
-              showContactPreference={wedding.settings?.rsvpFormVisibility?.contactPreference ?? true}
-              showEmergencyContact={wedding.settings?.rsvpFormVisibility?.emergencyContact ?? true}
-              showSpecialRequests={wedding.settings?.rsvpFormVisibility?.specialRequests ?? true}
-              showMessage={wedding.settings?.rsvpFormVisibility?.message ?? true}
-              submitLabel={wedding.settings?.rsvpButtonText}
-              primaryColor={primaryColor}
-              secondaryColor={secondaryColor}
-            />
-          </RSVPFormSection>
-        )}
-
-        {/* Show Success Message after RSVP submission */}
-        {submitted && guest && (
-          <RSVPSuccessMessage>
-            <Check size={48} style={{ margin: '0 auto 1rem', display: 'block' }} />
-            <h3 style={{ margin: '0 0 1rem', fontSize: '1.8rem', fontWeight: '300' }}>
-              {t.invitation.thankYouName.replace('{name}', guest.firstName)}
-            </h3>
-            <p style={{ margin: '0 0 1rem', fontSize: '1.2rem' }}>
-              {t.invitation.rsvpSubmittedSuccessfully}
+          <SectionInner>
+            <SectionTitle>{wedding.settings?.rsvpTitle || t.invitation.rsvpTitle}</SectionTitle>
+            <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem auto' }}>
+              {wedding.settings?.rsvpMessage || t.invitation.rsvpMessage}
             </p>
-            <p style={{ margin: 0, fontSize: '1rem', opacity: 0.8 }}>
-              {t.invitation.celebrateWithYou}
-            </p>
-          </RSVPSuccessMessage>
-        )}
 
-        {/* Show RSVP Button for demo mode or unauthenticated users */}
-        {(!guest || isDemo) && !submitted && (
-          <>
-            <RSVPButton href={isDemo ? "#" : `/rsvp/${wedding.subdomain}-invitation`} primaryColor={primaryColor} secondaryColor={secondaryColor}>
-              <MessageCircle size={24} />
-              {wedding.settings?.rsvpButtonText || t.invitation.confirmAttendance}
-            </RSVPButton>
-            {isDemo && (
-              <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '1rem', fontStyle: 'italic' }}>
-                {t.invitation.demoMessage}
-              </p>
+            {/* Show RSVP Form for authenticated guests */}
+            {guest && !submitted && (
+              <RSVPFormSection>
+                <RSVPFormTitle>{t.invitation.rsvpFor} {guest.firstName} {guest.lastName}</RSVPFormTitle>
+                {error && (
+                  <RSVPErrorMessage>
+                    <X size={24} style={{ margin: '0 auto 1rem', display: 'block' }} />
+                    {error}
+                  </RSVPErrorMessage>
+                )}
+                <GuestWelcomeMessage>
+                  {t.invitation.dearGuest.replace('{name}', guest.firstName)}
+                </GuestWelcomeMessage>
+                <EnhancedRSVPForm
+                  onSubmit={handleRSVPSubmit}
+                  isSubmitting={submitting}
+                  defaultValues={{
+                    rsvpStatus: guest.rsvpStatus === 'pending' ? '' : guest.rsvpStatus,
+                    attendingCeremony: guest.attendingCeremony,
+                    attendingReception: guest.attendingReception,
+                    plusOnes: guest.plusOnes || [],
+                    dietaryRestrictions: guest.dietaryRestrictions || '',
+                    specialRequests: guest.specialRequests || '',
+                    message: guest.message || '',
+                    songRequests: guest.songRequests || '',
+                    needsTransportation: guest.needsTransportation || false,
+                    transportationDetails: guest.transportationDetails || '',
+                    needsAccommodation: guest.needsAccommodation || false,
+                    accommodationDetails: guest.accommodationDetails || '',
+                    contactPreference: guest.contactPreference || 'email',
+                    emergencyContactName: guest.emergencyContactName || '',
+                    emergencyContactPhone: guest.emergencyContactPhone || '',
+                  }}
+                  {
+                    ...(() => {
+                      const rawMax = guest.maxPlusOnes ?? 0;
+                      const hasExplicitMax = typeof guest.maxPlusOnes === 'number' && rawMax > 0;
+                      const allowedFlag = guest.allowPlusOnes === true;
+                      const allow = allowedFlag || hasExplicitMax;
+                      const max = allow ? (hasExplicitMax ? rawMax : 1) : 0;
+                      return { allowPlusOnes: allow, maxPlusOnes: max };
+                    })()
+                  }
+                  showAttendanceEvents={wedding.settings?.rsvpFormVisibility?.attendanceEvents ?? true}
+                  showPlusOnes={wedding.settings?.rsvpFormVisibility?.plusOnes ?? true}
+                  showDietaryRestrictions={wedding.settings?.rsvpFormVisibility?.dietaryRestrictions ?? true}
+                  showSongRequests={wedding.settings?.rsvpFormVisibility?.songRequests ?? true}
+                  showTransportation={wedding.settings?.rsvpFormVisibility?.transportation ?? true}
+                  showAccommodation={wedding.settings?.rsvpFormVisibility?.accommodation ?? true}
+                  showContactPreference={wedding.settings?.rsvpFormVisibility?.contactPreference ?? true}
+                  showEmergencyContact={wedding.settings?.rsvpFormVisibility?.emergencyContact ?? true}
+                  showSpecialRequests={wedding.settings?.rsvpFormVisibility?.specialRequests ?? true}
+                  showMessage={wedding.settings?.rsvpFormVisibility?.message ?? true}
+                  submitLabel={wedding.settings?.rsvpButtonText}
+                  primaryColor={primaryColor}
+                  secondaryColor={secondaryColor}
+                />
+              </RSVPFormSection>
             )}
-          </>
-        )}
-        
-        <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#fff3cd', borderRadius: '10px', maxWidth: '500px', margin: '2rem auto 0', fontSize: '0.9rem', color: '#856404' }}>
-          <strong>{wedding.settings?.childrenNote || t.invitation.childrenNote}</strong><br />
-          {wedding.settings?.childrenNoteDetails || t.invitation.childrenNoteDetails}
-        </div>
-      </RSVPSection>
+
+            {/* Show Success Message after RSVP submission */}
+            {submitted && guest && (
+              <RSVPSuccessMessage>
+                <Check size={48} style={{ margin: '0 auto 1rem', display: 'block' }} />
+                <h3 style={{ margin: '0 0 1rem', fontSize: '1.8rem', fontWeight: '300' }}>
+                  {t.invitation.thankYouName.replace('{name}', guest.firstName)}
+                </h3>
+                <p style={{ margin: '0 0 1rem', fontSize: '1.2rem' }}>
+                  {t.invitation.rsvpSubmittedSuccessfully}
+                </p>
+                <p style={{ margin: 0, fontSize: '1rem', opacity: 0.8 }}>
+                  {t.invitation.celebrateWithYou}
+                </p>
+              </RSVPSuccessMessage>
+            )}
+
+            {/* Show RSVP Button for demo mode or unauthenticated users */}
+            {(!guest || isDemo) && !submitted && (
+              <>
+                <RSVPButton href={isDemo ? "#" : `/rsvp/${wedding.subdomain}-invitation`} primaryColor={primaryColor} secondaryColor={secondaryColor}>
+                  <MessageCircle size={24} />
+                  {wedding.settings?.rsvpButtonText || t.invitation.confirmAttendance}
+                </RSVPButton>
+                {isDemo && (
+                  <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '1rem', fontStyle: 'italic' }}>
+                    {t.invitation.demoMessage}
+                  </p>
+                )}
+              </>
+            )}
+            
+            <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#fff3cd', borderRadius: '10px', maxWidth: '500px', margin: '2rem auto 0', fontSize: '0.9rem', color: '#856404' }}>
+              <strong>{wedding.settings?.childrenNote || t.invitation.childrenNote}</strong><br />
+              {wedding.settings?.childrenNoteDetails || t.invitation.childrenNoteDetails}
+            </div>
+          </SectionInner>
+        </RSVPSection>
       )}
 
       {/* Gift Options Section */}
       {(wedding.settings?.sectionVisibility?.giftOptions !== false) && wedding.settings?.giftOptions && wedding.settings.giftOptions.length > 0 && (
         <GiftSection>
-          <SectionTitle>{t.invitation.giftOptions}</SectionTitle>
-          <GiftContainer>
+          <SectionInner>
+            <SectionTitle>{t.invitation.giftOptions}</SectionTitle>
             <GiftMessage>
               {wedding.settings?.giftMessage || t.invitation.giftMessage}
             </GiftMessage>
@@ -1269,88 +1339,92 @@ export const PublicWeddingInvitation: React.FC = () => {
                 </GiftOptionCard>
               ))}
             </GiftOptionsGrid>
-          </GiftContainer>
+          </SectionInner>
         </GiftSection>
       )}
 
       {/* Photo Gallery */}
       {(wedding.settings?.sectionVisibility?.photoGallery !== false) && wedding.settings?.photoGallery && wedding.settings.photoGallery.length > 0 && (
         <GallerySection>
-          <SectionTitle>{t.invitation.ourMemories}</SectionTitle>
-          <GalleryContainer>
-            {wedding.settings.photoGallery.map((imageUrl, index) => (
-              <GalleryCard key={index}>
-                <GalleryImage
-                  src={imageUrl}
-                  alt={`Wedding memory ${index + 1}`}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.closest('.gallery-card')?.remove();
-                  }}
-                />
-                <GalleryCardFooter>
-                  <GalleryImageCaption>
-                    {t.invitation.memoryNumber}{index + 1}
-                  </GalleryImageCaption>
-                </GalleryCardFooter>
-              </GalleryCard>
-            ))}
-          </GalleryContainer>
+          <SectionInner>
+            <SectionTitle>{t.invitation.ourMemories}</SectionTitle>
+            <GalleryContainer>
+              {wedding.settings.photoGallery.map((imageUrl, index) => (
+                <GalleryCard key={index}>
+                  <GalleryImage
+                    src={imageUrl}
+                    alt={`Wedding memory ${index + 1}`}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.closest('.gallery-card')?.remove();
+                    }}
+                  />
+                  <GalleryCardFooter>
+                    <GalleryImageCaption>
+                      {t.invitation.memoryNumber}{index + 1}
+                    </GalleryImageCaption>
+                  </GalleryCardFooter>
+                </GalleryCard>
+              ))}
+            </GalleryContainer>
+          </SectionInner>
         </GallerySection>
       )}
 
       {/* Hotel Section */}
       {(wedding.settings?.sectionVisibility?.hotelInfo !== false) && wedding.settings?.hotelInfo && (
         <HotelSection>
-          <SectionTitle>{t.invitation.accommodation}</SectionTitle>
-          <HotelContainer>
-            <HotelCard>
-              <HotelContent>
-                <HotelInfo>
-                  <HotelName>{wedding.settings.hotelInfo.name}</HotelName>
-                  <HotelAddress>{wedding.settings.hotelInfo.address}</HotelAddress>
-                  {wedding.settings.hotelInfo.description && (
-                    <HotelDescription>{wedding.settings.hotelInfo.description}</HotelDescription>
+          <SectionInner>
+            <SectionTitle>{t.invitation.accommodation}</SectionTitle>
+            <HotelContainer>
+              <HotelCard>
+                <HotelContent>
+                  <HotelInfo>
+                    <HotelName>{wedding.settings.hotelInfo.name}</HotelName>
+                    <HotelAddress>{wedding.settings.hotelInfo.address}</HotelAddress>
+                    {wedding.settings.hotelInfo.description && (
+                      <HotelDescription>{wedding.settings.hotelInfo.description}</HotelDescription>
+                    )}
+                    <HotelBookingInfo>
+                      {wedding.settings.hotelInfo.phone && (
+                        <div><strong>{t.invitation.phone}:</strong> {wedding.settings.hotelInfo.phone}</div>
+                      )}
+                      {wedding.settings.hotelInfo.specialRate && (
+                        <div><strong>{t.invitation.specialRate}:</strong> {wedding.settings.hotelInfo.specialRate}</div>
+                      )}
+                      {wedding.settings.hotelInfo.bookingCode && (
+                        <div><strong>{t.invitation.bookingCode}:</strong> {wedding.settings.hotelInfo.bookingCode}</div>
+                      )}
+                    </HotelBookingInfo>
+                    {wedding.settings.hotelInfo.bookingUrl && (
+                      <BookingButton 
+                        href={wedding.settings.hotelInfo.bookingUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        {t.invitation.makeReservation}
+                      </BookingButton>
+                    )}
+                  </HotelInfo>
+                  {wedding.settings.hotelInfo.photos && wedding.settings.hotelInfo.photos.length > 0 && (
+                    <HotelPhotos>
+                      {wedding.settings.hotelInfo.photos.slice(0, 4).map((photo, index) => (
+                        <HotelPhoto 
+                          key={index}
+                          src={photo} 
+                          alt={`${wedding.settings?.hotelInfo?.name} - Photo ${index + 1}`}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                      ))}
+                    </HotelPhotos>
                   )}
-                  <HotelBookingInfo>
-                    {wedding.settings.hotelInfo.phone && (
-                      <div><strong>{t.invitation.phone}:</strong> {wedding.settings.hotelInfo.phone}</div>
-                    )}
-                    {wedding.settings.hotelInfo.specialRate && (
-                      <div><strong>{t.invitation.specialRate}:</strong> {wedding.settings.hotelInfo.specialRate}</div>
-                    )}
-                    {wedding.settings.hotelInfo.bookingCode && (
-                      <div><strong>{t.invitation.bookingCode}:</strong> {wedding.settings.hotelInfo.bookingCode}</div>
-                    )}
-                  </HotelBookingInfo>
-                  {wedding.settings.hotelInfo.bookingUrl && (
-                    <BookingButton 
-                      href={wedding.settings.hotelInfo.bookingUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      {t.invitation.makeReservation}
-                    </BookingButton>
-                  )}
-                </HotelInfo>
-                {wedding.settings.hotelInfo.photos && wedding.settings.hotelInfo.photos.length > 0 && (
-                  <HotelPhotos>
-                    {wedding.settings.hotelInfo.photos.slice(0, 4).map((photo, index) => (
-                      <HotelPhoto 
-                        key={index}
-                        src={photo} 
-                        alt={`${wedding.settings?.hotelInfo?.name} - Photo ${index + 1}`}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    ))}
-                  </HotelPhotos>
-                )}
-              </HotelContent>
-            </HotelCard>
-          </HotelContainer>
+                </HotelContent>
+              </HotelCard>
+            </HotelContainer>
+          </SectionInner>
         </HotelSection>
       )}
 

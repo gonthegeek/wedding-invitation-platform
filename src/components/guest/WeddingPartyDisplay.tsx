@@ -7,14 +7,14 @@ import type { TranslationKeys } from '../../types/i18n';
 
 const WeddingPartySection = styled.section`
   padding: 4rem 2rem;
-  background: #f8f9fa;
+  background: transparent;
   position: relative;
 `;
 
 const SectionTitle = styled.h2`
   text-align: center;
   font-size: 2.5rem;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 3rem;
   font-weight: 300;
   
@@ -60,7 +60,7 @@ const MembersGrid = styled.div`
 `;
 
 const MemberCard = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 15px;
   padding: 2rem;
   text-align: center;
@@ -92,7 +92,7 @@ const MemberPhoto = styled.div.withConfig({
   color: white;
   font-size: 3rem;
   font-weight: 300;
-  border: 4px solid white;
+  border: 4px solid rgba(255,255,255,0.9);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   
   @media (max-width: 768px) {
@@ -104,14 +104,14 @@ const MemberPhoto = styled.div.withConfig({
 
 const MemberName = styled.h4`
   font-size: 1.3rem;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 0.5rem;
   font-weight: 500;
 `;
 
 const MemberRelationship = styled.p`
   font-size: 0.9rem;
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin: 0;
   font-style: italic;
 `;
