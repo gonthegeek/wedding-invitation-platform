@@ -14,7 +14,8 @@
     "functions:serve": "cd functions && npm run serve",
     "functions:deploy": "cd functions && npm run deploy",
     "deploy:full": "npm run build && npm run functions:deploy && firebase deploy",
-    "i18n:unused": "tsx scripts/find-unused-i18n.ts"
+    "i18n:unused": "tsx scripts/find-unused-i18n.ts",
+    "i18n:prune": "tsx scripts/prune-i18n.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",

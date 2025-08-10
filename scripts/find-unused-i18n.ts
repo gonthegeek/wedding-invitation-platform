@@ -38,10 +38,10 @@ function isRecord(val: unknown): val is Record<string, unknown> {
 function flatten(obj: Record<string, unknown>, prefix = ''): string[] {
   let keys: string[] = [];
   for (const k of Object.keys(obj)) {
-    const val = obj[k];
+    const val = (obj as Record<string, unknown>)[k];
     const next = prefix ? `${prefix}.${k}` : k;
     if (isRecord(val)) {
-      keys = keys.concat(flatten(val, next));
+      keys = keys.concat(flatten(val as Record<string, unknown>, next));
     } else {
       keys.push(next);
     }
@@ -76,49 +76,61 @@ function collectDestructuredSections(content: string) {
 function scanFileForUsedKeys(content: string, allKeys: Set<string>): Set<string> {
   const used = new Set<string>();
 
-  // 1) Direct dot access: t.section.key
-  const dotPatterns = [
-    /t\.(?:[a-zA-Z0-9_]+)(?:\.[a-zA-Z0-9_]+)+/g,
-  ];
-  for (const re of dotPatterns) {
-    const matches = content.match(re) || [];
-    for (const m of matches) if (allKeys.has(m)) used.add(m);
+  // 1) Direct dot access: t.section.key[.something]
+  const dotMatches = content.match(/\bt\.(?:[a-zA-Z0-9_]+)(?:\.[a-zA-Z0-9_]+)+/g) || [];
+  for (const m of dotMatches) {
+    const noT = m.replace(/^t\./, '');
+    // Trim trailing segments until a known key is found
+    const parts = noT.split('.');
+    while (parts.length > 1) { // at least section.key
+      const candidate = parts.join('.');
+      if (allKeys.has(candidate)) {
+        used.add(candidate);
+        break;
+      }
+      parts.pop();
+    }
   }
 
-  // 2) Known top-level sections referenced without t prefix (heuristic): section.key
+  // 2) Heuristic: section.key without t prefix
   const sectionWord = TOP_LEVEL_SECTIONS.join('|');
   const bareSection = new RegExp(`\\b(?:${sectionWord})\\.(?:[a-zA-Z0-9_]+)(?:\\.[a-zA-Z0-9_]+)*`, 'g');
   for (const m of content.match(bareSection) || []) if (allKeys.has(m)) used.add(m);
 
   // 3) Bracket notation variants
-  // t['section'].key
-  const br1 = /t\[['"]([a-zA-Z0-9_]+)['"]\]\.((?:[a-zA-Z0-9_]+)(?:\.[a-zA-Z0-9_]+)*)/g;
   let bm: RegExpExecArray | null;
+  const br1 = /t\[['"]([a-zA-Z0-9_]+)['"]\]\.((?:[a-zA-Z0-9_]+)(?:\.[a-zA-Z0-9_]+)*)/g;
   while ((bm = br1.exec(content))) {
     const key = `${bm[1]}.${bm[2]}`;
     if (allKeys.has(key)) used.add(key);
   }
-  // t.section['key']
   const br2 = /t\.([a-zA-Z0-9_]+)\[['"]([a-zA-Z0-9_]+)['"]\]/g;
   while ((bm = br2.exec(content))) {
     const key = `${bm[1]}.${bm[2]}`;
     if (allKeys.has(key)) used.add(key);
   }
-  // t['section']['key'] (two levels)
   const br3 = /t\[['"]([a-zA-Z0-9_]+)['"]\]\[['"]([a-zA-Z0-9_]+)['"]\]/g;
   while ((bm = br3.exec(content))) {
     const key = `${bm[1]}.${bm[2]}`;
     if (allKeys.has(key)) used.add(key);
   }
 
-  // 4) Destructured: const { invitation } = t; invitation.rsvpTitle
-  const destructured = collectDestructuredSections(content); // local -> section
+  // 4) Destructured sections
+  const destructured = collectDestructuredSections(content);
   for (const [local, section] of destructured.entries()) {
     const rDot = new RegExp(`\\b${local}\\.((?:[a-zA-Z0-9_]+)(?:\\.[a-zA-Z0-9_]+)*)`, 'g');
     let dm: RegExpExecArray | null;
     while ((dm = rDot.exec(content))) {
-      const key = `${section}.${dm[1]}`;
-      if (allKeys.has(key)) used.add(key);
+      // Trim trailing segments after the key path
+      const parts = dm[1].split('.');
+      while (parts.length > 0) {
+        const candidate = `${section}.${parts.join('.')}`;
+        if (allKeys.has(candidate)) {
+          used.add(candidate);
+          break;
+        }
+        parts.pop();
+      }
     }
     const rBr = new RegExp(`${local}\\[['"]([a-zA-Z0-9_]+)['"]\\]`, 'g');
     while ((dm = rBr.exec(content))) {
@@ -133,7 +145,7 @@ function scanFileForUsedKeys(content: string, allKeys: Set<string>): Set<string>
 function main() {
   const enSource = fs.readFileSync(path.join(SRC, 'locales', 'en.ts'), 'utf8');
   const enUnknown = safeParseLocaleObject(enSource);
-  const en = isRecord(enUnknown) ? enUnknown : {};
+  const en = isRecord(enUnknown) ? (enUnknown as Record<string, unknown>) : {};
   const allKeys = new Set(flatten(en));
 
   const files = walk(SRC);

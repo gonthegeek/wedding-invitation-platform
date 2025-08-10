@@ -1,79 +1,17 @@
 export type Language = 'en' | 'es';
 
 export interface TranslationKeys {
-  // Common
   common: {
-    save: string;
-    cancel: string;
-    edit: string;
-    delete: string;
-    confirm: string;
     loading: string;
-    error: string;
-    success: string;
-    yes: string;
-    no: string;
-    back: string;
-    next: string;
-    previous: string;
-    close: string;
-    send: string;
-    submit: string;
-    search: string;
-    filter: string;
-    clear: string;
-    select: string;
-    optional: string;
-    required: string;
   };
-
-  // Common UI elements
-  dressCode: string;
-  giftOptions: string;
-  hotelInformation: string;
-  loveQuote: string;
-  specialInstructions: string;
-  couplePhoto: string;
-  photoGallery: string;
-
-  // Navigation
-  nav: {
-    dashboard: string;
-    weddings: string;
-    guests: string;
-    rsvp: string;
-    gallery: string;
-    settings: string;
-    logout: string;
-    login: string;
-    register: string;
-    profile: string;
-  };
-
-  // Authentication
   auth: {
     email: string;
     password: string;
-    confirmPassword: string;
-    displayName: string;
     loginTitle: string;
-    registerTitle: string;
-    forgotPassword: string;
-    resetPassword: string;
     createAccount: string;
-    alreadyHaveAccount: string;
     dontHaveAccount: string;
-    signInWithGoogle: string;
-    selectRole: string;
-    admin: string;
-    couple: string;
-    guest: string;
   };
-
-  // Wedding Creation/Management
   wedding: {
-    createWedding: string;
-    weddingDetails: string;
     brideFirstName: string;
     brideLastName: string;
     groomFirstName: string;
@@ -84,80 +22,8 @@ export interface TranslationKeys {
     receptionTime: string;
     receptionLocation: string;
     subdomain: string;
-    customizeInvitation: string;
-    primaryColor: string;
-    secondaryColor: string;
-    fontFamily: string;
-    backgroundImage: string;
-    welcomeMessage: string;
-    loveQuote: string;
-    dressCode: string;
-    specialInstructions: string;
-    allowPlusOnes: string;
-    allowChildren: string;
-    rsvpDeadline: string;
-    emailNotifications: string;
-    isPublic: string;
-    templateStyle: string;
-    classic: string;
-    modern: string;
-    rustic: string;
-    elegant: string;
   };
-
-  // Guest Management
-  guests: {
-    guestManagement: string;
-    addGuest: string;
-    editGuest: string;
-    deleteGuest: string;
-    importGuests: string;
-    exportGuests: string;
-    sendInvitations: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    category: string;
-    inviteCode: string;
-    rsvpStatus: string;
-    confirmed: string;
-    declined: string;
-    pending: string;
-    family: string;
-    friends: string;
-    work: string;
-    other: string;
-    totalGuests: string;
-    confirmedGuests: string;
-    pendingGuests: string;
-    declinedGuests: string;
-  };
-
-  // RSVP
   rsvp: {
-    rsvpTitle: string;
-    rsvpMessage: string;
-    willYouAttend: string;
-    yesIWillAttend: string;
-    sorryCannotAttend: string;
-    guestName: string;
-    dietaryRestrictions: string;
-    specialRequests: string;
-    plusOneAttending: string;
-    plusOneName: string;
-    childrenAttending: string;
-    numberOfChildren: string;
-    childrenNames: string;
-    additionalComments: string;
-    submitRSVP: string;
-    rsvpConfirmed: string;
-    rsvpDeclined: string;
-    thankYouMessage: string;
-    rsvpDeadlineMessage: string;
-    alreadyResponded: string;
-    invalidInviteCode: string;
-    // Enhanced RSVP Form translations
     willYouBeAttending: string;
     yesIllBeThere: string;
     cantWaitToCelebrate: string;
@@ -192,13 +58,10 @@ export interface TranslationKeys {
     needAccommodation: string;
     accommodationDetails: string;
     provideAccommodationDetails: string;
-    emergencyContact: string;
     emergencyContactName: string;
     emergencyContactPhone: string;
     contactPreference: string;
     email: string;
-    phone: string;
-    text: string;
     additionalMessage: string;
     shareSpecialMessage: string;
     submitting: string;
@@ -211,28 +74,17 @@ export interface TranslationKeys {
     emergencyContactOptional: string;
     enterName: string;
     enterPhoneNumber: string;
-    // Special requests and messages
     specialRequestsTitle: string;
     specialRequestsLabel: string;
     specialRequestsPlaceholder: string;
     heartfeltMessage: string;
   };
-
-  // Wedding Party
   weddingParty: {
     weddingParty: string;
     bridesmaids: string;
     groomsmen: string;
     maidOfHonor: string;
     bestMan: string;
-    addMember: string;
-    editMember: string;
-    deleteMember: string;
-    memberName: string;
-    memberRole: string;
-    memberPhoto: string;
-    memberDescription: string;
-    // Additional role translations
     ourWeddingParty: string;
     loadingWeddingParty: string;
     flowerGirls: string;
@@ -249,33 +101,11 @@ export interface TranslationKeys {
     bridesParty: string;
     groomsParty: string;
   };
-
-  // Public Invitation
   invitation: {
-    weAreGettingMarried: string;
-    joinUsForOurWedding: string;
     ceremony: string;
     reception: string;
     viewOnMap: string;
-    rsvpNow: string;
-    ourStory: string;
-    photoGallery: string;
-    giftRegistry: string;
     dressCodeTitle: string;
-    importantInformation: string;
-    hotelAccommodations: string;
-    questions: string;
-    contactUs: string;
-    lookingForward: string;
-    withLove: string;
-    saveTheDate: string;
-    weddingOf: string;
-    and: string;
-    at: string;
-    on: string;
-    time: string;
-    location: string;
-    address: string;
     loveQuote: string;
     bridesMother: string;
     bridesFather: string;
@@ -287,7 +117,6 @@ export interface TranslationKeys {
     childrenNote: string;
     childrenNoteDetails: string;
     giftMessage: string;
-    // Additional content translations
     oops: string;
     honorInvitation: string;
     withBlessing: string;
@@ -323,106 +152,59 @@ export interface TranslationKeys {
     scrollIndicator: string;
     dressCodeNote: string;
   };
-
-  // Wedding Customization
   customization: {
-    // Page titles
     customizeInvitation: string;
     personalizeInvitation: string;
     makeItYours: string;
     loadingWeddingDetails: string;
     errorLoadingDetails: string;
     backToDashboard: string;
-    noWeddingFound: string;
-    failedToLoad: string;
-    failedToSave: string;
-    unableToLoadWedding: string;
-    tryAgain: string;
-    createWeddingFirst: string;
-    createWedding: string;
-    settingsSavedSuccessfully: string;
     preview: string;
-    save: string;
-    previewInvitation: string;
     saveChanges: string;
     saving: string;
-    
-    // Tab navigation
-    contentSettings: string;
-    designSettings: string;
-    additionalSections: string;
-    venueDetails: string;
-    weddingParty: string;
-    settingsVisibility: string;
+    tryAgain: string;
+    createWedding: string;
+    settingsSavedSuccessfully: string;
+    failedToSave: string;
+    failedToLoad: string;
+    noWeddingFound: string;
+    createWeddingFirst: string;
+    unableToLoadWedding: string;
     contentAndText: string;
     designAndColors: string;
     weddingPartyTab: string;
     settingsAndVisibility: string;
-    
-    // Content tab
+    additionalSections: string;
+    venueDetails: string;
     invitationContent: string;
     loveQuote: string;
-    welcomeMessage: string;
     welcomeMessagePlaceholder: string;
-    enterText: string;
     dressCode: string;
     dressCodePlaceholder: string;
     dressCodeDescription: string;
     dressCodeDescriptionPlaceholder: string;
-    specialInstructions: string;
-    specialInstructionsPlaceholder: string;
-    giftMessage: string;
-    giftMessagePlaceholder: string;
     rsvpTitle: string;
     rsvpMessage: string;
     rsvpButtonText: string;
-    parentNames: string;
-    fatherName: string;
-    motherName: string;
-    giftRegistryTitle: string;
-    giftRegistryMessage: string;
+    giftMessage: string;
+    giftMessagePlaceholder: string;
     customMessage: string;
     customMessagePlaceholder: string;
     footerMessage: string;
     footerMessagePlaceholder: string;
     footerSignature: string;
-    
-    // Design tab
     invitationDesign: string;
+    primaryColor: string;
     secondaryColor: string;
-    couplePhotos: string;
-    bridePhoto: string;
-    groomPhoto: string;
-    couplePhoto: string;
-    uploadBridePhoto: string;
-    uploadGroomPhoto: string;
-    uploadCouplePhoto: string;
-    photoGallery: string;
-    galleryImages: string;
-    
-    // Additional Sections Tab
-    uploadPhotos: string;
-    removePhoto: string;
-    addMorePhotos: string;
-    ourMemories: string;
-    giftRegistry: string;
-    addGiftOption: string;
-    removeGiftOption: string;
-    giftStoreName: string;
-    giftStoreUrl: string;
-    
+    fontFamily: string;
+    backgroundImage: string;
+    uploadBackgroundImage: string;
+    removeBackgroundImage: string;
+    backgroundPosition: string;
     backgroundType: string;
     gradientBackground: string;
     solidBackground: string;
     imageBackground: string;
-    backgroundImage: string;
-    uploadBackgroundImage: string;
-    removeBackgroundImage: string;
-    templateStyle: string;
-    classic: string;
-    modern: string;
-    rustic: string;
-    backgroundPosition: string;
     centerPosition: string;
     topPosition: string;
     bottomPosition: string;
@@ -432,52 +214,23 @@ export interface TranslationKeys {
     coverSize: string;
     containSize: string;
     autoSize: string;
-    primaryColor: string;
-    accentColor: string;
-    textColor: string;
-    fontFamily: string;
-    
-    // Font Family Options
-    fontGeorgia: string;
-    fontTimesNewRoman: string;
-    fontPlayfairDisplay: string;
-    fontMerriweather: string;
-    fontArial: string;
-    fontHelvetica: string;
-    fontOpenSans: string;
-    fontLato: string;
-    fontMontserrat: string;
-    fontDancingScript: string;
-    fontGreatVibes: string;
-    fontPacifico: string;
-    fontSatisfy: string;
-    
-    elegant: string;
-    romantic: string;
-    
-    // Additional sections tab
-    padrinos: string;
-    addPadrinos: string;
-    padrinoVelacion: string;
-    padrinoAnillos: string;
-    padrinoArras: string;
-    padrinoLazo: string;
-    padrinoBiblia: string;
-    padrinoCojines: string;
-    padrinoRamo: string;
-    padrinoName: string;
-    padrinoLastName: string;
-    addPadrino: string;
-    removePadrino: string;
-    padrinoType: string;
+    couplePhotos: string;
+    bridePhoto: string;
+    groomPhoto: string;
+    couplePhoto: string;
+    uploadBridePhoto: string;
+    uploadGroomPhoto: string;
+    uploadCouplePhoto: string;
+    photoGallery: string;
+    galleryImages: string;
+    addGiftOption: string;
     giftOptions: string;
-    giftType: string;
+    giftTitle: string;
+    giftDescription: string;
     bankTransfer: string;
     storeRegistry: string;
     cash: string;
     other: string;
-    giftTitle: string;
-    giftDescription: string;
     bankName: string;
     accountNumber: string;
     accountHolder: string;
@@ -487,57 +240,21 @@ export interface TranslationKeys {
     hotelName: string;
     hotelAddress: string;
     hotelDescription: string;
-    hotelDescriptionPlaceholder: string;
     hotelPhone: string;
     bookingUrl: string;
-    enterUrl: string;
     specialRate: string;
-    padrinosTitle: string;
-    padrinosDe: string;
-    hotelInfoTitle: string;
-    hotelInfoMessage: string;
-    specialInstructionsTitle: string;
-    specialInstructionsMessage: string;
-    
-    // Venue details tab
+    hotelDescriptionPlaceholder: string;
     ceremonyVenue: string;
     receptionVenue: string;
     venueName: string;
     venueAddress: string;
-    venueDate: string;
-    venueTime: string;
-    venueDescription: string;
-    city: string;
-    state: string;
-    zipCode: string;
     ceremonyTime: string;
     receptionTime: string;
     weddingDate: string;
-    googleMapsLink: string;
+    city: string;
+    state: string;
+    zipCode: string;
     googleMapsOptional: string;
-    
-    // Settings & Visibility tab
-    visibilitySettings: string;
-    sectionVisibility: string;
-    showSection: string;
-    hideSection: string;
-    invitationSettings: string;
-    allowPlusOnes: string;
-    allowChildren: string;
-    rsvpDeadline: string;
-    emailNotifications: string;
-    isPublic: string;
-    
-    // Form labels and placeholders
-    optional: string;
-    required: string;
-    chooseColor: string;
-    selectFont: string;
-    selectDate: string;
-    selectTime: string;
-    enterAddress: string;
-    enterDescription: string;
-    
     backgroundSettings: string;
     parentsNames: string;
     weddingPartySection: string;
@@ -549,65 +266,22 @@ export interface TranslationKeys {
     loveQuoteSection: string;
     specialInstructionsSection: string;
   };
-
-  // Date/Time formatting
   date: {
     months: string[];
     monthsShort: string[];
     days: string[];
     daysShort: string[];
-    today: string;
-    tomorrow: string;
-    yesterday: string;
-    am: string;
-    pm: string;
   };
-
-  // Validation messages
   validation: {
     required: string;
-    invalidEmail: string;
-    passwordMinLength: string;
-    passwordsDoNotMatch: string;
-    invalidDate: string;
-    invalidTime: string;
-    invalidUrl: string;
-    tooShort: string;
-    tooLong: string;
-    invalidCharacters: string;
   };
-
-  // Error messages
   errors: {
-    general: string;
-    networkError: string;
     authError: string;
-    permissionDenied: string;
     notFound: string;
-    alreadyExists: string;
-    invalidInput: string;
-    uploadFailed: string;
-    deleteFailed: string;
-    updateFailed: string;
   };
-
-  // Success messages
-  success: {
-    saved: string;
-    deleted: string;
-    updated: string;
-    created: string;
-    sent: string;
-    uploaded: string;
-    invited: string;
-    rsvpSubmitted: string;
-  };
-
-  // Language selection
   language: {
     selectLanguage: string;
     english: string;
     spanish: string;
-    changeLanguage: string;
   };
 }
