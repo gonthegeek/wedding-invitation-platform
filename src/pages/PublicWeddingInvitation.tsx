@@ -1115,7 +1115,6 @@ export const PublicWeddingInvitation: React.FC = () => {
       {/* Optional custom message from Design & Colors */}
       {wedding.settings?.customMessage && (
         <Section>
-          <SectionTitle>{t.customization.customMessage}</SectionTitle>
           <div style={{ maxWidth: 800, margin: '0 auto', fontSize: '1.1rem', color: '#555', lineHeight: 1.7, textAlign: 'center' }}>
             {wedding.settings.customMessage}
           </div>
