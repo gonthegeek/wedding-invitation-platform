@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import { LanguageSelector } from './LanguageSelector';
-import { LogOut, User, Crown, Heart, Menu, ChevronRight, SunMedium, Moon } from 'lucide-react';
+import { LogOut, User, Crown, Heart, Menu, ChevronRight, SunMedium, Moon, Monitor } from 'lucide-react';
 import { useThemeContext } from '../../contexts/ThemeContextBase';
 
 const HeaderContainer = styled.header`
@@ -136,13 +136,13 @@ const LogoutButton = styled.button`
 const ThemeToggle = styled.button`
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  gap: 0.5rem;
+  border-radius: 9999px;
   border: 1px solid ${(p) => p.theme.colors.border};
   background: ${(p) => p.theme.colors.surface};
   color: ${(p) => p.theme.colors.textPrimary};
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   cursor: pointer;
   transition: background 0.2s ease;
   &:hover { background: ${(p) => p.theme.colors.surfaceAlt}; }
@@ -237,6 +237,9 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
     setMode(mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system');
   };
 
+  const themeLabel = mode === 'system' ? 'System' : mode === 'dark' ? 'Dark' : 'Light';
+  const ThemeIcon = mode === 'system' ? Monitor : mode === 'dark' ? Moon : SunMedium;
+
   return (
     <HeaderContainer>
       <HeaderLeft>
@@ -259,8 +262,9 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
       </HeaderLeft>
       
       <HeaderRight>
-        <ThemeToggle onClick={cycleMode} aria-label="Toggle theme">
-          {mode === 'dark' ? <SunMedium size={18} /> : <Moon size={18} />}
+        <ThemeToggle onClick={cycleMode} aria-label={`Toggle theme (current: ${themeLabel})`}>
+          <ThemeIcon size={16} />
+          <span>{themeLabel}</span>
         </ThemeToggle>
         <LanguageSelector />
         
