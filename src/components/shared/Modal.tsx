@@ -25,7 +25,7 @@ const ModalOverlay = styled.div<{ $isOpen: boolean }>`
 `;
 
 const ModalContent = styled.div<{ $maxWidth?: string }>`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   width: 100%;
@@ -51,13 +51,13 @@ const ModalHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   margin-bottom: 1.5rem;
 `;
 
 const ModalTitle = styled.h2`
   margin: 0;
-  color: var(--text-primary);
+  color: ${({ theme }) => theme.colors.textPrimary};
   font-size: 1.25rem;
   font-weight: 600;
 `;
@@ -68,14 +68,14 @@ const CloseButton = styled.button`
   padding: 0.5rem;
   border-radius: 6px;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: ${({ theme }) => theme.colors.textSecondary};
   display: flex;
   align-items: center;
   justify-content: center;
   
   &:hover {
-    background: #f3f4f6;
-    color: var(--text-primary);
+    background: ${({ theme }) => theme.colors.surfaceAlt};
+    color: ${({ theme }) => theme.colors.textPrimary};
   }
 `;
 

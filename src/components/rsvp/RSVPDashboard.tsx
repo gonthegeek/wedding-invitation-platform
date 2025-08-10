@@ -16,12 +16,12 @@ const PageTitle = styled.h1`
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const PageDescription = styled.p`
   font-size: 1.1rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-bottom: 32px;
 `;
 
@@ -33,10 +33,10 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
@@ -50,9 +50,10 @@ const StatValue = styled.div`
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 8px;
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &.primary {
-    color: #3b82f6;
+    color: ${(p) => p.theme.colors.primary};
   }
   
   &.success {
@@ -70,7 +71,7 @@ const StatValue = styled.div`
 
 const StatLabel = styled.div`
   font-size: 0.9rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -78,7 +79,7 @@ const StatLabel = styled.div`
 
 const StatSubtext = styled.div`
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-top: 4px;
 `;
 
@@ -94,10 +95,10 @@ const ChartsSection = styled.div`
 `;
 
 const ChartCard = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
@@ -105,13 +106,13 @@ const ChartTitle = styled.h3`
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 16px;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const ProgressBar = styled.div`
   width: 100%;
   height: 8px;
-  background-color: #e5e7eb;
+  background-color: ${(p) => p.theme.colors.surfaceAlt};
   border-radius: 4px;
   overflow: hidden;
   margin: 8px 0;
@@ -119,16 +120,16 @@ const ProgressBar = styled.div`
 
 const ProgressFill = styled.div<{ percentage: number; color: string }>`
   height: 100%;
-  width: ${props => props.percentage}%;
-  background-color: ${props => props.color};
+  width: ${(props) => props.percentage}%;
+  background-color: ${(props) => props.color};
   transition: width 0.3s ease;
 `;
 
 const RecentActivity = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
@@ -137,7 +138,7 @@ const ActivityItem = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
 
   &:last-child {
     border-bottom: none;
@@ -150,18 +151,18 @@ const ActivityInfo = styled.div`
 
 const ActivityName = styled.div`
   font-weight: 500;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const ActivityDetails = styled.div`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-top: 2px;
 `;
 
 const ActivityDate = styled.div`
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const StatusBadge = styled.span<{ status: string }>`
@@ -172,7 +173,7 @@ const StatusBadge = styled.span<{ status: string }>`
   text-transform: uppercase;
   letter-spacing: 0.5px;
   
-  ${props => {
+  ${(props) => {
     switch (props.status) {
       case 'attending':
         return 'background-color: #d1fae5; color: #065f46;';
@@ -181,7 +182,7 @@ const StatusBadge = styled.span<{ status: string }>`
       case 'maybe':
         return 'background-color: #fef3c7; color: #92400e;';
       default:
-        return 'background-color: #f3f4f6; color: #374151;';
+        return `background-color: ${props.theme.colors.surfaceAlt}; color: ${props.theme.colors.textSecondary};`;
     }
   }}
 `;
@@ -192,7 +193,7 @@ const LoadingSpinner = styled.div`
   align-items: center;
   height: 200px;
   font-size: 1.1rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const ErrorMessage = styled.div`
@@ -215,18 +216,18 @@ const DietaryItem = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background-color: #f9fafb;
+  background-color: ${(p) => p.theme.colors.surfaceAlt};
   border-radius: 6px;
 `;
 
 const DietaryRestriction = styled.span`
   font-weight: 500;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
   text-transform: capitalize;
 `;
 
 const DietaryCount = styled.span`
-  background-color: #3b82f6;
+  background-color: ${(p) => p.theme.colors.primary};
   color: white;
   padding: 2px 8px;
   border-radius: 12px;
@@ -330,7 +331,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
         <ChartCard>
           <ChartTitle>Response Progress</ChartTitle>
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
               <span>Attending ({analytics.attendingCeremony})</span>
               <span>{((analytics.attendingCeremony / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>
@@ -343,7 +344,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
           </div>
 
           <div style={{ marginTop: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
               <span>Not Attending ({analytics.notAttending})</span>
               <span>{((analytics.notAttending / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>
@@ -356,7 +357,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
           </div>
 
           <div style={{ marginTop: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
               <span>Maybe ({analytics.maybeCount})</span>
               <span>{((analytics.maybeCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>
@@ -369,7 +370,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
           </div>
 
           <div style={{ marginTop: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
               <span>Pending ({analytics.pendingCount})</span>
               <span>{((analytics.pendingCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>

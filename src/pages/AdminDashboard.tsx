@@ -26,9 +26,9 @@ const AdminContainer = styled.div`
 `;
 
 const WeddingsTable = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
@@ -37,10 +37,10 @@ const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 120px;
   padding: 1rem 1.5rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   font-weight: 600;
-  color: #374151;
+  color: ${({ theme }) => theme.colors.textPrimary};
   font-size: 0.875rem;
 `;
 
@@ -48,11 +48,11 @@ const TableRow = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 120px;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   align-items: center;
   
   &:hover {
-    background: #f9fafb;
+    background: ${({ theme }) => theme.colors.surfaceAlt};
   }
 `;
 
@@ -64,12 +64,12 @@ const WeddingInfo = styled.div`
 
 const WeddingTitle = styled.div`
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const WeddingSubtitle = styled.div`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const StatusBadge = styled.span<{ status: 'active' | 'inactive' | 'upcoming' }>`
@@ -82,7 +82,7 @@ const StatusBadge = styled.span<{ status: 'active' | 'inactive' | 'upcoming' }>`
       case 'active': return '#dcfce7';
       case 'upcoming': return '#fef3c7';
       case 'inactive': return '#fee2e2';
-      default: return '#f3f4f6';
+      default: return props.theme.colors.surfaceAlt;
     }
   }};
   color: ${props => {
@@ -90,7 +90,7 @@ const StatusBadge = styled.span<{ status: 'active' | 'inactive' | 'upcoming' }>`
       case 'active': return '#166534';
       case 'upcoming': return '#92400e';
       case 'inactive': return '#991b1b';
-      default: return '#374151';
+      default: return props.theme.colors.textPrimary;
     }
   }};
 `;
@@ -102,16 +102,16 @@ const ActionButtons = styled.div`
 
 const ActionButton = styled.button`
   padding: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 6px;
-  background: white;
-  color: #6b7280;
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.textSecondary};
   cursor: pointer;
   transition: all 0.2s;
   
   &:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: ${({ theme }) => theme.colors.surfaceAlt};
+    color: ${({ theme }) => theme.colors.textPrimary};
   }
 `;
 
@@ -120,14 +120,14 @@ const LoadingSpinner = styled.div`
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const SearchAndFilters = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   margin-bottom: 2rem;
   display: flex;
   gap: 1rem;
@@ -139,14 +139,16 @@ const SearchInput = styled.input`
   flex: 1;
   min-width: 300px;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   font-size: 0.875rem;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  background: ${({ theme }) => theme.colors.surface};
   
   &:focus {
     outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 3px ${({ theme }) => `${theme.colors.primary}1A`};
   }
 `;
 
@@ -161,22 +163,23 @@ const SearchIcon = styled(Search)`
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   width: 1rem;
   height: 1rem;
 `;
 
 const FilterSelect = styled.select`
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   font-size: 0.875rem;
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 3px ${({ theme }) => `${theme.colors.primary}1A`};
   }
 `;
 
@@ -195,7 +198,7 @@ const ExportButton = styled.button`
   transition: all 0.2s;
   
   &:hover {
-    background: #059669;
+    filter: brightness(0.9);
   }
 `;
 
@@ -207,10 +210,10 @@ const MetricsGrid = styled.div`
 `;
 
 const MetricCard = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
@@ -236,13 +239,13 @@ const MetricTitle = styled.h3`
   margin: 0;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const MetricValue = styled.div`
   font-size: 1.875rem;
   font-weight: 700;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: 0.5rem;
 `;
 
@@ -482,10 +485,10 @@ export const AdminDashboard: React.FC = () => {
     <Layout>
       <AdminContainer>
         <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ margin: '0 0 0.5rem 0', fontSize: '2rem', fontWeight: '600', color: '#1f2937' }}>
+          <h1 style={{ margin: '0 0 0.5rem 0', fontSize: '2rem', fontWeight: '600', color: 'var(--text-primary)' }}>
             Admin Dashboard
           </h1>
-          <p style={{ margin: 0, color: '#6b7280' }}>
+          <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
             Manage all weddings and users on the platform
           </p>
         </div>
@@ -675,7 +678,7 @@ export const AdminDashboard: React.FC = () => {
               </TableRow>
             ))
           ) : (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
               No weddings found
             </div>
           )}

@@ -31,14 +31,15 @@ const Container = styled.div`
 `;
 
 const Section = styled.div`
-  border: 1px solid var(--border);
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 12px;
   padding: 1.5rem;
+  background: ${(p) => p.theme.colors.surface};
 `;
 
 const SectionTitle = styled.h3`
   margin: 0 0 1rem 0;
-  color: var(--text-primary);
+  color: ${(p) => p.theme.colors.textPrimary};
   font-size: 1.125rem;
   font-weight: 600;
   display: flex;
@@ -48,7 +49,7 @@ const SectionTitle = styled.h3`
 
 const SectionDescription = styled.p`
   margin: 0 0 1.5rem 0;
-  color: var(--text-secondary);
+  color: ${(p) => p.theme.colors.textSecondary};
   font-size: 0.875rem;
   line-height: 1.5;
 `;
@@ -57,21 +58,21 @@ const MethodTabs = styled.div`
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
 `;
 
 const MethodTab = styled.button<{ $active: boolean }>`
   padding: 0.75rem 1rem;
   border: none;
   background: none;
-  color: ${props => props.$active ? 'var(--primary-color)' : 'var(--text-secondary)'};
-  border-bottom: 2px solid ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
+  color: ${(p) => (p.$active ? p.theme.colors.primary : p.theme.colors.textSecondary)};
+  border-bottom: 2px solid ${(p) => (p.$active ? p.theme.colors.primary : 'transparent')};
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s;
   
   &:hover {
-    color: var(--primary-color);
+    color: ${(p) => p.theme.colors.primary};
   }
 `;
 
@@ -79,9 +80,9 @@ const InfoBox = styled.div<{ type: 'info' | 'warning' }>`
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
-  background: ${props => props.type === 'info' ? '#eff6ff' : '#fff7ed'};
-  border: 1px solid ${props => props.type === 'info' ? '#bfdbfe' : '#fed7aa'};
-  color: ${props => props.type === 'info' ? '#1e40af' : '#ea580c'};
+  background: ${(p) => (p.type === 'info' ? p.theme.colors.surfaceAlt : '#fff7ed')};
+  border: 1px solid ${(p) => (p.type === 'info' ? p.theme.colors.border : '#fed7aa')};
+  color: ${(p) => (p.type === 'info' ? p.theme.colors.textSecondary : '#ea580c')};
   font-size: 0.875rem;
   display: flex;
   align-items: flex-start;
@@ -92,29 +93,29 @@ const FilterTabs = styled.div`
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
 `;
 
 const FilterTab = styled.button<{ $active: boolean }>`
   padding: 0.5rem 1rem;
   border: none;
   background: none;
-  color: ${props => props.$active ? 'var(--primary-color)' : 'var(--text-secondary)'};
-  border-bottom: 2px solid ${props => props.$active ? 'var(--primary-color)' : 'transparent'};
+  color: ${(p) => (p.$active ? p.theme.colors.primary : p.theme.colors.textSecondary)};
+  border-bottom: 2px solid ${(p) => (p.$active ? p.theme.colors.primary : 'transparent')};
   cursor: pointer;
   font-weight: 500;
   font-size: 0.875rem;
   transition: all 0.2s;
   
   &:hover {
-    color: var(--primary-color);
+    color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const GuestSelectionContainer = styled.div`
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid var(--border);
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   margin-bottom: 1rem;
 `;
@@ -123,8 +124,8 @@ const GuestItem = styled.div<{ $selected: boolean }>`
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: ${props => props.$selected ? '#f0f9ff' : 'white'};
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => (p.$selected ? p.theme.colors.surfaceAlt : p.theme.colors.surface)};
   cursor: pointer;
   transition: background-color 0.2s;
   
@@ -133,7 +134,7 @@ const GuestItem = styled.div<{ $selected: boolean }>`
   }
   
   &:hover {
-    background: ${props => props.$selected ? '#e0f2fe' : '#f9fafb'};
+    background: ${(p) => (p.$selected ? p.theme.colors.surfaceAlt : p.theme.colors.surfaceAlt)};
   }
 `;
 
@@ -148,12 +149,12 @@ const GuestInfo = styled.div`
 
 const GuestName = styled.div`
   font-weight: 600;
-  color: var(--text-primary);
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const GuestPhone = styled.div`
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const GuestStatus = styled.div<{ $status: string }>`
@@ -163,23 +164,14 @@ const GuestStatus = styled.div<{ $status: string }>`
   text-transform: uppercase;
   font-weight: 600;
   
-  ${props => {
-    switch (props.$status) {
+  ${(p) => {
+    switch (p.$status) {
       case 'pending':
-        return `
-          background: #fef3c7;
-          color: #92400e;
-        `;
+        return `background: #fef3c7; color: #92400e;`;
       case 'sent':
-        return `
-          background: #dcfce7;
-          color: #166534;
-        `;
+        return `background: #dcfce7; color: #166534;`;
       default:
-        return `
-          background: #f3f4f6;
-          color: #6b7280;
-        `;
+        return `background: ${p.theme.colors.surfaceAlt}; color: ${p.theme.colors.textSecondary};`;
     }
   }}
 `;
@@ -189,7 +181,7 @@ const SelectionSummary = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: #f9fafb;
+  background: ${(p) => p.theme.colors.surfaceAlt};
   border-radius: 8px;
   margin-bottom: 1rem;
 `;
@@ -206,21 +198,24 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   transition: all 0.2s;
   border: none;
   
-  ${props => props.variant === 'primary' ? `
-    background: var(--primary-color);
+  ${(p) =>
+    p.variant === 'primary'
+      ? `
+    background: ${p.theme.colors.primary};
     color: white;
     
     &:hover:not(:disabled) {
-      background: var(--primary-hover);
+      filter: brightness(0.95);
     }
-  ` : `
-    background: white;
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
+  `
+      : `
+    background: ${p.theme.colors.surface};
+    color: ${p.theme.colors.textSecondary};
+    border: 1px solid ${p.theme.colors.border};
     
     &:hover:not(:disabled) {
-      background: #f9fafb;
-      color: var(--text-primary);
+      background: ${p.theme.colors.surfaceAlt};
+      color: ${p.theme.colors.textPrimary};
     }
   `}
   
@@ -235,12 +230,12 @@ const ButtonGroup = styled.div`
   gap: 1rem;
   justify-content: flex-end;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid ${(p) => p.theme.colors.border};
 `;
 
 const URLSection = styled.div`
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: ${(p) => p.theme.colors.surfaceAlt};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
@@ -251,8 +246,8 @@ const URLItem = styled.div`
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: white;
-  border: 1px solid var(--border);
+  background: ${(p) => p.theme.colors.surface};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 6px;
   margin-bottom: 0.5rem;
   
@@ -265,7 +260,7 @@ const URLText = styled.div`
   flex: 1;
   font-family: monospace;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: ${(p) => p.theme.colors.textPrimary};
   word-break: break-all;
 `;
 
@@ -274,16 +269,16 @@ const CopyButton = styled.button`
   align-items: center;
   gap: 0.25rem;
   padding: 0.5rem 0.75rem;
-  background: var(--primary-color);
+  background: ${(p) => p.theme.colors.primary};
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 0.75rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: filter 0.2s;
   
   &:hover {
-    background: var(--primary-hover);
+    filter: brightness(0.95);
   }
 `;
 
@@ -298,7 +293,7 @@ const SocialButton = styled.button<{ $color: string }>`
   align-items: center;
   gap: 0.25rem;
   padding: 0.375rem 0.625rem;
-  background: ${props => props.$color};
+  background: ${(p) => p.$color};
   color: white;
   border: none;
   border-radius: 4px;
@@ -319,15 +314,10 @@ const StatusMessage = styled.div<{ $type: 'success' | 'error' }>`
   border-radius: 8px;
   margin-top: 1rem;
   
-  ${props => props.$type === 'success' ? `
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
-  ` : `
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
-  `}
+  ${(p) =>
+    p.$type === 'success'
+      ? `background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;`
+      : `background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;`}
 `;
 
 const TemplateControls = styled.div`
@@ -346,17 +336,20 @@ const TemplateRow = styled.div`
 
 const Select = styled.select`
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 6px;
   font-size: 0.875rem;
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
   min-height: 90px;
   padding: 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   border-radius: 6px;
   font-size: 0.9rem;
   resize: vertical;

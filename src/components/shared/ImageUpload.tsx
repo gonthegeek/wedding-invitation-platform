@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Upload, Loader } from 'lucide-react';
 
 const UploadContainer = styled.div`
-  border: 2px dashed #d1d5db;
+  border: 2px dashed ${({ theme }) => theme.colors.border};
   border-radius: 12px;
   padding: 2rem;
   text-align: center;
@@ -11,13 +11,13 @@ const UploadContainer = styled.div`
   cursor: pointer;
   
   &:hover {
-    border-color: #667eea;
-    background: #f8f9ff;
+    border-color: ${({ theme }) => theme.colors.primary};
+    background: ${({ theme }) => theme.colors.surfaceAlt};
   }
   
   &.dragover {
-    border-color: #667eea;
-    background: #f0f4ff;
+    border-color: ${({ theme }) => theme.colors.primary};
+    background: ${({ theme }) => theme.colors.surfaceAlt};
   }
 `;
 
@@ -32,21 +32,21 @@ const UploadIcon = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9ca3af;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const UploadText = styled.div`
-  color: #374151;
+  color: ${({ theme }) => theme.colors.textPrimary};
   font-size: 1rem;
   font-weight: 500;
 `;
 
 const UploadSubtext = styled.div`
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
 `;
 
@@ -61,7 +61,7 @@ const PreviewImage = styled.img`
   height: 150px;
   object-fit: cover;
   border-radius: 12px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid ${({ theme }) => theme.colors.border};
 `;
 
 const RemoveButton = styled.button`
@@ -71,9 +71,9 @@ const RemoveButton = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #ef4444;
+  background: ${({ theme }) => theme.colors.error};
   color: white;
-  border: 2px solid white;
+  border: 2px solid ${({ theme }) => theme.colors.surface};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,14 +86,13 @@ const RemoveButton = styled.button`
   font-family: Arial, sans-serif;
   
   &:hover {
-    background: #dc2626;
-    color: white;
+    filter: brightness(0.9);
     transform: scale(1.1);
   }
 `;
 
 const ErrorMessage = styled.div`
-  color: #ef4444;
+  color: ${({ theme }) => theme.colors.error};
   font-size: 0.875rem;
   margin-top: 0.5rem;
 `;

@@ -24,7 +24,7 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  color: var(--text-primary);
+  color: ${(p) => p.theme.colors.textPrimary};
   font-weight: 600;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
@@ -32,28 +32,31 @@ const Label = styled.label`
 
 const Input = styled.input<{ $error?: boolean }>`
   padding: 0.75rem;
-  border: 1px solid ${props => props.$error ? '#ef4444' : 'var(--border)'};
+  border: 1px solid ${(p) => (p.$error ? '#ef4444' : p.theme.colors.border)};
   border-radius: 8px;
   font-size: 1rem;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: ${props => props.$error ? '#ef4444' : 'var(--primary-color)'};
-    box-shadow: 0 0 0 3px ${props => props.$error ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)'};
+    border-color: ${(p) => (p.$error ? '#ef4444' : p.theme.colors.primary)};
+    box-shadow: none;
   }
 `;
 
 const Select = styled.select<{ $error?: boolean }>`
   padding: 0.75rem;
-  border: 1px solid ${props => props.$error ? '#ef4444' : 'var(--border)'};
+  border: 1px solid ${(p) => (p.$error ? '#ef4444' : p.theme.colors.border)};
   border-radius: 8px;
   font-size: 1rem;
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: ${props => props.$error ? '#ef4444' : 'var(--primary-color)'};
-    box-shadow: 0 0 0 3px ${props => props.$error ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)'};
+    border-color: ${(p) => (p.$error ? '#ef4444' : p.theme.colors.primary)};
+    box-shadow: none;
   }
 `;
 
@@ -64,13 +67,13 @@ const Checkbox = styled.input`
 const CheckboxLabel = styled.label`
   display: flex;
   align-items: center;
-  color: var(--text-primary);
+  color: ${(p) => p.theme.colors.textPrimary};
   font-size: 0.875rem;
   cursor: pointer;
 `;
 
 const ErrorMessage = styled.div`
-  color: #ef4444;
+  color: ${(p) => p.theme.colors.error};
   font-size: 0.875rem;
   margin-top: 0.25rem;
 `;
@@ -81,7 +84,7 @@ const ButtonGroup = styled.div`
   justify-content: flex-end;
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid ${(p) => p.theme.colors.border};
 `;
 
 const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
@@ -92,22 +95,25 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   cursor: pointer;
   transition: all 0.2s;
   
-  ${props => props.variant === 'primary' ? `
-    background: var(--primary-color);
+  ${(p) =>
+    p.variant === 'primary'
+      ? `
+    background: ${p.theme.colors.primary};
     color: white;
     border: none;
     
     &:hover:not(:disabled) {
-      background: var(--primary-hover);
+      filter: brightness(0.95);
     }
-  ` : `
-    background: white;
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
+  `
+      : `
+    background: ${p.theme.colors.surface};
+    color: ${p.theme.colors.textSecondary};
+    border: 1px solid ${p.theme.colors.border};
     
     &:hover:not(:disabled) {
-      background: #f9fafb;
-      color: var(--text-primary);
+      background: ${p.theme.colors.surfaceAlt};
+      color: ${p.theme.colors.textPrimary};
     }
   `}
   

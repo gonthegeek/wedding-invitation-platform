@@ -6,28 +6,28 @@ import { GuestService } from '../../services/guestService';
 import type { Guest } from '../../types/guest';
 
 const Container = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   overflow: hidden;
 `;
 
 const Header = styled.div`
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.surfaceAlt};
 `;
 
 const Title = styled.h3`
   margin: 0 0 0.5rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const Subtitle = styled.p`
   margin: 0;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
 `;
 
@@ -47,7 +47,7 @@ const SectionTitle = styled.h4`
   margin: 0 0 1rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #374151;
+  color: ${({ theme }) => theme.colors.textPrimary};
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -67,24 +67,24 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'outline' }>`
   border: ${props => {
     switch (props.variant) {
       case 'primary': return 'none';
-      case 'secondary': return '1px solid #d1d5db';
-      case 'outline': return '1px solid #667eea';
-      default: return '1px solid #d1d5db';
+      case 'secondary': return `1px solid ${props.theme.colors.border}`;
+      case 'outline': return `1px solid ${props.theme.colors.primary}`;
+      default: return `1px solid ${props.theme.colors.border}`;
     }
   }};
   background: ${props => {
     switch (props.variant) {
-      case 'primary': return '#667eea';
-      case 'secondary': return 'white';
-      case 'outline': return 'white';
-      default: return 'white';
+      case 'primary': return props.theme.colors.primary;
+      case 'secondary': return props.theme.colors.surface;
+      case 'outline': return props.theme.colors.surface;
+      default: return props.theme.colors.surface;
     }
   }};
   color: ${props => {
     switch (props.variant) {
       case 'primary': return 'white';
-      case 'outline': return '#667eea';
-      default: return '#374151';
+      case 'outline': return props.theme.colors.primary;
+      default: return props.theme.colors.textPrimary;
     }
   }};
   border-radius: 8px;
@@ -96,6 +96,7 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'outline' }>`
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    filter: brightness(0.98);
   }
 
   &:disabled {
@@ -107,17 +108,16 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'outline' }>`
 `;
 
 const FileDropZone = styled.div<{ isDragOver: boolean }>`
-  border: 2px dashed ${props => props.isDragOver ? '#667eea' : '#d1d5db'};
+  border: 2px dashed ${props => props.isDragOver ? props.theme.colors.primary : props.theme.colors.border};
   border-radius: 8px;
   padding: 2rem;
   text-align: center;
-  background: ${props => props.isDragOver ? '#f8f9ff' : '#f9fafb'};
+  background: ${props => props.isDragOver ? props.theme.colors.surfaceAlt : props.theme.colors.surfaceAlt};
   transition: all 0.2s ease;
   cursor: pointer;
   
   &:hover {
-    border-color: #667eea;
-    background: #f8f9ff;
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -134,33 +134,33 @@ const DropZoneContent = styled.div`
 
 const DropZoneIcon = styled.div`
   font-size: 2rem;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const DropZoneText = styled.div`
   font-size: 1rem;
-  color: #374151;
+  color: ${({ theme }) => theme.colors.textPrimary};
   font-weight: 500;
 `;
 
 const DropZoneSubtext = styled.div`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const PreviewContainer = styled.div`
   margin-top: 1rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   overflow: hidden;
 `;
 
 const PreviewHeader = styled.div`
   padding: 1rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
 `;
 
@@ -168,20 +168,20 @@ const PreviewTitle = styled.h5`
   margin: 0;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #374151;
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const CloseButton = styled.button`
   padding: 0.25rem;
   border: none;
   background: none;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   cursor: pointer;
   border-radius: 4px;
   
   &:hover {
-    background: #e5e7eb;
-    color: #374151;
+    background: ${({ theme }) => theme.colors.surfaceAlt};
+    color: ${({ theme }) => theme.colors.textPrimary};
   }
 `;
 
@@ -202,21 +202,21 @@ const ValidationSection = styled.div`
   }
 `;
 
-const ValidationTitle = styled.div`
+const ValidationTitle = styled.div<{ color?: string }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: ${props => props.color || '#374151'};
+  color: ${({ color, theme }) => color || theme.colors.textPrimary};
 `;
 
 const ValidationList = styled.ul`
   margin: 0;
   padding-left: 1.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const ValidationItem = styled.li`
@@ -228,8 +228,8 @@ const ImportActions = styled.div`
   gap: 1rem;
   justify-content: flex-end;
   padding: 1rem;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.surfaceAlt};
 `;
 
 interface GuestImportExportProps {

@@ -17,12 +17,12 @@ import type { Guest } from '../types/guest';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: ${(p) => p.theme.colors.background};
 `;
 
 const Header = styled.div`
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: ${(p) => p.theme.colors.surface};
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
   padding: 1.5rem 2rem;
   position: sticky;
   top: 0;
@@ -40,7 +40,7 @@ const HeaderContent = styled.div`
 const HeaderTitle = styled.h1`
   font-size: 1.875rem;
   font-weight: 700;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin: 0;
 `;
 
@@ -61,29 +61,32 @@ const ActionButton = styled.button<{ variant?: 'primary' | 'secondary' }>`
   cursor: pointer;
   transition: all 0.2s ease;
   
-  ${props => props.variant === 'primary' ? `
-    background: #3b82f6;
+  ${(props) =>
+    props.variant === 'primary'
+      ? `
+    background: ${props.theme.colors.primary};
     color: white;
     border: none;
     
     &:hover {
-      background: #2563eb;
+      filter: brightness(0.95);
     }
-  ` : `
-    background: white;
-    color: #374151;
-    border: 1px solid #d1d5db;
+  `
+      : `
+    background: ${props.theme.colors.surface};
+    color: ${props.theme.colors.textSecondary};
+    border: 1px solid ${props.theme.colors.border};
     
     &:hover {
-      background: #f9fafb;
-      border-color: #9ca3af;
+      background: ${props.theme.colors.surfaceAlt};
+      color: ${props.theme.colors.textPrimary};
     }
   `}
 `;
 
 const TabsContainer = styled.div`
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: ${(p) => p.theme.colors.surface};
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
 `;
 
 const TabsList = styled.div`
@@ -100,15 +103,15 @@ const Tab = styled.button<{ $active: boolean }>`
   padding: 1rem 1.5rem;
   border: none;
   background: none;
-  color: ${props => props.$active ? '#3b82f6' : '#6b7280'};
-  font-weight: ${props => props.$active ? '600' : '500'};
+  color: ${(p) => (p.$active ? p.theme.colors.primary : p.theme.colors.textSecondary)};
+  font-weight: ${(p) => (p.$active ? 600 : 500)};
   font-size: 0.875rem;
   cursor: pointer;
-  border-bottom: 2px solid ${props => props.$active ? '#3b82f6' : 'transparent'};
+  border-bottom: 2px solid ${(p) => (p.$active ? p.theme.colors.primary : 'transparent')};
   transition: all 0.2s ease;
   
   &:hover {
-    color: #3b82f6;
+    color: ${(p) => p.theme.colors.primary};
   }
 `;
 
@@ -119,11 +122,11 @@ const ContentContainer = styled.div`
 `;
 
 const ActionBar = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -139,15 +142,90 @@ const ActionGroup = styled.div`
 
 const StatusFilter = styled.select`
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 6px;
   font-size: 0.875rem;
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
+  }
+`;
+
+const SectionHeading = styled.h2`
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: ${(p) => p.theme.colors.textPrimary};
+`;
+
+const SectionSubtext = styled.p`
+  margin: 0.5rem 0 0;
+  color: ${(p) => p.theme.colors.textSecondary};
+  font-size: 0.875rem;
+`;
+
+const CenteredContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  flex-direction: column;
+  color: ${(p) => p.theme.colors.textPrimary};
+`;
+
+const ThemedLink = styled(Link)`
+  margin-top: 1rem;
+  color: ${(p) => p.theme.colors.primary};
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+`;
+
+const ModalContainer = styled.div`
+  background: ${(p) => p.theme.colors.surface};
+  border: 1px solid ${(p) => p.theme.colors.border};
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1001;
+  color: ${(p) => p.theme.colors.textSecondary};
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: ${(p) => p.theme.colors.surfaceAlt};
+    color: ${(p) => p.theme.colors.textPrimary};
   }
 `;
 
@@ -224,9 +302,9 @@ const WeddingManagementPage: React.FC = () => {
     return (
       <Layout>
         <PageContainer>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+          <CenteredContainer>
             <p>Loading wedding data...</p>
-          </div>
+          </CenteredContainer>
         </PageContainer>
       </Layout>
     );
@@ -237,12 +315,10 @@ const WeddingManagementPage: React.FC = () => {
     return (
       <Layout>
         <PageContainer>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', flexDirection: 'column' }}>
+          <CenteredContainer>
             <p>No wedding found for this account.</p>
-            <Link to="/couple/create-wedding" style={{ marginTop: '1rem', color: '#3b82f6' }}>
-              Create a wedding first
-            </Link>
-          </div>
+            <ThemedLink to="/couple/create-wedding">Create a wedding first</ThemedLink>
+          </CenteredContainer>
         </PageContainer>
       </Layout>
     );
@@ -294,12 +370,10 @@ const WeddingManagementPage: React.FC = () => {
           <>
             <ActionBar>
               <div>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600', color: '#1f2937' }}>
-                  RSVP Analytics & Insights
-                </h2>
-                <p style={{ margin: '0.5rem 0 0', color: '#6b7280', fontSize: '0.875rem' }}>
+                <SectionHeading>RSVP Analytics & Insights</SectionHeading>
+                <SectionSubtext>
                   Track guest responses and wedding attendance in real-time
-                </p>
+                </SectionSubtext>
               </div>
               <ActionGroup>
                 <StatusFilter 
@@ -331,12 +405,10 @@ const WeddingManagementPage: React.FC = () => {
           <>
             <ActionBar>
               <div>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600', color: '#1f2937' }}>
-                  Guest List Management
-                </h2>
-                <p style={{ margin: '0.5rem 0 0', color: '#6b7280', fontSize: '0.875rem' }}>
+                <SectionHeading>Guest List Management</SectionHeading>
+                <SectionSubtext>
                   Manage your guest list, send invitations, and track responses
-                </p>
+                </SectionSubtext>
               </div>
               <ActionGroup>
                 <ActionButton variant="primary" onClick={handleAddGuest}>
@@ -407,57 +479,18 @@ const WeddingManagementPage: React.FC = () => {
 
           {/* Import/Export Modal */}
           {isImportExportModalOpen && (
-            <div style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1000,
-              padding: '2rem'
-            }}>
-              <div style={{
-                background: 'white',
-                borderRadius: '12px',
-                width: '100%',
-                maxWidth: '800px',
-                maxHeight: '90vh',
-                overflow: 'auto',
-                position: 'relative'
-              }}>
-                <button
-                  onClick={() => setIsImportExportModalOpen(false)}
-                  style={{
-                    position: 'absolute',
-                    top: '1rem',
-                    right: '1rem',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '1.5rem',
-                    cursor: 'pointer',
-                    zIndex: 1001,
-                    color: '#6b7280',
-                    width: '2rem',
-                    height: '2rem',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
+            <Overlay>
+              <ModalContainer>
+                <CloseButton onClick={() => setIsImportExportModalOpen(false)}>
                   ×
-                </button>
+                </CloseButton>
                 <GuestImportExport
                   weddingId={weddingId}
                   guests={guests}
                   onImportComplete={handleImportComplete}
                 />
-              </div>
-            </div>
+              </ModalContainer>
+            </Overlay>
           )}
         </>
       )}

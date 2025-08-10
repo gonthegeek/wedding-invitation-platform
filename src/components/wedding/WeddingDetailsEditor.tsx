@@ -222,6 +222,40 @@ const InfoBox = styled.div`
   padding: 1rem;
 `;
 
+// New: Themed color swatches and RSVP chip for previews
+const ColorSwatches = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const ColorSwatch = styled.div<{ $bg: string }>`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: ${(p) => p.$bg};
+  border: 3px solid ${(p) => p.theme.colors.surface};
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const RSVPPreviewChip = styled.div<{ $bg: string }>`
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: ${(p) => p.$bg};
+  color: white;
+  border-radius: 25px;
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: bold;
+`;
+
+const MapsLink = styled.span`
+  font-size: 0.8rem;
+  color: ${(p) => p.theme.colors.primary};
+  text-decoration: underline;
+`;
+
 const ActionButtons = styled.div`
   display: flex;
   gap: 1rem;
@@ -245,7 +279,8 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    /* Use a neutral shadow that works in both themes instead of a fixed accent color */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
   }
   
   &:disabled {
@@ -303,7 +338,7 @@ const GiftInputs = styled.div`
 `;
 
 const AddButton = styled.button`
-  background: #28a745;
+  background: ${(p) => p.theme.colors.success};
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -313,12 +348,12 @@ const AddButton = styled.button`
   margin-top: 0.5rem;
   
   &:hover {
-    background: #218838;
+    filter: brightness(0.95);
   }
 `;
 
 const RemoveButton = styled.button`
-  background: #dc3545;
+  background: ${(p) => p.theme.colors.error};
   color: white;
   border: none;
   border-radius: 50%;
@@ -332,7 +367,7 @@ const RemoveButton = styled.button`
   line-height: 1;
   
   &:hover {
-    background: #c82333;
+    filter: brightness(0.95);
   }
 `;
 
@@ -1266,31 +1301,14 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
               </PreviewCard>
 
               <PreviewCard>
-                <PreviewTitle style={{ color: settings.primaryColor }}>Dress Code</PreviewTitle>
-                <PreviewText>
-                  <strong style={{ color: settings.secondaryColor }}>{settings.dressCode}</strong><br />
-                  {settings.dressCodeDescription}
-                </PreviewText>
-              </PreviewCard>
-
-              <PreviewCard>
                 <PreviewTitle style={{ color: settings.primaryColor }}>RSVP Section</PreviewTitle>
                 <PreviewText>
                   <strong style={{ color: settings.secondaryColor }}>{settings.rsvpTitle}</strong><br />
                   {settings.rsvpMessage}
                 </PreviewText>
-                <div style={{
-                  marginTop: '0.5rem',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: settings.primaryColor,
-                  color: 'white',
-                  borderRadius: '25px',
-                  display: 'inline-block',
-                  fontSize: '0.9rem',
-                  fontWeight: 'bold'
-                }}>
+                <RSVPPreviewChip $bg={settings.primaryColor || '#667eea'}>
                   {settings.rsvpButtonText}
-                </div>
+                </RSVPPreviewChip>
               </PreviewCard>
             </>
           )}
@@ -1302,24 +1320,10 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                 border: `2px solid ${settings.primaryColor}30`
               }}>
                 <PreviewTitle style={{ color: settings.primaryColor }}>Color Scheme Preview</PreviewTitle>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                  <div style={{ 
-                    width: '60px', 
-                    height: '60px', 
-                    backgroundColor: settings.primaryColor,
-                    borderRadius: '50%',
-                    border: '3px solid white',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                  }} />
-                  <div style={{ 
-                    width: '60px', 
-                    height: '60px', 
-                    backgroundColor: settings.secondaryColor,
-                    borderRadius: '50%',
-                    border: '3px solid white',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                  }} />
-                </div>
+                <ColorSwatches>
+                  <ColorSwatch $bg={settings.primaryColor || '#667eea'} />
+                  <ColorSwatch $bg={settings.secondaryColor || '#ff6b9d'} />
+                </ColorSwatches>
                 <PreviewText style={{ color: settings.primaryColor, fontWeight: 'bold' }}>
                   Primary Color: {settings.primaryColor}
                 </PreviewText>
@@ -1411,9 +1415,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                       </VenueSubtext>
                       {wedding.ceremonyLocation?.googleMapsUrl && (
                         <div style={{ marginTop: '0.5rem' }}>
-                          <span style={{ fontSize: '0.8rem', color: settings.primaryColor, textDecoration: 'underline' }}>
-                            📍 View on Maps
-                          </span>
+                          <MapsLink>📍 View on Maps</MapsLink>
                         </div>
                       )}
                     </div>
@@ -1436,9 +1438,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                       </VenueSubtext>
                       {wedding.receptionLocation?.googleMapsUrl && (
                         <div style={{ marginTop: '0.5rem' }}>
-                          <span style={{ fontSize: '0.8rem', color: settings.primaryColor, textDecoration: 'underline' }}>
-                            📍 View on Maps
-                          </span>
+                          <MapsLink>📍 View on Maps</MapsLink>
                         </div>
                       )}
                     </div>

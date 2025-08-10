@@ -24,7 +24,7 @@ const ContentArea = styled.div`
 
 const MainContent = styled.main`
   flex: 1;
-  background-color: #fafafa;
+  background-color: ${(p) => p.theme.colors.background};
   min-height: calc(100vh - 64px); /* Subtract header height */
   
   @media (min-width: 1024px) {

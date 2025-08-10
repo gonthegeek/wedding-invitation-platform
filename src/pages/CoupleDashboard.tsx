@@ -22,11 +22,11 @@ const DashboardGrid = styled.div`
 `;
 
 const DashboardCard = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
@@ -36,7 +36,7 @@ const DashboardCard = styled.div`
 
   h3 {
     margin: 0 0 1rem 0;
-    color: #1f2937;
+    color: ${({ theme }) => theme.colors.textPrimary};
     font-size: 1.25rem;
     font-weight: 600;
   }
@@ -44,26 +44,26 @@ const DashboardCard = styled.div`
   .metric {
     font-size: 2rem;
     font-weight: 700;
-    color: #3b82f6;
+    color: ${({ theme }) => theme.colors.primary};
     margin: 0;
   }
 
   .description {
-    color: #6b7280;
+    color: ${({ theme }) => theme.colors.textSecondary};
     margin: 0.5rem 0;
   }
 `;
 
 const ActionSection = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
 
   h3 {
     margin: 0 0 1.5rem 0;
-    color: #1f2937;
+    color: ${({ theme }) => theme.colors.textPrimary};
     font-size: 1.5rem;
     font-weight: 600;
   }
@@ -87,21 +87,22 @@ const ActionButton = styled(Link)<{ variant?: 'primary' | 'secondary' }>`
   cursor: pointer;
 
   ${props => props.variant === 'primary' ? `
-    background: #3b82f6;
+    background: ${props.theme.colors.primary};
     color: white;
     
     &:hover {
-      background: #2563eb;
+      filter: brightness(0.95);
       transform: translateY(-1px);
     }
   ` : `
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background: ${props.theme.colors.surfaceAlt};
+    color: ${props.theme.colors.textPrimary};
+    border: 1px solid ${props.theme.colors.border};
     
     &:hover {
-      background: #e5e7eb;
+      background: ${props.theme.colors.surfaceAlt};
       transform: translateY(-1px);
+      filter: brightness(0.98);
     }
   `}
 `;
@@ -111,14 +112,14 @@ const WelcomeSection = styled.div`
   margin-bottom: 3rem;
 
   h1 {
-    color: #1f2937;
+    color: ${({ theme }) => theme.colors.textPrimary};
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
   }
 
   .subtitle {
-    color: #6b7280;
+    color: ${({ theme }) => theme.colors.textSecondary};
     font-size: 1.125rem;
   }
 `;
@@ -132,8 +133,8 @@ const LoadingSpinner = styled.div`
   .spinner {
     width: 40px;
     height: 40px;
-    border: 4px solid #e5e7eb;
-    border-top: 4px solid #3b82f6;
+    border: 4px solid ${({ theme }) => theme.colors.border};
+    border-top: 4px solid ${({ theme }) => theme.colors.primary};
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -200,7 +201,7 @@ export const CoupleDashboard: React.FC = () => {
               style={{
                 marginTop: '1rem',
                 padding: '1rem 1.5rem',
-                background: '#3b82f6',
+                background: 'var(--primary)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
@@ -218,20 +219,20 @@ export const CoupleDashboard: React.FC = () => {
             <h3>What You Can Do</h3>
             <ActionButtons>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#1f2937' }}>📝 Design & Customize</h4>
-                <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>📝 Design & Customize</h4>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   Choose templates, colors, and fonts that match your style
                 </p>
               </div>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#1f2937' }}>👥 Wedding Management</h4>
-                <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>👥 Wedding Management</h4>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   Manage guests, track RSVPs, and send invitations
                 </p>
               </div>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#1f2937' }}>🌐 Share Online</h4>
-                <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>🌐 Share Online</h4>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   Get a custom URL to share your invitation easily
                 </p>
               </div>

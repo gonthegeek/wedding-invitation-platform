@@ -17,8 +17,8 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   left: 0;
   width: 280px;
   height: 100vh;
-  background: white;
-  border-right: 1px solid #e2e8f0;
+  background: ${({ theme }) => theme.colors.surface};
+  border-right: 1px solid ${({ theme }) => theme.colors.border};
   z-index: 1000;
   transform: translateX(${props => props.$isOpen ? '0' : '-100%'});
   transition: transform 0.3s ease;
@@ -34,7 +34,7 @@ const SidebarContainer = styled.div<{ $isOpen: boolean }>`
 
 const SidebarHeader = styled.div`
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const Logo = styled.div`
@@ -43,13 +43,13 @@ const Logo = styled.div`
   gap: 0.75rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const LogoIcon = styled.div`
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, ${({ theme }) => theme.colors.primary}, #8b5cf6);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -68,7 +68,7 @@ const NavSection = styled.div`
 const NavSectionTitle = styled.h3`
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0 1.5rem;
@@ -80,16 +80,16 @@ const NavItem = styled(Link)<{ $active: boolean }>`
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.5rem;
-  color: ${props => props.$active ? '#3b82f6' : '#374151'};
-  background: ${props => props.$active ? '#eff6ff' : 'transparent'};
-  border-right: 3px solid ${props => props.$active ? '#3b82f6' : 'transparent'};
+  color: ${props => props.$active ? props.theme.colors.primary : props.theme.colors.textPrimary};
+  background: ${props => props.$active ? props.theme.colors.surfaceAlt : 'transparent'};
+  border-right: 3px solid ${props => props.$active ? props.theme.colors.primary : 'transparent'};
   text-decoration: none;
   font-weight: ${props => props.$active ? '600' : '500'};
   transition: all 0.2s ease;
   
   &:hover {
-    background: #f9fafb;
-    color: #3b82f6;
+    background: ${({ theme }) => theme.colors.surfaceAlt};
+    color: ${({ theme }) => theme.colors.primary};
   }
   
   svg {

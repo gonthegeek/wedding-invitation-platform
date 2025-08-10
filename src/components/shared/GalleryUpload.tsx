@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { X, Plus } from 'lucide-react';
 
 const GalleryContainer = styled.div`
-  border: 2px dashed #d1d5db;
+  border: 2px dashed ${({ theme }) => theme.colors.border};
   border-radius: 12px;
   padding: 1.5rem;
   min-height: 200px;
@@ -21,7 +21,7 @@ const ImageItem = styled.div`
   aspect-ratio: 1;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid #e5e7eb;
+  border: 2px solid ${({ theme }) => theme.colors.border};
 `;
 
 const GalleryImage = styled.img`
@@ -37,7 +37,7 @@ const RemoveButton = styled.button`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: rgba(239, 68, 68, 0.9);
+  background: ${({ theme }) => theme.colors.error};
   color: white;
   border: none;
   display: flex;
@@ -46,26 +46,26 @@ const RemoveButton = styled.button`
   cursor: pointer;
   
   &:hover {
-    background: rgba(220, 38, 38, 0.9);
+    filter: brightness(0.9);
   }
 `;
 
 const AddButton = styled.button`
   aspect-ratio: 1;
-  border: 2px dashed #9ca3af;
+  border: 2px dashed ${({ theme }) => theme.colors.textSecondary};
   border-radius: 8px;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   transition: all 0.3s ease;
   
   &:hover {
-    border-color: #667eea;
-    color: #667eea;
-    background: #f8f9ff;
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+    background: ${({ theme }) => theme.colors.surfaceAlt};
   }
 `;
 
@@ -75,13 +75,13 @@ const HiddenInput = styled.input`
 
 const UploadInfo = styled.div`
   text-align: center;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
   margin-top: 1rem;
 `;
 
 const ErrorMessage = styled.div`
-  color: #ef4444;
+  color: ${({ theme }) => theme.colors.error};
   font-size: 0.875rem;
   margin-top: 0.5rem;
 `;

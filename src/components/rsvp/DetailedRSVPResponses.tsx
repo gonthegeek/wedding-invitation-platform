@@ -26,7 +26,7 @@ const Header = styled.div`
 const Title = styled.h2`
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin: 0;
 `;
 
@@ -39,15 +39,16 @@ const SearchContainer = styled.div`
 const SearchInput = styled.input`
   width: 100%;
   padding: 12px 12px 12px 40px;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   font-size: 14px;
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.textPrimary};
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 3px ${({ theme }) => `${theme.colors.primary}1A`};
   }
 `;
 
@@ -56,14 +57,14 @@ const SearchIcon = styled(Search)`
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   width: 16px;
   height: 16px;
 `;
 
 const GuestCard = styled.div`
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 16px;
@@ -91,7 +92,7 @@ const GuestInfo = styled.div`
 const GuestName = styled.h3`
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin: 0 0 4px 0;
   display: flex;
   align-items: center;
@@ -99,7 +100,7 @@ const GuestName = styled.h3`
 `;
 
 const GuestEmail = styled.div`
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
 `;
 
@@ -122,7 +123,7 @@ const StatusBadge = styled.span<{ $status: string }>`
       case 'maybe':
         return 'background: #fef3c7; color: #92400e;';
       default:
-        return 'background: #f3f4f6; color: #374151;';
+        return `background: ${props.theme.colors.surfaceAlt}; color: ${props.theme.colors.textPrimary};`;
     }
   }}
 `;
@@ -135,14 +136,14 @@ const ResponseSection = styled.div`
 `;
 
 const InfoCard = styled.div`
-  background: #f9fafb;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
   border-radius: 8px;
   padding: 16px;
 `;
 
 const InfoTitle = styled.div`
   font-weight: 600;
-  color: #374151;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -151,7 +152,7 @@ const InfoTitle = styled.div`
 `;
 
 const InfoContent = styled.div`
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
   line-height: 1.5;
 `;
@@ -161,8 +162,8 @@ const PlusOnesList = styled.div`
 `;
 
 const PlusOneItem = styled.div`
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 8px;
@@ -174,14 +175,14 @@ const PlusOneItem = styled.div`
 
 const PlusOneName = styled.div`
   font-weight: 500;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: 4px;
 `;
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 48px 24px;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-style: italic;
 `;
 

@@ -20,10 +20,10 @@ const StatsContainer = styled.div`
 `;
 
 const StatCard = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
@@ -31,7 +31,7 @@ const StatIcon = styled.div<{ color: string }>`
   width: 3rem;
   height: 3rem;
   border-radius: 8px;
-  background: ${props => props.color};
+  background: ${(props) => props.color};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,21 +42,21 @@ const StatIcon = styled.div<{ color: string }>`
 const StatValue = styled.div`
   font-size: 2rem;
   font-weight: 700;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin-bottom: 0.25rem;
 `;
 
 const StatLabel = styled.div`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   font-weight: 500;
 `;
 
 const SearchAndFilters = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   margin-bottom: 2rem;
   display: flex;
   flex-wrap: wrap;
@@ -73,14 +73,15 @@ const SearchContainer = styled.div`
 const SearchInput = styled.input`
   width: 100%;
   padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   font-size: 0.875rem;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
@@ -89,30 +90,30 @@ const SearchIcon = styled(Search)`
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #9ca3af;
+  color: ${(p) => p.theme.colors.textSecondary};
   width: 1rem;
   height: 1rem;
 `;
 
 const FilterSelect = styled.select`
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   font-size: 0.875rem;
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   min-width: 150px;
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const GuestTable = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   overflow: hidden;
 `;
 
@@ -121,11 +122,11 @@ const TableHeader = styled.div`
   grid-template-columns: 2fr 2fr 1.5fr 1fr 1fr 1fr;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background: ${(p) => p.theme.colors.surfaceAlt};
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
   font-weight: 600;
   font-size: 0.875rem;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const TableRow = styled.div<{ $isEven?: boolean }>`
@@ -133,12 +134,12 @@ const TableRow = styled.div<{ $isEven?: boolean }>`
   grid-template-columns: 2fr 2fr 1.5fr 1fr 1fr 1fr;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  background: ${props => props.$isEven ? '#f9fafb' : 'white'};
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => (p.$isEven ? p.theme.colors.surfaceAlt : p.theme.colors.surface)};
   transition: background-color 0.2s ease;
   
   &:hover {
-    background: #f3f4f6;
+    background: ${(p) => p.theme.colors.surfaceAlt};
   }
   
   &:last-child {
@@ -148,11 +149,11 @@ const TableRow = styled.div<{ $isEven?: boolean }>`
 
 const GuestName = styled.div`
   font-weight: 500;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const GuestPhone = styled.div`
-  color: var(--text-secondary);
+  color: ${(p) => p.theme.colors.textSecondary};
   font-size: 0.875rem;
 `;
 
@@ -163,7 +164,7 @@ const StatusBadge = styled.span<{ status: string }>`
   font-weight: 500;
   text-transform: capitalize;
   
-  ${props => {
+  ${(props) => {
     switch (props.status) {
       case 'attending':
         return 'background: #dcfce7; color: #166534;';
@@ -172,7 +173,7 @@ const StatusBadge = styled.span<{ status: string }>`
       case 'maybe':
         return 'background: #fef3c7; color: #d97706;';
       default:
-        return 'background: #f3f4f6; color: #6b7280;';
+        return `background: ${props.theme.colors.surfaceAlt}; color: ${props.theme.colors.textSecondary};`;
     }
   }}
 `;
@@ -186,21 +187,21 @@ const SmallActionButton = styled.button`
   padding: 0.25rem;
   border: none;
   background: none;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s ease;
   
   &:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: ${(p) => p.theme.colors.surfaceAlt};
+    color: ${(p) => p.theme.colors.textPrimary};
   }
 `;
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 1.5rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 interface GuestManagementContentProps {

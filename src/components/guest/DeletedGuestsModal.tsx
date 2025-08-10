@@ -21,7 +21,7 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.colors.surface};
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
@@ -37,12 +37,12 @@ const ModalHeader = styled.div`
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const Title = styled.h2`
   margin: 0;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
   font-size: 1.5rem;
   font-weight: 600;
 `;
@@ -52,11 +52,13 @@ const CloseButton = styled.button`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   padding: 0.25rem;
   
   &:hover {
-    color: #374151;
+    color: ${({ theme }) => theme.colors.textPrimary};
+    background: ${({ theme }) => theme.colors.surfaceAlt};
+    border-radius: 6px;
   }
 `;
 
@@ -69,10 +71,10 @@ const GuestCard = styled.div`
   justify-content: between;
   align-items: center;
   padding: 1rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 8px;
   margin-bottom: 0.75rem;
-  background: #f9fafb;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
 `;
 
 const GuestInfo = styled.div`
@@ -81,23 +83,23 @@ const GuestInfo = styled.div`
 
 const GuestName = styled.div`
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: 0.25rem;
 `;
 
 const GuestDetails = styled.div`
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
 `;
 
 const DeletedDate = styled.div`
-  color: #ef4444;
+  color: ${({ theme }) => theme.colors.error};
   font-size: 0.875rem;
   margin-top: 0.25rem;
 `;
 
 const RestoreButton = styled.button`
-  background: #10b981;
+  background: ${({ theme }) => theme.colors.success};
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -108,11 +110,11 @@ const RestoreButton = styled.button`
   transition: background-color 0.2s;
 
   &:hover:not(:disabled) {
-    background: #059669;
+    filter: brightness(0.9);
   }
 
   &:disabled {
-    background: #9ca3af;
+    background: ${({ theme }) => theme.colors.border};
     cursor: not-allowed;
   }
 `;
@@ -120,19 +122,19 @@ const RestoreButton = styled.button`
 const EmptyState = styled.div`
   text-align: center;
   padding: 2rem;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const LoadingState = styled.div`
   text-align: center;
   padding: 2rem;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const ErrorState = styled.div`
   text-align: center;
   padding: 2rem;
-  color: #ef4444;
+  color: ${({ theme }) => theme.colors.error};
 `;
 
 interface DeletedGuestsModalProps {
