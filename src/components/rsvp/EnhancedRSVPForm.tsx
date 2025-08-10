@@ -12,18 +12,53 @@ const SectionTitle = styled.h3`
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-const PlusOneSection = styled.div`
-  border: 1px solid #e5e7eb;
+// RSVP status options
+const RsvpOptionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+`;
+
+const OptionCard = styled.label<{ $active?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid ${(p) => (p.$active ? p.theme.colors.primary : p.theme.colors.border)};
+  border-radius: 8px;
+  cursor: pointer;
+  background: ${(p) => (p.$active ? p.theme.colors.surfaceAlt : p.theme.colors.surface)};
+`;
+
+const OptionText = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const OptionTitle = styled.div`
+  font-weight: 600;
+  color: ${(p) => p.theme.colors.textPrimary};
+  font-size: 0.875rem;
+`;
+
+const OptionSubtitle = styled.div`
+  color: ${(p) => p.theme.colors.textSecondary};
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+`;
+
+const PlusOneCard = styled.div`
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  background: #f9fafb;
+  background: ${(p) => p.theme.colors.surfaceAlt};
 `;
 
 const PlusOneHeader = styled.div`
@@ -36,11 +71,11 @@ const PlusOneHeader = styled.div`
 const PlusOneTitle = styled.h4`
   font-size: 1rem;
   font-weight: 500;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const RemoveButton = styled.button`
-  background: #dc2626;
+  background: ${(p) => p.theme.colors.error};
   color: white;
   border: none;
   border-radius: 6px;
@@ -52,12 +87,12 @@ const RemoveButton = styled.button`
   gap: 0.25rem;
   
   &:hover {
-    background: #b91c1c;
+    filter: brightness(0.9);
   }
 `;
 
 const AddPlusOneButton = styled.button`
-  background: #3b82f6;
+  background: ${(p) => p.theme.colors.primary};
   color: white;
   border: none;
   border-radius: 8px;
@@ -70,11 +105,11 @@ const AddPlusOneButton = styled.button`
   margin-top: 1rem;
   
   &:hover {
-    background: #2563eb;
+    filter: brightness(0.95);
   }
   
   &:disabled {
-    background: #9ca3af;
+    opacity: 0.6;
     cursor: not-allowed;
   }
 `;
@@ -99,27 +134,30 @@ const InputField = styled.div`
 const Label = styled.label`
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   border-radius: 8px;
   font-size: 1rem;
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   border-radius: 8px;
   font-size: 1rem;
   resize: vertical;
@@ -127,23 +165,22 @@ const TextArea = styled.textarea`
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const Select = styled.select`
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   font-size: 1rem;
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
@@ -163,18 +200,18 @@ const CheckboxOption = styled.label`
   gap: 0.5rem;
   cursor: pointer;
   font-size: 0.875rem;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const ErrorMessage = styled.div`
-  color: #dc2626;
+  color: ${(p) => p.theme.colors.error};
   font-size: 0.875rem;
   margin-top: 0.5rem;
 `;
 
 const InfoText = styled.p`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   margin-top: 0.5rem;
   font-style: italic;
 `;
@@ -182,7 +219,7 @@ const InfoText = styled.p`
 const SubmitButton = styled.button<{ primaryColor?: string; secondaryColor?: string }>`
   width: 100%;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, ${props => props.primaryColor || '#667eea'} 0%, ${props => props.secondaryColor || '#764ba2'} 100%);
+  background: linear-gradient(135deg, ${(props) => props.primaryColor || '#667eea'} 0%, ${(props) => props.secondaryColor || '#764ba2'} 100%);
   color: white;
   border: none;
   border-radius: 50px;
@@ -328,82 +365,43 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       {/* RSVP Status */}
       <FormSection>
         <SectionTitle>{t.rsvp.willYouBeAttending}</SectionTitle>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-          <label style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.75rem', 
-            padding: '1rem', 
-            border: `2px solid ${rsvpStatus === 'attending' ? '#3b82f6' : '#e5e7eb'}`, 
-            borderRadius: '8px',
-            cursor: 'pointer',
-            background: rsvpStatus === 'attending' ? '#eff6ff' : 'white'
-          }}>
+        <RsvpOptionGrid>
+          <OptionCard $active={rsvpStatus === 'attending'}>
             <input
               type="radio"
               value="attending"
               {...register('rsvpStatus', { required: t.rsvp.pleaseSelectAttendanceStatus })}
             />
-            <div>
-              <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.875rem' }}>
-                {t.rsvp.yesIllBeThere}
-              </div>
-              <div style={{ color: '#6b7280', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                {t.rsvp.cantWaitToCelebrate}
-              </div>
-            </div>
-          </label>
+            <OptionText>
+              <OptionTitle>{t.rsvp.yesIllBeThere}</OptionTitle>
+              <OptionSubtitle>{t.rsvp.cantWaitToCelebrate}</OptionSubtitle>
+            </OptionText>
+          </OptionCard>
 
-          <label style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.75rem', 
-            padding: '1rem', 
-            border: `2px solid ${rsvpStatus === 'not_attending' ? '#3b82f6' : '#e5e7eb'}`, 
-            borderRadius: '8px',
-            cursor: 'pointer',
-            background: rsvpStatus === 'not_attending' ? '#eff6ff' : 'white'
-          }}>
+          <OptionCard $active={rsvpStatus === 'not_attending'}>
             <input
               type="radio"
               value="not_attending"
               {...register('rsvpStatus', { required: t.rsvp.pleaseSelectAttendanceStatus })}
             />
-            <div>
-              <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.875rem' }}>
-                {t.rsvp.sorryCannotMakeIt}
-              </div>
-              <div style={{ color: '#6b7280', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                {t.rsvp.willBeThereInSpirit}
-              </div>
-            </div>
-          </label>
+            <OptionText>
+              <OptionTitle>{t.rsvp.sorryCannotMakeIt}</OptionTitle>
+              <OptionSubtitle>{t.rsvp.willBeThereInSpirit}</OptionSubtitle>
+            </OptionText>
+          </OptionCard>
 
-          <label style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.75rem', 
-            padding: '1rem', 
-            border: `2px solid ${rsvpStatus === 'maybe' ? '#3b82f6' : '#e5e7eb'}`, 
-            borderRadius: '8px',
-            cursor: 'pointer',
-            background: rsvpStatus === 'maybe' ? '#eff6ff' : 'white'
-          }}>
+          <OptionCard $active={rsvpStatus === 'maybe'}>
             <input
               type="radio"
               value="maybe"
               {...register('rsvpStatus', { required: t.rsvp.pleaseSelectAttendanceStatus })}
             />
-            <div>
-              <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.875rem' }}>
-                {t.rsvp.maybe}
-              </div>
-              <div style={{ color: '#6b7280', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-                {t.rsvp.stillFiguringOut}
-              </div>
-            </div>
-          </label>
-        </div>
+            <OptionText>
+              <OptionTitle>{t.rsvp.maybe}</OptionTitle>
+              <OptionSubtitle>{t.rsvp.stillFiguringOut}</OptionSubtitle>
+            </OptionText>
+          </OptionCard>
+        </RsvpOptionGrid>
         {errors.rsvpStatus && (
           <ErrorMessage>{errors.rsvpStatus.message}</ErrorMessage>
         )}
@@ -437,13 +435,13 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
         <FormSection>
           <SectionTitle>
             <span>{t.rsvp.plusOnes}</span>
-            <span style={{ fontSize: '0.875rem', fontWeight: 'normal', color: '#6b7280' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: 'normal', color: 'inherit' }}>
               ({t.rsvp.maximum} {maxPlusOnes})
             </span>
           </SectionTitle>
           
           {fields.map((field, index) => (
-            <PlusOneSection key={field.id}>
+            <PlusOneCard key={field.id}>
               <PlusOneHeader>
                 <PlusOneTitle>{t.rsvp.plusOne} {index + 1}</PlusOneTitle>
                 <RemoveButton onClick={() => removePlusOne(index)} type="button">
@@ -487,7 +485,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
                   placeholder={t.rsvp.anyDietaryRestrictions}
                 />
               </InputField>
-            </PlusOneSection>
+            </PlusOneCard>
           ))}
           
           {fields.length < maxPlusOnes && (
