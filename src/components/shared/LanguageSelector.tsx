@@ -35,7 +35,7 @@ const LanguageButton = styled.button`
   }
 `;
 
-const LanguageDropdown = styled.div<{ isOpen: boolean }>`
+const LanguageDropdown = styled.div<{ $isOpen: boolean }>`
   position: absolute;
   top: 100%;
   right: 0;
@@ -46,20 +46,20 @@ const LanguageDropdown = styled.div<{ isOpen: boolean }>`
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   min-width: 140px;
   z-index: 1000;
-  opacity: ${props => props.isOpen ? 1 : 0};
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
-  transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(-10px)'};
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-10px)'};
   transition: all 0.2s ease;
 `;
 
-const LanguageOption = styled.button<{ isSelected: boolean }>`
+const LanguageOption = styled.button<{ $isSelected: boolean }>`
   width: 100%;
   padding: 0.75rem 1rem;
   text-align: left;
   border: none;
-  background: ${props => props.isSelected ? '#f8fafc' : 'transparent'};
-  color: ${props => props.isSelected ? '#3b82f6' : '#374151'};
-  font-weight: ${props => props.isSelected ? '500' : '400'};
+  background: ${props => props.$isSelected ? '#f8fafc' : 'transparent'};
+  color: ${props => props.$isSelected ? '#3b82f6' : '#374151'};
+  font-weight: ${props => props.$isSelected ? '500' : '400'};
   cursor: pointer;
   transition: all 0.2s ease;
 
@@ -130,11 +130,11 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         {currentLanguage?.name}
       </LanguageButton>
       
-      <LanguageDropdown isOpen={isOpen}>
+      <LanguageDropdown $isOpen={isOpen}>
         {languages.map((lang) => (
           <LanguageOption
             key={lang.code}
-            isSelected={language === lang.code}
+            $isSelected={language === lang.code}
             onClick={() => handleLanguageChange(lang.code)}
           >
             <FlagEmoji>{lang.flag}</FlagEmoji>

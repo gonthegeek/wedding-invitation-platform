@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Modal } from '../shared/Modal';
 import { GuestService } from '../../services/guestService';
+import { isValidPhoneNumber } from '../../utils/phoneUtils';
 import type { Guest, RSVPStatus } from '../../types/guest';
 
 interface EditGuestModalProps {
@@ -185,6 +186,7 @@ interface FormErrors {
   firstName?: string;
   lastName?: string;
   email?: string;
+  phone?: string;
 }
 
 export const EditGuestModal: React.FC<EditGuestModalProps> = ({ 
@@ -212,6 +214,7 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
   // Populate form when guest changes
   useEffect(() => {
     if (guest) {
+      console.log('EditGuestModal: Guest prop changed, updating form data:', guest);
       setFormData({
         firstName: guest.firstName,
         lastName: guest.lastName,
@@ -224,7 +227,8 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
         specialRequests: guest.specialRequests || '',
       });
     }
-  }, [guest]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guest?.id, guest?.phone, guest?.updatedAt]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -237,17 +241,20 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
       newErrors.lastName = 'Last name is required';
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!isValidPhoneNumber(formData.phone)) {
+      newErrors.phone = 'Please enter a valid phone number (include country code if international)';
+    }
+
+    // Email is optional, but if provided, validate it
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  };  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!guest || !validateForm()) {
@@ -261,8 +268,8 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
       const updates: Partial<Guest> = {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
-        email: formData.email.trim().toLowerCase(),
-        phone: formData.phone.trim() || undefined,
+        email: formData.email.trim() || '', // Email is optional now
+        phone: formData.phone.trim(),
         rsvpStatus: formData.rsvpStatus as RSVPStatus,
         attendingCeremony: formData.attendingCeremony,
         attendingReception: formData.attendingReception,
@@ -281,7 +288,7 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error updating guest:', error);
-      setErrors({ email: 'Failed to update guest. Please try again.' });
+      setErrors({ phone: 'Failed to update guest. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -362,25 +369,26 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="email">Email Address *</Label>
-          <Input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            $error={!!errors.email}
-            disabled={isSubmitting || isDeleting}
-          />
-          {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
-        </FormGroup>
-
-        <FormGroup>
-          <Label htmlFor="phone">Phone Number</Label>
+          <Label htmlFor="phone">Phone Number *</Label>
           <Input
             id="phone"
             type="tel"
             value={formData.phone}
             onChange={(e) => handleInputChange('phone', e.target.value)}
+            $error={!!errors.phone}
+            disabled={isSubmitting || isDeleting}
+            placeholder="e.g., +1 (555) 123-4567 or 555-123-4567"
+          />
+          {errors.phone && <ErrorMessage>{errors.phone}</ErrorMessage>}
+        </FormGroup>
+
+        <FormGroup>
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
             disabled={isSubmitting || isDeleting}
             placeholder="Optional"
           />

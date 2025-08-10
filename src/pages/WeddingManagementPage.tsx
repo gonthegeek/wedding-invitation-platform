@@ -170,8 +170,8 @@ const WeddingManagementPage: React.FC = () => {
   // Get wedding ID from the hook instead of hardcoding
   const weddingId = wedding?.id;
   
-  // Get guest data for modals
-  const { guests, refreshGuests, getDeletedGuests, restoreGuest } = useGuest(weddingId);
+  // Get guest data for modals and share with GuestManagementContent
+  const { guests, loading, error, stats, refreshGuests, getDeletedGuests, restoreGuest, deleteGuest } = useGuest(weddingId);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -361,6 +361,14 @@ const WeddingManagementPage: React.FC = () => {
             <GuestManagementContent 
               weddingId={weddingId} 
               onEditGuest={handleEditGuest}
+              guests={guests}
+              loading={loading}
+              error={error}
+              stats={stats}
+              refreshGuests={refreshGuests}
+              getDeletedGuests={getDeletedGuests}
+              restoreGuest={restoreGuest}
+              deleteGuest={deleteGuest}
             />
           </>
         )}

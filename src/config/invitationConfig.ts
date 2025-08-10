@@ -1,3 +1,5 @@
+import { cleanPhoneNumber, formatForWhatsApp } from '../utils/phoneUtils';
+
 // Configuration for invitation sending methods
 export const invitationConfig = {
   // Email configuration
@@ -48,11 +50,25 @@ export const invitationConfig = {
 
 // Helper functions for generating sharing URLs
 export const generateSharingURL = {
-  whatsapp: (message: string) => 
-    `https://wa.me/?text=${encodeURIComponent(message)}`,
+  whatsapp: (message: string, phoneNumber?: string) => {
+    if (phoneNumber) {
+      const whatsappPhone = formatForWhatsApp(phoneNumber);
+      return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
+    }
+    
+    // Fallback to generic WhatsApp share if no phone number
+    return `https://wa.me/?text=${encodeURIComponent(message)}`;
+  },
   
-  sms: (message: string) => 
-    `sms:?body=${encodeURIComponent(message)}`,
+  sms: (message: string, phoneNumber?: string) => {
+    if (phoneNumber) {
+      const cleanPhone = cleanPhoneNumber(phoneNumber);
+      return `sms:${cleanPhone}?body=${encodeURIComponent(message)}`;
+    }
+    
+    // Fallback to generic SMS if no phone number
+    return `sms:?body=${encodeURIComponent(message)}`;
+  },
   
   email: (subject: string, body: string) => 
     `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,

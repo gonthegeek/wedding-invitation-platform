@@ -145,7 +145,7 @@ const GuestName = styled.div`
   color: var(--text-primary);
 `;
 
-const GuestEmail = styled.div`
+const GuestPhone = styled.div`
   font-size: 0.875rem;
   color: var(--text-secondary);
 `;
@@ -472,9 +472,15 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
   };
 
   const shareViaWhatsApp = async (guest: Guest) => {
+    // Check if guest has a phone number
+    if (!guest.phone) {
+      alert(`${guest.firstName} ${guest.lastName} doesn't have a phone number. Please add one first or use the copy URL option.`);
+      return;
+    }
+
     const url = getInvitationURL(guest);
     const message = `Hi ${guest.firstName}! You're invited to our wedding! 💒 Please RSVP here: ${url}`;
-    const whatsappURL = generateSharingURL.whatsapp(message);
+    const whatsappURL = generateSharingURL.whatsapp(message, guest.phone);
     window.open(whatsappURL, '_blank');
     
     // Mark guest as invited when URL is shared
@@ -482,9 +488,15 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
   };
 
   const shareViaSMS = async (guest: Guest) => {
+    // Check if guest has a phone number
+    if (!guest.phone) {
+      alert(`${guest.firstName} ${guest.lastName} doesn't have a phone number. Please add one first or use the copy URL option.`);
+      return;
+    }
+
     const url = getInvitationURL(guest);
     const message = `Hi ${guest.firstName}! You're invited to our wedding! Please RSVP: ${url}`;
-    const smsURL = generateSharingURL.sms(message);
+    const smsURL = generateSharingURL.sms(message, guest.phone);
     window.open(smsURL, '_blank');
     
     // Mark guest as invited when URL is shared
@@ -648,7 +660,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                     />
                     <GuestInfo>
                       <GuestName>{guest.firstName} {guest.lastName}</GuestName>
-                      <GuestEmail>{guest.email}</GuestEmail>
+                      <GuestPhone>{guest.phone || 'No phone provided'}</GuestPhone>
                     </GuestInfo>
                     <GuestStatus $status={guest.remindersSent > 0 ? 'sent' : 'pending'}>
                       {guest.remindersSent > 0 ? `Sent (${guest.remindersSent}x)` : 'Pending'}
@@ -733,9 +745,11 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
             </SectionTitle>
             <SectionDescription>
               Copy individual invitation URLs to share via WhatsApp, text message, or other channels. 
+              <br />
+              <strong>📱 Direct Integration:</strong> WhatsApp and SMS buttons will open directly to the guest's phone number if available.
               {selectedGuestsList.some(g => g.remindersSent > 0) 
-                ? 'Reminder counts will be updated when you copy/share URLs, helping you track follow-ups.'
-                : 'Guests will be automatically marked as "invited" when you copy/share their URLs, or you can use "Mark All as Invited" for bulk tracking.'
+                ? ' Reminder counts will be updated when you copy/share URLs, helping you track follow-ups.'
+                : ' Guests will be automatically marked as "invited" when you copy/share their URLs, or you can use "Mark All as Invited" for bulk tracking.'
               }
             </SectionDescription>
 
@@ -751,18 +765,22 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                       <SocialButton 
                         $color="#25D366" 
                         onClick={() => shareViaWhatsApp(guest)}
-                        title="Share via WhatsApp"
+                        title={guest.phone ? "Send WhatsApp message directly" : "No phone number - add one to enable WhatsApp"}
+                        disabled={!guest.phone}
+                        style={{ opacity: guest.phone ? 1 : 0.5, cursor: guest.phone ? 'pointer' : 'not-allowed' }}
                       >
                         <MessageCircle size={12} />
-                        WhatsApp
+                        WhatsApp {!guest.phone && '(No phone)'}
                       </SocialButton>
                       <SocialButton 
                         $color="#007AFF" 
                         onClick={() => shareViaSMS(guest)}
-                        title="Share via SMS"
+                        title={guest.phone ? "Send SMS message directly" : "No phone number - add one to enable SMS"}
+                        disabled={!guest.phone}
+                        style={{ opacity: guest.phone ? 1 : 0.5, cursor: guest.phone ? 'pointer' : 'not-allowed' }}
                       >
                         <Smartphone size={12} />
-                        SMS
+                        SMS {!guest.phone && '(No phone)'}
                       </SocialButton>
                     </SocialButtons>
                   </div>

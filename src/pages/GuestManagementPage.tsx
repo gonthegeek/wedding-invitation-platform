@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Layout } from '../components/shared/Layout';
 import { useWedding } from '../hooks/useWedding';
 import { useGuest } from '../hooks/useGuest';
+import { GuestService } from '../services/guestService';
 import { AddGuestModal } from '../components/guest/AddGuestModal';
 import { EditGuestModal } from '../components/guest/EditGuestModal';
 import { SendInvitationsModal } from '../components/guest/SendInvitationsModal';
@@ -210,12 +211,12 @@ const GuestName = styled.div`
   color: var(--text-primary);
 `;
 
-const GuestEmail = styled.div`
+const GuestPhone = styled.div`
   color: var(--text-secondary);
   font-size: 0.875rem;
 `;
 
-const RSVPStatus = styled.span<{ status: string }>`
+const RSVPStatus = styled.span<{ $status: string }>`
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.75rem;
@@ -223,7 +224,7 @@ const RSVPStatus = styled.span<{ status: string }>`
   text-transform: uppercase;
   
   ${props => {
-    switch (props.status) {
+    switch (props.$status) {
       case 'attending':
         return `
           background: #dcfce7;
@@ -275,8 +276,13 @@ const LoadingSpinner = styled.div`
 `;
 
 export const GuestManagementPage: React.FC = () => {
+  console.log('🚀 GuestManagementPage: Component is loading...');
+  
   const { wedding } = useWedding();
+  console.log('🏰 Wedding data:', wedding?.id);
+  
   const { guests, loading, error, stats, refreshGuests, getDeletedGuests, restoreGuest } = useGuest(wedding?.id);
+  console.log('👥 Guests data:', { guestCount: guests.length, loading, error });
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [isAddGuestModalOpen, setIsAddGuestModalOpen] = useState(false);
@@ -284,6 +290,23 @@ export const GuestManagementPage: React.FC = () => {
   const [isSendInvitationsModalOpen, setIsSendInvitationsModalOpen] = useState(false);
   const [isDeletedGuestsModalOpen, setIsDeletedGuestsModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
+
+  // Update selectedGuest when guests array changes (after refresh)
+  useEffect(() => {
+    if (selectedGuest && guests.length > 0) {
+      const updatedGuest = guests.find(g => g.id === selectedGuest.id);
+      if (updatedGuest) {
+        console.log('GuestManagementPage: Updating selectedGuest after refresh:', {
+          oldPhone: selectedGuest.phone,
+          newPhone: updatedGuest.phone,
+          updated: updatedGuest
+        });
+        // Always update to ensure we have the latest data
+        setSelectedGuest(updatedGuest);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guests]); // Intentionally excluding selectedGuest to avoid infinite loop
 
   // Modal handlers
   const handleAddGuest = () => {
@@ -307,9 +330,28 @@ export const GuestManagementPage: React.FC = () => {
     refreshGuests(); // Refresh the guest list
   };
 
-  const handleGuestUpdated = () => {
-    refreshGuests(); // Refresh the guest list
-    setSelectedGuest(null);
+  const handleGuestUpdated = async () => {
+    console.log('GuestManagementPage: handleGuestUpdated called, refreshing guests...');
+    
+    // Store the selected guest ID before refresh
+    const selectedGuestId = selectedGuest?.id;
+    
+    await refreshGuests(); // Refresh the guest list
+    
+    // Force update the selectedGuest by re-fetching the specific guest
+    if (selectedGuestId && wedding?.id) {
+      try {
+        const updatedGuest = await GuestService.getGuest(selectedGuestId);
+        if (updatedGuest) {
+          console.log('GuestManagementPage: Found updated guest data:', updatedGuest.phone);
+          setSelectedGuest(updatedGuest);
+        }
+      } catch (error) {
+        console.error('Error fetching updated guest:', error);
+      }
+    }
+    
+    console.log('GuestManagementPage: Guests refresh completed, selectedGuestId:', selectedGuestId);
   };
 
   const handleInvitationsSent = () => {
@@ -320,7 +362,7 @@ export const GuestManagementPage: React.FC = () => {
   const filteredGuests = guests.filter(guest => {
     const matchesSearch = !searchTerm || 
       `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guest.email.toLowerCase().includes(searchTerm.toLowerCase());
+      guest.phone?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = filterStatus === 'all' || guest.rsvpStatus === filterStatus;
     
@@ -431,7 +473,7 @@ export const GuestManagementPage: React.FC = () => {
             <SearchIcon />
             <SearchInput
               type="text"
-              placeholder="Search guests by name or email..."
+              placeholder="Search guests by name or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -451,7 +493,7 @@ export const GuestManagementPage: React.FC = () => {
         <GuestsTable>
           <TableHeader>
             <div>Name</div>
-            <div>Email</div>
+            <div>Phone</div>
             <div className="hide-mobile">RSVP Status</div>
             <div className="hide-mobile">Plus Ones</div>
             <div className="hide-tablet">Invite Code</div>
@@ -478,13 +520,13 @@ export const GuestManagementPage: React.FC = () => {
               <TableRow key={guest.id}>
                 <div>
                   <GuestName>{guest.firstName} {guest.lastName}</GuestName>
-                  <GuestEmail className="show-mobile">{guest.email}</GuestEmail>
+                  <GuestPhone className="show-mobile">{guest.phone || 'No phone'}</GuestPhone>
                 </div>
                 <div className="hide-mobile">
-                  <GuestEmail>{guest.email}</GuestEmail>
+                  <GuestPhone>{guest.phone || 'No phone'}</GuestPhone>
                 </div>
                 <div className="hide-mobile">
-                  <RSVPStatus status={guest.rsvpStatus}>
+                  <RSVPStatus $status={guest.rsvpStatus}>
                     {formatRSVPStatus(guest.rsvpStatus)}
                   </RSVPStatus>
                 </div>
@@ -518,6 +560,7 @@ export const GuestManagementPage: React.FC = () => {
 
         {/* Edit Guest Modal */}
         <EditGuestModal
+          key={selectedGuest?.id || 'no-guest'}
           isOpen={isEditGuestModalOpen}
           onClose={() => setIsEditGuestModalOpen(false)}
           guest={selectedGuest}

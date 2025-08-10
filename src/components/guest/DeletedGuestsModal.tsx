@@ -233,8 +233,8 @@ export function DeletedGuestsModal({
                     {guest.firstName} {guest.lastName}
                   </GuestName>
                   <GuestDetails>
-                    {guest.email}
-                    {guest.phone && ` • ${guest.phone}`}
+                    {guest.phone || 'No phone provided'}
+                    {guest.email && ` • ${guest.email}`}
                   </GuestDetails>
                   <DeletedDate>
                     Deleted: {formatDate(guest.deletedAt)}

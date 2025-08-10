@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Modal } from '../shared/Modal';
 import { GuestService } from '../../services/guestService';
+import { isValidPhoneNumber } from '../../utils/phoneUtils';
 import type { Guest } from '../../types/guest';
 
 interface AddGuestModalProps {
@@ -119,7 +120,7 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 interface FormData {
   firstName: string;
   lastName: string;
-  email: string;
+  phone: string;
   groupName: string;
   allowPlusOnes: boolean;
   maxPlusOnes: number;
@@ -128,7 +129,7 @@ interface FormData {
 interface FormErrors {
   firstName?: string;
   lastName?: string;
-  email?: string;
+  phone?: string;
   groupName?: string;
 }
 
@@ -141,7 +142,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
-    email: '',
+    phone: '',
     groupName: '',
     allowPlusOnes: false,
     maxPlusOnes: 0,
@@ -161,10 +162,10 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       newErrors.lastName = 'Last name is required';
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!isValidPhoneNumber(formData.phone)) {
+      newErrors.phone = 'Please enter a valid phone number (include country code if international)';
     }
 
     if (!formData.groupName.trim()) {
@@ -197,7 +198,8 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         weddingId,
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
-        email: formData.email.trim().toLowerCase(),
+        email: '', // Not using email anymore, focusing on phone
+        phone: formData.phone.trim(),
         groupId,
         rsvpStatus: 'pending',
         attendingCeremony: false,
@@ -212,7 +214,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       setFormData({
         firstName: '',
         lastName: '',
-        email: '',
+        phone: '',
         groupName: '',
         allowPlusOnes: false,
         maxPlusOnes: 0,
@@ -222,7 +224,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error adding guest:', error);
-      setErrors({ email: 'Failed to add guest. Please try again.' });
+      setErrors({ phone: 'Failed to add guest. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -242,7 +244,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       setFormData({
         firstName: '',
         lastName: '',
-        email: '',
+        phone: '',
         groupName: '',
         allowPlusOnes: false,
         maxPlusOnes: 0,
@@ -282,16 +284,17 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="email">Email Address *</Label>
+          <Label htmlFor="phone">Phone Number *</Label>
           <Input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            $error={!!errors.email}
+            id="phone"
+            type="tel"
+            value={formData.phone}
+            onChange={(e) => handleInputChange('phone', e.target.value)}
+            $error={!!errors.phone}
             disabled={isSubmitting}
+            placeholder="e.g., +1 (555) 123-4567 or 555-123-4567"
           />
-          {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
+          {errors.phone && <ErrorMessage>{errors.phone}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>

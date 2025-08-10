@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useGuest } from '../../hooks/useGuest';
 import { AddGuestModal } from './AddGuestModal';
@@ -128,13 +128,13 @@ const TableHeader = styled.div`
   color: #374151;
 `;
 
-const TableRow = styled.div<{ isEven?: boolean }>`
+const TableRow = styled.div<{ $isEven?: boolean }>`
   display: grid;
   grid-template-columns: 2fr 2fr 1.5fr 1fr 1fr 1fr;
   gap: 1rem;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #f3f4f6;
-  background: ${props => props.isEven ? '#f9fafb' : 'white'};
+  background: ${props => props.$isEven ? '#f9fafb' : 'white'};
   transition: background-color 0.2s ease;
   
   &:hover {
@@ -151,8 +151,8 @@ const GuestName = styled.div`
   color: #1f2937;
 `;
 
-const GuestEmail = styled.div`
-  color: #6b7280;
+const GuestPhone = styled.div`
+  color: var(--text-secondary);
   font-size: 0.875rem;
 `;
 
@@ -206,13 +206,50 @@ const EmptyState = styled.div`
 interface GuestManagementContentProps {
   weddingId: string;
   onEditGuest?: (guest: Guest) => void;
+  // Optional overrides to use shared state from parent instead of internal hook
+  guests?: Guest[];
+  loading?: boolean;
+  error?: string | null;
+  stats?: {
+    totalGuests: number;
+    totalInvited: number;
+    respondedCount: number;
+    attendingCount: number;
+    notAttendingCount: number;
+    maybeCount: number;
+    totalPlusOnes: number;
+    responseRate: number;
+    attendanceRate: number;
+  } | null;
+  refreshGuests?: () => Promise<void>;
+  getDeletedGuests?: () => Promise<Guest[]>;
+  restoreGuest?: (guestId: string) => Promise<boolean>;
+  deleteGuest?: (guestId: string) => Promise<boolean>;
 }
 
 export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({ 
   weddingId, 
-  onEditGuest: externalOnEditGuest
+  onEditGuest: externalOnEditGuest,
+  guests: guestsOverride,
+  loading: loadingOverride,
+  error: errorOverride,
+  stats: statsOverride,
+  refreshGuests: refreshGuestsOverride,
+  getDeletedGuests: getDeletedGuestsOverride,
+  restoreGuest: restoreGuestOverride,
+  deleteGuest: deleteGuestOverride,
 }) => {
-  const { guests, loading, error, stats, refreshGuests, getDeletedGuests, restoreGuest, deleteGuest } = useGuest(weddingId);
+  // Always initialize hook, but prefer overrides when provided
+  const hook = useGuest(weddingId);
+  const guests = guestsOverride ?? hook.guests;
+  const loading = loadingOverride ?? hook.loading;
+  const error = errorOverride ?? hook.error;
+  const stats = statsOverride ?? hook.stats;
+  const refreshGuests = refreshGuestsOverride ?? hook.refreshGuests;
+  const getDeletedGuests = getDeletedGuestsOverride ?? hook.getDeletedGuests;
+  const restoreGuest = restoreGuestOverride ?? hook.restoreGuest;
+  const deleteGuest = deleteGuestOverride ?? hook.deleteGuest;
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isAddGuestModalOpen, setIsAddGuestModalOpen] = useState(false);
@@ -221,12 +258,23 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
   const [isDeletedGuestsModalOpen, setIsDeletedGuestsModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
 
+  // Update selectedGuest when guests array changes (after refresh)
+  useEffect(() => {
+    if (selectedGuest && guests.length > 0) {
+      const updatedGuest = guests.find(g => g.id === selectedGuest.id);
+      if (updatedGuest) {
+        setSelectedGuest(updatedGuest);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guests]);
+
   // Filter guests based on search and status
   const filteredGuests = guests.filter(guest => {
     const matchesSearch = 
       guest.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       guest.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guest.email.toLowerCase().includes(searchTerm.toLowerCase());
+      guest.phone?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || guest.rsvpStatus === statusFilter;
     
@@ -250,9 +298,8 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
     refreshGuests(); // Refresh the guest list
   };
 
-  const handleGuestUpdated = () => {
-    refreshGuests(); // Refresh the guest list
-    setSelectedGuest(null);
+  const handleGuestUpdated = async () => {
+    await refreshGuests(); // Refresh the guest list
   };
 
   const handleInvitationsSent = () => {
@@ -335,7 +382,7 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
           <SearchIcon />
           <SearchInput
             type="text"
-            placeholder="Search guests by name or email..."
+            placeholder="Search guests by name or phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -356,7 +403,7 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
       <GuestTable>
         <TableHeader>
           <div>Name</div>
-          <div>Email</div>
+          <div>Phone</div>
           <div>Status</div>
           <div>Plus Ones</div>
           <div>Invite Code</div>
@@ -372,9 +419,9 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
           </EmptyState>
         ) : (
           filteredGuests.map((guest, index) => (
-            <TableRow key={guest.id} isEven={index % 2 === 1}>
+            <TableRow key={guest.id} $isEven={index % 2 === 1}>
               <GuestName>{guest.firstName} {guest.lastName}</GuestName>
-              <GuestEmail>{guest.email}</GuestEmail>
+              <GuestPhone>{guest.phone || 'No phone'}</GuestPhone>
               <div>
                 <StatusBadge status={guest.rsvpStatus}>
                   {guest.rsvpStatus.replace('_', ' ')}

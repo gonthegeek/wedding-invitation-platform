@@ -84,9 +84,9 @@ export class GuestService {
       
       Object.entries(updates).forEach(([key, value]) => {
         if (value !== undefined) {
-          // Handle empty strings for optional fields
+          // Handle empty strings for optional fields (phone is now required, so don't skip it)
           if (typeof value === 'string' && value.trim() === '' && 
-              ['phone', 'dietaryRestrictions', 'specialRequests'].includes(key)) {
+              ['dietaryRestrictions', 'specialRequests'].includes(key)) {
             // Don't include empty optional string fields - this effectively removes them
             console.log(`Skipping empty optional field: ${key}`);
             return;
