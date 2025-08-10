@@ -12,6 +12,7 @@ import { useTranslation, useLanguage } from '../hooks/useLanguage';
 import { formatDate, formatTime } from '../utils/i18nUtils';
 import type { Wedding, Guest } from '../types';
 import { useThemeContext } from '../contexts/ThemeContextBase';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
 // Animations
 const fadeIn = keyframes`
@@ -754,6 +755,17 @@ export const PublicWeddingInvitation: React.FC = () => {
   const { language } = useLanguage();
   const { mode, resolvedMode, setMode } = useThemeContext();
 
+  // Dynamic translation for user-provided content
+  const loveQuoteT = useAutoTranslate(wedding?.settings?.loveQuote, { domain: wedding ? `wedding:${wedding.id}:loveQuote` : 'wedding:loveQuote' });
+  const rsvpTitleT = useAutoTranslate(wedding?.settings?.rsvpTitle, { domain: wedding ? `wedding:${wedding.id}:rsvpTitle` : 'wedding:rsvpTitle' });
+  const rsvpMessageT = useAutoTranslate(wedding?.settings?.rsvpMessage, { domain: wedding ? `wedding:${wedding.id}:rsvpMessage` : 'wedding:rsvpMessage' });
+  const customMessageT = useAutoTranslate(wedding?.settings?.customMessage, { domain: wedding ? `wedding:${wedding.id}:customMessage` : 'wedding:customMessage' });
+  const childrenNoteT = useAutoTranslate(wedding?.settings?.childrenNote, { domain: wedding ? `wedding:${wedding.id}:childrenNote` : 'wedding:childrenNote' });
+  const childrenNoteDetailsT = useAutoTranslate(wedding?.settings?.childrenNoteDetails, { domain: wedding ? `wedding:${wedding.id}:childrenNoteDetails` : 'wedding:childrenNoteDetails' });
+  const hotelDescriptionT = useAutoTranslate(wedding?.settings?.hotelInfo?.description, { domain: wedding ? `wedding:${wedding.id}:hotelDescription` : 'wedding:hotelDescription' });
+  const dressCodeDescriptionT = useAutoTranslate(wedding?.settings?.dressCodeDescription, { domain: wedding ? `wedding:${wedding.id}:dressCodeDescription` : 'wedding:dressCodeDescription' });
+  const rsvpButtonTextT = useAutoTranslate(wedding?.settings?.rsvpButtonText, { domain: wedding ? `wedding:${wedding.id}:rsvpButtonText` : 'wedding:rsvpButtonText' });
+
   const cycleTheme = () => {
     const next = mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system';
     setMode(next);
@@ -985,7 +997,7 @@ export const PublicWeddingInvitation: React.FC = () => {
         </WeddingDate>
         {(wedding.settings?.sectionVisibility?.loveQuote !== false) && (
           <LoveQuote>
-            {wedding.settings?.loveQuote || t.invitation.loveQuote}
+            {loveQuoteT.text || t.invitation.loveQuote}
           </LoveQuote>
         )}
         <HeartIcon size={48} secondaryColor={secondaryColor} />
@@ -1165,7 +1177,7 @@ export const PublicWeddingInvitation: React.FC = () => {
                   <EventLocation>
                     {wedding.settings?.dressCodeDescription && (
                       <>
-                        {wedding.settings.dressCodeDescription}
+                        {dressCodeDescriptionT.text}
                         <br />
                       </>
                     )}
@@ -1183,7 +1195,7 @@ export const PublicWeddingInvitation: React.FC = () => {
         <Section>
           <SectionInner>
             <div style={{ maxWidth: 800, margin: '0 auto', fontSize: '1.1rem', color: '#555', lineHeight: 1.7, textAlign: 'center' }}>
-              {wedding.settings.customMessage}
+              {customMessageT.text}
             </div>
           </SectionInner>
         </Section>
@@ -1193,9 +1205,9 @@ export const PublicWeddingInvitation: React.FC = () => {
       {(wedding.settings?.sectionVisibility?.rsvp !== false) && (
         <RSVPSection>
           <SectionInner>
-            <SectionTitle>{wedding.settings?.rsvpTitle || t.invitation.rsvpTitle}</SectionTitle>
+            <SectionTitle>{rsvpTitleT.text || t.invitation.rsvpTitle}</SectionTitle>
             <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem auto' }}>
-              {wedding.settings?.rsvpMessage || t.invitation.rsvpMessage}
+              {rsvpMessageT.text || t.invitation.rsvpMessage}
             </p>
 
             {/* Show RSVP Form for authenticated guests */}
@@ -1279,7 +1291,7 @@ export const PublicWeddingInvitation: React.FC = () => {
               <>
                 <RSVPButton href={isDemo ? "#" : `/rsvp/${wedding.subdomain}-invitation`} primaryColor={primaryColor} secondaryColor={secondaryColor}>
                   <MessageCircle size={24} />
-                  {wedding.settings?.rsvpButtonText || t.invitation.confirmAttendance}
+                  {rsvpButtonTextT.text || t.invitation.confirmAttendance}
                 </RSVPButton>
                 {isDemo && (
                   <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '1rem', fontStyle: 'italic' }}>
@@ -1290,8 +1302,8 @@ export const PublicWeddingInvitation: React.FC = () => {
             )}
             
             <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#fff3cd', borderRadius: '10px', maxWidth: '500px', margin: '2rem auto 0', fontSize: '0.9rem', color: '#856404' }}>
-              <strong>{wedding.settings?.childrenNote || t.invitation.childrenNote}</strong><br />
-              {wedding.settings?.childrenNoteDetails || t.invitation.childrenNoteDetails}
+              <strong>{childrenNoteT.text || t.invitation.childrenNote}</strong><br />
+              {childrenNoteDetailsT.text || t.invitation.childrenNoteDetails}
             </div>
           </SectionInner>
         </RSVPSection>
@@ -1383,7 +1395,7 @@ export const PublicWeddingInvitation: React.FC = () => {
                     <HotelName>{wedding.settings.hotelInfo.name}</HotelName>
                     <HotelAddress>{wedding.settings.hotelInfo.address}</HotelAddress>
                     {wedding.settings.hotelInfo.description && (
-                      <HotelDescription>{wedding.settings.hotelInfo.description}</HotelDescription>
+                      <HotelDescription>{hotelDescriptionT.text}</HotelDescription>
                     )}
                     <HotelBookingInfo>
                       {wedding.settings.hotelInfo.phone && (

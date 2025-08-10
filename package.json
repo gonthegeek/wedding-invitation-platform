@@ -13,7 +13,8 @@
     "functions:build": "cd functions && npm run build",
     "functions:serve": "cd functions && npm run serve",
     "functions:deploy": "cd functions && npm run deploy",
-    "deploy:full": "npm run build && npm run functions:deploy && firebase deploy"
+    "deploy:full": "npm run build && npm run functions:deploy && firebase deploy",
+    "i18n:unused": "tsx scripts/find-unused-i18n.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",
@@ -44,6 +45,8 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
