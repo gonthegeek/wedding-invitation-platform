@@ -12,7 +12,8 @@ const EditorContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Georgia', serif;
+  /* Match RSVP/global font stack */
+  font-family: inherit;
 `;
 
 const Header = styled.div`
@@ -139,6 +140,22 @@ const TextArea = styled.textarea`
   }
 `;
 
+// New: Theme-aware select matching RSVP Select styling
+const StyledSelect = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid ${(p) => p.theme.colors.border};
+  border-radius: 8px;
+  font-size: 1rem;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
+  
+  &:focus {
+    outline: none;
+    border-color: ${(p) => p.theme.colors.primary};
+  }
+`;
+
 const ColorInput = styled.input`
   width: 100px;
   height: 40px;
@@ -164,6 +181,7 @@ const PreviewCard = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
+// Re-add missing preview typography components
 const PreviewTitle = styled.h4`
   font-size: 1.2rem;
   font-weight: 600;
@@ -175,6 +193,33 @@ const PreviewText = styled.p`
   color: ${(p) => p.theme.colors.textSecondary};
   line-height: 1.6;
   margin-bottom: 0.5rem;
+`;
+
+// New: Venue preview components for dark mode
+const VenueCard = styled.div`
+  padding: 1rem;
+  background: ${(p) => p.theme.colors.surfaceAlt};
+  border-radius: 8px;
+`;
+
+const VenueSubtext = styled.div`
+  font-size: 0.8rem;
+  color: ${(p) => p.theme.colors.textSecondary};
+`;
+
+// New: Match RSVP-like subheading in visibility list
+const VisibilityTitle = styled.h4`
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: ${(p) => p.theme.colors.textPrimary};
+  margin: 0 0 0.25rem;
+`;
+
+// New: Themed info container
+const InfoBox = styled.div`
+  font-size: 0.9rem;
+  color: ${(p) => p.theme.colors.textSecondary};
+  padding: 1rem;
 `;
 
 const ActionButtons = styled.div`
@@ -715,17 +760,9 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               <FormGroup>
                 <Label>{t.customization.fontFamily}</Label>
-                <select
+                <StyledSelect
                   value={settings.fontFamily || 'Georgia, serif'}
                   onChange={(e) => handleInputChange('fontFamily', e.target.value)}
-                  style={{
-                    padding: '0.75rem',
-                    border: '2px solid #e0e0e0',
-                    borderRadius: '10px',
-                    fontSize: '1rem',
-                    width: '100%',
-                    backgroundColor: 'white'
-                  }}
                 >
                   <option value="Georgia, serif">{t.customization.fontGeorgia}</option>
                   <option value="Times New Roman, serif">{t.customization.fontTimesNewRoman}</option>
@@ -740,7 +777,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                   <option value="Great Vibes, cursive">{t.customization.fontGreatVibes}</option>
                   <option value="Pacifico, cursive">{t.customization.fontPacifico}</option>
                   <option value="Satisfy, cursive">{t.customization.fontSatisfy}</option>
-                </select>
+                </StyledSelect>
               </FormGroup>
 
               <FormGroup>
@@ -1064,7 +1101,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                   ].map(section => (
                     <VisibilityItem key={section.key}>
                       <div>
-                        <SectionTitle as="h4">{section.label}</SectionTitle>
+                        <VisibilityTitle>{section.label}</VisibilityTitle>
                         <VisibilityItemText>{/* description if any */}</VisibilityItemText>
                       </div>
                       <input
@@ -1073,7 +1110,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                         onChange={(e) => {
                           const newVisibility = {
                             [section.key]: e.target.checked
-                          };
+                          } as Partial<SectionVisibility>;
                           handleSectionVisibilityChange(newVisibility);
                         }}
                       />
@@ -1131,21 +1168,14 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
               <FormGroup>
                 <Label>{t.customization.backgroundType}</Label>
-                <select
+                <StyledSelect
                   value={settings.backgroundType || 'gradient'}
                   onChange={(e) => handleInputChange('backgroundType', e.target.value)}
-                  style={{
-                    padding: '0.75rem',
-                    border: '2px solid #e0e0e0',
-                    borderRadius: '10px',
-                    fontSize: '1rem',
-                    width: '100%'
-                  }}
                 >
                   <option value="solid">{t.customization.solidBackground}</option>
                   <option value="gradient">{t.customization.gradientBackground}</option>
                   <option value="image">{t.customization.imageBackground}</option>
-                </select>
+                </StyledSelect>
               </FormGroup>
 
               {settings.backgroundType === 'image' && (
@@ -1174,42 +1204,28 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
 
                   <FormGroup>
                     <Label>{t.customization.backgroundPosition}</Label>
-                    <select
+                    <StyledSelect
                       value={settings.backgroundPosition || 'center'}
                       onChange={(e) => handleInputChange('backgroundPosition', e.target.value)}
-                      style={{
-                        padding: '0.75rem',
-                        border: '2px solid #e0e0e0',
-                        borderRadius: '10px',
-                        fontSize: '1rem',
-                        width: '100%'
-                      }}
                     >
                       <option value="center">{t.customization.centerPosition}</option>
                       <option value="top">{t.customization.topPosition}</option>
                       <option value="bottom">{t.customization.bottomPosition}</option>
                       <option value="left">{t.customization.leftPosition}</option>
                       <option value="right">{t.customization.rightPosition}</option>
-                    </select>
+                    </StyledSelect>
                   </FormGroup>
 
                   <FormGroup>
                     <Label>{t.customization.backgroundSize}</Label>
-                    <select
+                    <StyledSelect
                       value={settings.backgroundSize || 'cover'}
                       onChange={(e) => handleInputChange('backgroundSize', e.target.value)}
-                      style={{
-                        padding: '0.75rem',
-                        border: '2px solid #e0e0e0',
-                        borderRadius: '10px',
-                        fontSize: '1rem',
-                        width: '100%'
-                      }}
                     >
                       <option value="cover">{t.customization.coverSize}</option>
                       <option value="contain">{t.customization.containSize}</option>
                       <option value="auto">{t.customization.autoSize}</option>
-                    </select>
+                    </StyledSelect>
                   </FormGroup>
                 </>
               )}
@@ -1373,23 +1389,17 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                 <div style={{ marginBottom: '1.5rem' }}>
                   <h4 style={{ margin: '0 0 1rem', color: settings.primaryColor, fontSize: '1.1rem' }}>
                     📅 {wedding.weddingDate ? new Date(wedding.weddingDate).toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    }) : 'Wedding Date'}
+                      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Wedding Date'}
                   </h4>
                 </div>
 
                 <div style={{ display: 'grid', gap: '1.5rem' }}>
-                  <div style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                    <h5 style={{ margin: '0 0 0.5rem', color: settings.primaryColor, fontSize: '1rem' }}>
-                      ⛪ Ceremony
-                    </h5>
-                    <div style={{ fontSize: '0.9rem', color: '#333' }}>
-                      <div style={{ fontWeight: '600' }}>{wedding.ceremonyLocation?.name || 'Ceremony Venue'}</div>
+                  <VenueCard>
+                    <h5 style={{ margin: '0 0 0.5rem', color: settings.primaryColor, fontSize: '1rem' }}>⛪ Ceremony</h5>
+                    <div style={{ fontSize: '0.9rem' }}>
+                      <div style={{ fontWeight: 600 }}>{wedding.ceremonyLocation?.name || 'Ceremony Venue'}</div>
                       <div>{wedding.ceremonyTime || 'Ceremony Time'}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                      <VenueSubtext>
                         {wedding.ceremonyLocation?.address && (
                           <span>
                             {wedding.ceremonyLocation.address}
@@ -1398,29 +1408,23 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                             {wedding.ceremonyLocation.zipCode && ` ${wedding.ceremonyLocation.zipCode}`}
                           </span>
                         )}
-                      </div>
+                      </VenueSubtext>
                       {wedding.ceremonyLocation?.googleMapsUrl && (
                         <div style={{ marginTop: '0.5rem' }}>
-                          <span style={{ 
-                            fontSize: '0.8rem', 
-                            color: settings.primaryColor, 
-                            textDecoration: 'underline' 
-                          }}>
+                          <span style={{ fontSize: '0.8rem', color: settings.primaryColor, textDecoration: 'underline' }}>
                             📍 View on Maps
                           </span>
                         </div>
                       )}
                     </div>
-                  </div>
+                  </VenueCard>
 
-                  <div style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                    <h5 style={{ margin: '0 0 0.5rem', color: settings.primaryColor, fontSize: '1rem' }}>
-                      🎉 Reception
-                    </h5>
-                    <div style={{ fontSize: '0.9rem', color: '#333' }}>
-                      <div style={{ fontWeight: '600' }}>{wedding.receptionLocation?.name || 'Reception Venue'}</div>
+                  <VenueCard>
+                    <h5 style={{ margin: '0 0 0.5rem', color: settings.primaryColor, fontSize: '1rem' }}>🎉 Reception</h5>
+                    <div style={{ fontSize: '0.9rem' }}>
+                      <div style={{ fontWeight: 600 }}>{wedding.receptionLocation?.name || 'Reception Venue'}</div>
                       <div>{wedding.receptionTime || 'Reception Time'}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#666' }}>
+                      <VenueSubtext>
                         {wedding.receptionLocation?.address && (
                           <span>
                             {wedding.receptionLocation.address}
@@ -1429,20 +1433,16 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                             {wedding.receptionLocation.zipCode && ` ${wedding.receptionLocation.zipCode}`}
                           </span>
                         )}
-                      </div>
+                      </VenueSubtext>
                       {wedding.receptionLocation?.googleMapsUrl && (
                         <div style={{ marginTop: '0.5rem' }}>
-                          <span style={{ 
-                            fontSize: '0.8rem', 
-                            color: settings.primaryColor, 
-                            textDecoration: 'underline' 
-                          }}>
+                          <span style={{ fontSize: '0.8rem', color: settings.primaryColor, textDecoration: 'underline' }}>
                             📍 View on Maps
                           </span>
                         </div>
                       )}
                     </div>
-                  </div>
+                  </VenueCard>
                 </div>
               </PreviewCard>
             </>
@@ -1479,7 +1479,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                   </div>
                 </div>
                 
-                <div style={{ fontSize: '0.9rem', color: '#666', padding: '1rem' }}>
+                <InfoBox>
                   <strong>Visible Sections:</strong>
                   <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
                     {Object.entries(settings.sectionVisibility || {})
@@ -1496,7 +1496,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                         </span>
                       ))}
                   </div>
-                </div>
+                </InfoBox>
               </PreviewCard>
             </>
           )}

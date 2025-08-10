@@ -10,12 +10,12 @@ import type { Wedding, WeddingSettings } from '../types';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9ff 0%, #f1f5ff 100%);
+  background: ${({ theme }) => theme.colors.background};
 `;
 
 const Header = styled.div`
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  background: ${({ theme }) => theme.colors.surface};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   padding: 1rem 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 `;
@@ -25,7 +25,7 @@ const HeaderContent = styled.div`
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
   gap: 1rem;
 `;
 
@@ -34,8 +34,8 @@ const BackButton = styled.button`
   align-items: center;
   gap: 0.5rem;
   background: transparent;
-  border: 1px solid #e5e7eb;
-  color: #666;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  color: ${({ theme }) => theme.colors.textSecondary};
   padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
@@ -43,8 +43,8 @@ const BackButton = styled.button`
   transition: all 0.3s ease;
 
   &:hover {
-    background: #f3f4f6;
-    border-color: #d1d5db;
+    background: ${({ theme }) => theme.colors.surfaceAlt};
+    border-color: ${({ theme }) => theme.colors.border};
   }
 `;
 
@@ -55,13 +55,13 @@ const HeaderTitle = styled.div`
 const Title = styled.h1`
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin: 0 0 0.25rem;
 `;
 
 const Subtitle = styled.p`
   font-size: 0.9rem;
-  color: #666;
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin: 0;
 `;
 
@@ -75,9 +75,9 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border: ${props => props.variant === 'primary' ? 'none' : '1px solid #667eea'};
-  background: ${props => props.variant === 'primary' ? '#667eea' : 'white'};
-  color: ${props => props.variant === 'primary' ? 'white' : '#667eea'};
+  border: ${(props) => (props.variant === 'primary' ? 'none' : `1px solid ${props.theme.colors.primary}`)};
+  background: ${(props) => (props.variant === 'primary' ? props.theme.colors.primary : props.theme.colors.surface)};
+  color: ${(props) => (props.variant === 'primary' ? '#fff' : props.theme.colors.primary)};
   font-size: 0.9rem;
   font-weight: 500;
   border-radius: 8px;
@@ -86,7 +86,7 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
   }
 
   &:disabled {
@@ -102,7 +102,7 @@ const LoadingContainer = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 400px;
-  color: #666;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 1.1rem;
 `;
 
@@ -110,18 +110,18 @@ const ErrorContainer = styled.div`
   max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+  border: 1px solid ${({ theme }) => theme.colors.error};
   border-radius: 12px;
   text-align: center;
-  color: #dc2626;
+  color: ${({ theme }) => theme.colors.error};
 `;
 
 const SuccessMessage = styled.div`
   position: fixed;
   top: 2rem;
   right: 2rem;
-  background: #059669;
+  background: ${({ theme }) => theme.colors.success};
   color: white;
   padding: 1rem 1.5rem;
   border-radius: 8px;

@@ -41,7 +41,7 @@ const RoleTitle = styled.h3.withConfig({
 })<{ primaryColor?: string }>`
   text-align: center;
   font-size: 1.8rem;
-  color: ${props => props.primaryColor || '#667eea'};
+  color: ${(props) => props.primaryColor || props.theme.colors.primary};
   margin-bottom: 2rem;
   font-weight: 400;
   text-transform: capitalize;
@@ -81,10 +81,10 @@ const MemberPhoto = styled.div.withConfig({
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: ${props => props.imageUrl 
-    ? `url(${props.imageUrl}) center/cover no-repeat` 
-    : `linear-gradient(135deg, ${props.primaryColor || '#667eea'} 0%, ${props.secondaryColor || '#764ba2'} 100%)`
-  };
+  background: ${(props) =>
+    props.imageUrl
+      ? `url(${props.imageUrl}) center/cover no-repeat`
+      : `linear-gradient(135deg, ${props.primaryColor || '#667eea'} 0%, ${props.secondaryColor || '#764ba2'} 100%)`};
   margin: 0 auto 1.5rem auto;
   display: flex;
   align-items: center;
@@ -92,7 +92,7 @@ const MemberPhoto = styled.div.withConfig({
   color: white;
   font-size: 3rem;
   font-weight: 300;
-  border: 4px solid rgba(255,255,255,0.9);
+  border: 4px solid ${(p) => p.theme.colors.background};
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   
   @media (max-width: 768px) {
@@ -125,7 +125,7 @@ const SideTitle = styled.h3.withConfig({
 })<{ primaryColor?: string }>`
   text-align: center;
   font-size: 1.5rem;
-  color: ${props => props.primaryColor || '#667eea'};
+  color: ${(props) => props.primaryColor || props.theme.colors.primary};
   margin-bottom: 1.5rem;
   font-weight: 400;
 `;

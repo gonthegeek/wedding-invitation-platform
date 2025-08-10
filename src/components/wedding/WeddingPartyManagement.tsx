@@ -7,16 +7,16 @@ import { ImageUpload } from '../shared/ImageUpload';
 import type { WeddingParty, WeddingPartyRole, Wedding } from '../../types';
 
 const Container = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${(p) => p.theme.colors.border};
   overflow: hidden;
 `;
 
 const Header = styled.div`
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
+  background: ${(p) => p.theme.colors.surfaceAlt};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,12 +32,12 @@ const Title = styled.h3`
   margin: 0 0 0.5rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const Subtitle = styled.p`
   margin: 0;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   font-size: 0.875rem;
 `;
 
@@ -50,7 +50,7 @@ const AddButton = styled.button`
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: #667eea;
+  background: ${(p) => p.theme.colors.primary};
   color: white;
   border: none;
   border-radius: 8px;
@@ -61,8 +61,8 @@ const AddButton = styled.button`
   margin-bottom: 1.5rem;
 
   &:hover {
-    background: #5a67d8;
     transform: translateY(-1px);
+    filter: brightness(0.95);
   }
 `;
 
@@ -78,19 +78,19 @@ const MemberCard = styled.div<{ isDragging?: boolean }>`
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: ${props => props.isDragging ? '#f3f4f6' : '#f9fafb'};
-  border: 1px solid #e5e7eb;
+  background: ${(p) => (p.isDragging ? p.theme.colors.surfaceAlt : p.theme.colors.surface)};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #d1d5db;
-    background: #f3f4f6;
+    border-color: ${(p) => p.theme.colors.border};
+    background: ${(p) => p.theme.colors.surfaceAlt};
   }
 `;
 
 const DragHandle = styled.div`
-  color: #9ca3af;
+  color: ${(p) => p.theme.colors.textSecondary};
   cursor: grab;
   
   &:active {
@@ -106,12 +106,12 @@ const MemberInfo = styled.div`
 
 const MemberName = styled.div`
   font-weight: 600;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const MemberRole = styled.div`
   font-size: 0.875rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -119,7 +119,7 @@ const MemberRole = styled.div`
 
 const MemberRelationship = styled.div`
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const Actions = styled.div`
@@ -129,16 +129,16 @@ const Actions = styled.div`
 
 const ActionButton = styled.button`
   padding: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 6px;
-  background: white;
-  color: #6b7280;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textSecondary};
   cursor: pointer;
   transition: all 0.2s;
   
   &:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: ${(p) => p.theme.colors.surfaceAlt};
+    color: ${(p) => p.theme.colors.textPrimary};
   }
 `;
 
@@ -156,18 +156,19 @@ const Modal = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  border: 1px solid ${(p) => p.theme.colors.border};
 `;
 
 const ModalHeader = styled.div`
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 `;
@@ -176,20 +177,20 @@ const ModalTitle = styled.h3`
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1f2937;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const CloseButton = styled.button`
   padding: 0.5rem;
   border: none;
   background: none;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
   cursor: pointer;
   border-radius: 6px;
   
   &:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: ${(p) => p.theme.colors.surfaceAlt};
+    color: ${(p) => p.theme.colors.textPrimary};
   }
 `;
 
@@ -208,33 +209,34 @@ const FormGroup = styled.div`
 const Label = styled.label`
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: ${(p) => p.theme.colors.textPrimary};
 `;
 
 const Input = styled.input`
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   font-size: 0.875rem;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const Select = styled.select`
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   font-size: 0.875rem;
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
   
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
@@ -247,9 +249,9 @@ const ModalActions = styled.div`
 
 const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   padding: 0.75rem 1.5rem;
-  border: ${props => props.variant === 'primary' ? 'none' : '1px solid #d1d5db'};
-  background: ${props => props.variant === 'primary' ? '#667eea' : 'white'};
-  color: ${props => props.variant === 'primary' ? 'white' : '#374151'};
+  border: ${(p) => (p.variant === 'primary' ? 'none' : `1px solid ${p.theme.colors.border}`)};
+  background: ${(p) => (p.variant === 'primary' ? p.theme.colors.primary : p.theme.colors.surface)};
+  color: ${(p) => (p.variant === 'primary' ? 'white' : p.theme.colors.textPrimary)};
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
@@ -259,6 +261,7 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    filter: ${(p) => (p.variant === 'primary' ? 'brightness(0.95)' : 'none')};
   }
 
   &:disabled {
@@ -272,12 +275,22 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem 1rem;
-  color: #6b7280;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const EmptyIcon = styled.div`
   font-size: 3rem;
   margin-bottom: 1rem;
+`;
+
+const EmptyTitle = styled.h4`
+  margin: 0 0 0.5rem;
+  color: ${(p) => p.theme.colors.textPrimary};
+`;
+
+const EmptyText = styled.p`
+  margin: 0;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const HeaderContent = styled.div`
@@ -300,17 +313,17 @@ const ErrorMessage = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid ${(p) => p.theme.colors.error};
   border-radius: 8px;
-  color: #dc2626;
+  color: ${(p) => p.theme.colors.error};
   font-size: 14px;
   margin-bottom: 16px;
 
   button {
     background: none;
     border: none;
-    color: #dc2626;
+    color: inherit;
     font-size: 20px;
     cursor: pointer;
     padding: 0;
@@ -538,8 +551,8 @@ export default function WeddingPartyManagement({
           ) : (
             <EmptyState>
               <EmptyIcon>👥</EmptyIcon>
-              <h4 style={{ margin: '0 0 0.5rem', color: '#374151' }}>No Wedding Party Members</h4>
-              <p style={{ margin: 0 }}>Add your bridesmaids, groomsmen, and other special members</p>
+              <EmptyTitle>No Wedding Party Members</EmptyTitle>
+              <EmptyText>Add your bridesmaids, groomsmen, and other special members</EmptyText>
             </EmptyState>
           )}
         </Content>
@@ -584,7 +597,7 @@ export default function WeddingPartyManagement({
                 <Label>Role *</Label>
                 <Select
                   value={formData.role}
-                  onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as WeddingPartyRole }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, role: (e.target as HTMLSelectElement).value as WeddingPartyRole }))}
                   required
                 >
                   {weddingPartyRoles.map((role) => (
