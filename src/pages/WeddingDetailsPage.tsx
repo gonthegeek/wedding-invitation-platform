@@ -30,7 +30,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin: 0;
   flex-grow: 1;
 `;
@@ -52,31 +52,34 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' | 'outline' }>`
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
-  
-  ${props => props.variant === 'primary' && `
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: ${(p) => p.theme.colors.textPrimary};
+  background: ${(p) => p.theme.colors.surface};
+  border: 1px solid ${(p) => p.theme.colors.border};
+
+  ${(props) => props.variant === 'primary' && `
+    background: linear-gradient(135deg, ${props.theme.colors.primary} 0%, ${props.theme.colors.secondary} 100%);
     color: white;
-    
+    border: none;
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
   `}
   
-  ${props => props.variant === 'outline' && `
+  ${(props) => props.variant === 'outline' && `
     background: transparent;
-    color: #667eea;
-    border: 2px solid #667eea;
-    
+    color: ${props.theme.colors.primary};
+    border: 2px solid ${props.theme.colors.primary};
     &:hover {
-      background: #667eea;
+      background: ${props.theme.colors.primary};
       color: white;
     }
   `}
 `;
 
 const Card = styled.div`
-  background: white;
+  background: ${(p) => p.theme.colors.surface};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -89,11 +92,11 @@ const CardHeader = styled.div`
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f8f9fa;
+  border-bottom: 2px solid ${(p) => p.theme.colors.border};
 `;
 
 const CardTitle = styled.h2`
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   margin: 0;
   font-size: 1.25rem;
 `;
@@ -112,36 +115,40 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   font-weight: 500;
-  color: #333;
+  color: ${(p) => p.theme.colors.textPrimary};
   font-size: 0.9rem;
 `;
 
 const Input = styled.input`
   padding: 0.75rem;
-  border: 2px solid #e9ecef;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
 const Textarea = styled.textarea`
   padding: 0.75rem;
-  border: 2px solid #e9ecef;
+  background: ${(p) => p.theme.colors.surface};
+  color: ${(p) => p.theme.colors.textPrimary};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 8px;
   font-size: 1rem;
   min-height: 100px;
   resize: vertical;
   font-family: inherit;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: ${(p) => p.theme.colors.primary};
   }
 `;
 
@@ -189,7 +196,7 @@ const LoadingSpinner = styled.div`
   align-items: center;
   height: 200px;
   font-size: 1.1rem;
-  color: #666;
+  color: ${(p) => p.theme.colors.textSecondary};
 `;
 
 const SuccessMessage = styled.div`
