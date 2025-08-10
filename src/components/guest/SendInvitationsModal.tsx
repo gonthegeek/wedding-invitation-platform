@@ -7,6 +7,12 @@ import { generateSharingURL } from '../../config/invitationConfig';
 import type { Guest } from '../../types/guest';
 import { Mail, Copy, Send, CheckCircle, AlertCircle, Users, ExternalLink, MessageCircle, Smartphone } from 'lucide-react';
 
+// Default invitation message templates (module scope so they are stable)
+const DEFAULT_INVITATION_TEMPLATES = {
+  en: "Hi {firstName}! You're invited to our wedding! 💒 Please RSVP here: {url}",
+  es: '¡Hola {firstName}! ¡Estás invitado/a a nuestra boda! 💒 Por favor confirma tu asistencia aquí: {url}',
+};
+
 interface SendInvitationsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -324,6 +330,38 @@ const StatusMessage = styled.div<{ $type: 'success' | 'error' }>`
   `}
 `;
 
+const TemplateControls = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+`;
+
+const TemplateRow = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const Select = styled.select`
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: white;
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  min-height: 90px;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  resize: vertical;
+`;
+
 export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({ 
   isOpen, 
   onClose, 
@@ -342,21 +380,53 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
     error?: string;
   } | null>(null);
 
+  // New: language + template control
+  const [messageLang, setMessageLang] = useState<'en' | 'es'>('en');
+  const [messageTemplates, setMessageTemplates] = useState<{ en: string; es: string }>(DEFAULT_INVITATION_TEMPLATES);
+
+  useEffect(() => {
+    // Load saved templates and preferred language
+    try {
+      const saved = localStorage.getItem('invitationMessageTemplates');
+      const savedLang = localStorage.getItem('invitationMessageLang');
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<typeof DEFAULT_INVITATION_TEMPLATES>;
+        setMessageTemplates({ en: parsed.en || DEFAULT_INVITATION_TEMPLATES.en, es: parsed.es || DEFAULT_INVITATION_TEMPLATES.es });
+      }
+      if (savedLang === 'en' || savedLang === 'es') setMessageLang(savedLang);
+    } catch {
+      // ignore parse/read errors
+    }
+  }, []);
+
+  useEffect(() => {
+    // Persist user customizations
+    try {
+      localStorage.setItem('invitationMessageTemplates', JSON.stringify(messageTemplates));
+      localStorage.setItem('invitationMessageLang', messageLang);
+    } catch {
+      // ignore write errors (e.g., privacy mode)
+    }
+  }, [messageTemplates, messageLang]);
+
+  const buildMessageForGuest = (guest: Guest) => {
+    const url = getInvitationURL(guest);
+    const tmpl = messageTemplates[messageLang] || DEFAULT_INVITATION_TEMPLATES[messageLang];
+    return tmpl
+      .replace(/\{firstName\}/g, guest.firstName)
+      .replace(/\{url\}/g, url);
+  };
+
   // Check email service status on mount
   useEffect(() => {
     const checkEmailService = async () => {
       try {
         // Temporarily disable email service check until functions are deployed
-        // TODO: Re-enable after firebase functions are deployed
         setEmailServiceStatus({
           available: false,
           provider: 'not_deployed',
           error: 'Email functions not deployed yet - use URL sharing instead'
         });
-        
-        // Uncomment below when functions are deployed:
-        // const status = await EmailService.checkEmailServiceStatus();
-        // setEmailServiceStatus(status);
       } catch (err) {
         console.error('Failed to check email service:', err);
         setEmailServiceStatus({
@@ -472,34 +542,26 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
   };
 
   const shareViaWhatsApp = async (guest: Guest) => {
-    // Check if guest has a phone number
     if (!guest.phone) {
       alert(`${guest.firstName} ${guest.lastName} doesn't have a phone number. Please add one first or use the copy URL option.`);
       return;
     }
 
-    const url = getInvitationURL(guest);
-    const message = `Hi ${guest.firstName}! You're invited to our wedding! 💒 Please RSVP here: ${url}`;
+    const message = buildMessageForGuest(guest);
     const whatsappURL = generateSharingURL.whatsapp(message, guest.phone);
     window.open(whatsappURL, '_blank');
-    
-    // Mark guest as invited when URL is shared
     await markGuestAsInvited(guest);
   };
 
   const shareViaSMS = async (guest: Guest) => {
-    // Check if guest has a phone number
     if (!guest.phone) {
       alert(`${guest.firstName} ${guest.lastName} doesn't have a phone number. Please add one first or use the copy URL option.`);
       return;
     }
 
-    const url = getInvitationURL(guest);
-    const message = `Hi ${guest.firstName}! You're invited to our wedding! Please RSVP: ${url}`;
+    const message = buildMessageForGuest(guest);
     const smsURL = generateSharingURL.sms(message, guest.phone);
     window.open(smsURL, '_blank');
-    
-    // Mark guest as invited when URL is shared
     await markGuestAsInvited(guest);
   };
 
@@ -706,7 +768,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                     }
                   </strong> Copy invitation URLs and share them directly via WhatsApp, text message, or social media. 
                   {selectedGuestsList.some(g => g.remindersSent > 0) 
-                    ? ' Perfect for following up with guests who haven\'t responded yet.'
+                    ? " Perfect for following up with guests who haven't responded yet."
                     : ' This method is free and often more personal than email.'
                   }
                 </div>
@@ -753,6 +815,26 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
               }
             </SectionDescription>
 
+            {/* New: Language and Template editor */}
+            <TemplateControls>
+              <TemplateRow>
+                <label htmlFor="msgLang" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Message language</label>
+                <Select id="msgLang" value={messageLang} onChange={e => setMessageLang(e.target.value as 'en' | 'es')}>
+                  <option value="en">English</option>
+                  <option value="es">Español</option>
+                </Select>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  Available placeholders: {'{firstName}'} and {'{url}'}
+                </div>
+              </TemplateRow>
+              <div>
+                <TextArea
+                  value={messageTemplates[messageLang]}
+                  onChange={(e) => setMessageTemplates(prev => ({ ...prev, [messageLang]: e.target.value }))}
+                />
+              </div>
+            </TemplateControls>
+
             <URLSection>
               {selectedGuestsList.map((guest) => (
                 <URLItem key={guest.id}>
@@ -761,6 +843,9 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                       {guest.firstName} {guest.lastName}
                     </div>
                     <URLText>{getInvitationURL(guest)}</URLText>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                      Preview: {buildMessageForGuest(guest)}
+                    </div>
                     <SocialButtons>
                       <SocialButton 
                         $color="#25D366" 
