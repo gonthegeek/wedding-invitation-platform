@@ -191,24 +191,33 @@ export class WeddingService {
   }
 
   // Helper to deep-remove undefined values from objects/arrays before saving to Firestore
-  private static deepRemoveUndefined<T>(value: T): T {
+  private static deepRemoveUndefined<T>(value: T[]): T[];
+  private static deepRemoveUndefined<T>(value: T): T;
+  private static deepRemoveUndefined(value: unknown): unknown {
     if (Array.isArray(value)) {
-      // @ts-expect-error preserve generic typing
-      return value.map((v) => this.deepRemoveUndefined(v)).filter((v) => v !== undefined) as T;
+      return value
+        .map((v) => this.deepRemoveUndefined(v))
+        .filter((v): v is Exclude<typeof v, undefined> => v !== undefined);
     }
-    if (value && typeof value === 'object' && !(value instanceof Date) && !(value instanceof File) && !(value instanceof Blob)) {
+
+    if (
+      value &&
+      typeof value === 'object' &&
+      !(value instanceof Date) &&
+      !(value instanceof File) &&
+      !(value instanceof Blob)
+    ) {
       const result: Record<string, unknown> = {};
-      Object.entries(value as Record<string, unknown>).forEach(([k, v]) => {
-        if (v === undefined) return; // skip undefined
-        // @ts-expect-error recursive clean
+      for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+        if (v === undefined) continue;
         const cleaned = this.deepRemoveUndefined(v);
         if (cleaned !== undefined) {
           result[k] = cleaned;
         }
-      });
-      // @ts-expect-error cast back to T
-      return result as T;
+      }
+      return result;
     }
+
     return value;
   }
 
@@ -216,7 +225,7 @@ export class WeddingService {
   static async updateWedding(weddingId: string, updates: Partial<Wedding>): Promise<void> {
     try {
       const weddingRef = doc(db, this.COLLECTION, weddingId);
-      const cleaned = this.deepRemoveUndefined(updates);
+      const cleaned = this.deepRemoveUndefined(updates) as Partial<Wedding>;
       await updateDoc(weddingRef, {
         ...cleaned,
         updatedAt: serverTimestamp(),
