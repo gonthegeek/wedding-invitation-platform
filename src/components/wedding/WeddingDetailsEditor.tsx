@@ -275,6 +275,10 @@ const RemoveButton = styled.button`
   height: 30px;
   cursor: pointer;
   font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   
   &:hover {
     background: #c82333;

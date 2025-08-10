@@ -1067,10 +1067,12 @@ export const PublicWeddingInvitation: React.FC = () => {
                 <br />
                 {wedding.ceremonyLocation.address}
               </EventLocation>
-              <MapButton href={wedding.ceremonyLocation.googleMapsUrl || "#"} target="_blank">
-                <MapPin size={16} />
-                {t.invitation.viewOnMap}
-              </MapButton>
+              {wedding.ceremonyLocation.googleMapsUrl && (
+                <MapButton href={wedding.ceremonyLocation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
+                  <MapPin size={16} />
+                  {t.invitation.viewOnMap}
+                </MapButton>
+              )}
             </EventCard>
 
             <EventCard>
@@ -1082,10 +1084,12 @@ export const PublicWeddingInvitation: React.FC = () => {
                 <br />
                 {wedding.receptionLocation.address}
               </EventLocation>
-              <MapButton href={wedding.receptionLocation.googleMapsUrl || "#"} target="_blank">
-                <MapPin size={16} />
-                {t.invitation.viewOnMap}
-              </MapButton>
+              {wedding.receptionLocation.googleMapsUrl && (
+                <MapButton href={wedding.receptionLocation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
+                  <MapPin size={16} />
+                  {t.invitation.viewOnMap}
+                </MapButton>
+              )}
             </EventCard>
 
             {(wedding.settings?.sectionVisibility?.dressCode !== false) && (
@@ -1106,6 +1110,16 @@ export const PublicWeddingInvitation: React.FC = () => {
             )}
           </EventsContainer>
         </EventDetailsSection>
+      )}
+
+      {/* Optional custom message from Design & Colors */}
+      {wedding.settings?.customMessage && (
+        <Section>
+          <SectionTitle>{t.customization.customMessage}</SectionTitle>
+          <div style={{ maxWidth: 800, margin: '0 auto', fontSize: '1.1rem', color: '#555', lineHeight: 1.7, textAlign: 'center' }}>
+            {wedding.settings.customMessage}
+          </div>
+        </Section>
       )}
 
       {/* RSVP Section */}
@@ -1154,6 +1168,9 @@ export const PublicWeddingInvitation: React.FC = () => {
               showTransportation={true}
               showAccommodation={true}
               showSongRequests={true}
+              submitLabel={wedding.settings?.rsvpButtonText}
+              primaryColor={primaryColor}
+              secondaryColor={secondaryColor}
             />
           </RSVPFormSection>
         )}

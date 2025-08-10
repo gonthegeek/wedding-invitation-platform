@@ -179,6 +179,33 @@ const InfoText = styled.p`
   font-style: italic;
 `;
 
+const SubmitButton = styled.button<{ primaryColor?: string; secondaryColor?: string }>`
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, ${props => props.primaryColor || '#667eea'} 0%, ${props => props.secondaryColor || '#764ba2'} 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+`;
+
 export interface EnhancedRSVPFormData {
   rsvpStatus: string;
   attendingCeremony: boolean;
@@ -222,6 +249,9 @@ interface EnhancedRSVPFormProps {
   showAccommodation?: boolean;
   showSongRequests?: boolean;
   allowPlusOnes?: boolean;
+  submitLabel?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
 }
 
 export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
@@ -233,6 +263,9 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
   showAccommodation = true,
   showSongRequests = true,
   allowPlusOnes = true,
+  submitLabel,
+  primaryColor,
+  secondaryColor,
 }) => {
   const t = useTranslation();
   const {
@@ -613,24 +646,14 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       </FormSection>
 
       {/* Submit Button */}
-      <button
+      <SubmitButton
         type="submit"
         disabled={isSubmitting}
-        style={{
-          width: '100%',
-          padding: '1rem 2rem',
-          background: isSubmitting ? '#9ca3af' : '#3b82f6',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '1rem',
-          fontWeight: 600,
-          cursor: isSubmitting ? 'not-allowed' : 'pointer',
-          marginTop: '1rem',
-        }}
+        primaryColor={primaryColor}
+        secondaryColor={secondaryColor}
       >
-        {isSubmitting ? t.rsvp.submitting : t.rsvp.submit}
-      </button>
+        {isSubmitting ? t.rsvp.submitting : (submitLabel || t.rsvp.submit)}
+      </SubmitButton>
     </form>
   );
 };
