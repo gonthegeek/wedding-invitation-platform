@@ -1162,8 +1162,16 @@ export const PublicWeddingInvitation: React.FC = () => {
                 emergencyContactName: guest.emergencyContactName || '',
                 emergencyContactPhone: guest.emergencyContactPhone || '',
               }}
-              maxPlusOnes={2}
-              allowPlusOnes={true}
+              {
+                ...(() => {
+                  const rawMax = guest.maxPlusOnes ?? 0;
+                  const hasExplicitMax = typeof guest.maxPlusOnes === 'number' && rawMax > 0;
+                  const allowedFlag = guest.allowPlusOnes === true;
+                  const allow = allowedFlag || hasExplicitMax;
+                  const max = allow ? (hasExplicitMax ? rawMax : 1) : 0;
+                  return { allowPlusOnes: allow, maxPlusOnes: max };
+                })()
+              }
               showTransportation={true}
               showAccommodation={true}
               showSongRequests={true}

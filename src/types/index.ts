@@ -184,6 +184,10 @@ export interface Guest {
   emergencyContactPhone?: string;
   message?: string;
   
+  // Per-guest plus-one controls
+  allowPlusOnes?: boolean;
+  maxPlusOnes?: number;
+  
   invitedAt: Date;
   remindersSent: number;
 }
@@ -339,6 +343,11 @@ export interface Guest {
   invitedAt: Date;
   remindersSent: number;
   groupId?: string;
+  
+  // Per-guest plus-one controls
+  allowPlusOnes?: boolean;
+  maxPlusOnes?: number;
+  
   createdAt: Date;
   updatedAt: Date;
 }

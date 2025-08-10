@@ -131,6 +131,7 @@ interface FormErrors {
   lastName?: string;
   phone?: string;
   groupName?: string;
+  maxPlusOnes?: string;
 }
 
 export const AddGuestModal: React.FC<AddGuestModalProps> = ({ 
@@ -145,7 +146,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
     phone: '',
     groupName: '',
     allowPlusOnes: false,
-    maxPlusOnes: 0,
+    maxPlusOnes: 1,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -170,6 +171,10 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
 
     if (!formData.groupName.trim()) {
       newErrors.groupName = 'Group name is required';
+    }
+
+    if (formData.allowPlusOnes && formData.maxPlusOnes <= 0) {
+      newErrors.maxPlusOnes = 'Maximum plus ones must be greater than 0';
     }
 
     setErrors(newErrors);
@@ -205,6 +210,8 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         attendingCeremony: false,
         attendingReception: false,
         plusOnes: [],
+        allowPlusOnes: formData.allowPlusOnes,
+        maxPlusOnes: formData.allowPlusOnes ? formData.maxPlusOnes : 0,
       };
 
       // Add guest
@@ -217,7 +224,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         phone: '',
         groupName: '',
         allowPlusOnes: false,
-        maxPlusOnes: 0,
+        maxPlusOnes: 1,
       });
       setErrors({});
       onGuestAdded();
@@ -231,7 +238,19 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   };
 
   const handleInputChange = (field: keyof FormData, value: string | boolean | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      // Handle linked changes between allowPlusOnes and maxPlusOnes
+      if (field === 'allowPlusOnes') {
+        const allow = Boolean(value);
+        return {
+          ...prev,
+          allowPlusOnes: allow,
+          maxPlusOnes: allow ? Math.max(1, prev.maxPlusOnes || 1) : 0,
+        };
+      }
+
+      return { ...prev, [field]: value } as FormData;
+    });
     
     // Clear error when user starts typing
     if (errors[field as keyof FormErrors]) {
@@ -247,7 +266,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         phone: '',
         groupName: '',
         allowPlusOnes: false,
-        maxPlusOnes: 0,
+        maxPlusOnes: 1,
       });
       setErrors({});
       onClose();
@@ -337,6 +356,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
               <option value={3}>3 Plus Ones</option>
               <option value={4}>4 Plus Ones</option>
             </Select>
+            {errors.maxPlusOnes && <ErrorMessage>{errors.maxPlusOnes}</ErrorMessage>}
           </FormGroup>
         )}
 
