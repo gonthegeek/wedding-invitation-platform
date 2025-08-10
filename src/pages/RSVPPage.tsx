@@ -575,9 +575,16 @@ export const RSVPPage: React.FC = () => {
                   return { allowPlusOnes: allow, maxPlusOnes: max };
                 })()
               }
-              showTransportation={true}
-              showAccommodation={true}
-              showSongRequests={true}
+              showAttendanceEvents={wedding.settings?.rsvpFormVisibility?.attendanceEvents ?? true}
+              showPlusOnes={wedding.settings?.rsvpFormVisibility?.plusOnes ?? true}
+              showDietaryRestrictions={wedding.settings?.rsvpFormVisibility?.dietaryRestrictions ?? true}
+              showSongRequests={wedding.settings?.rsvpFormVisibility?.songRequests ?? true}
+              showTransportation={wedding.settings?.rsvpFormVisibility?.transportation ?? true}
+              showAccommodation={wedding.settings?.rsvpFormVisibility?.accommodation ?? true}
+              showContactPreference={wedding.settings?.rsvpFormVisibility?.contactPreference ?? true}
+              showEmergencyContact={wedding.settings?.rsvpFormVisibility?.emergencyContact ?? true}
+              showSpecialRequests={wedding.settings?.rsvpFormVisibility?.specialRequests ?? true}
+              showMessage={wedding.settings?.rsvpFormVisibility?.message ?? true}
             />
           </RSVPFormSection>
         </Container>

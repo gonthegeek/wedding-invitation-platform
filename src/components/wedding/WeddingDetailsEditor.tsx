@@ -334,10 +334,16 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
         ...(prev.sectionVisibility || {}),
         ...(initialWedding.settings?.sectionVisibility || {}),
       },
-      hotelInfo: {
-        ...(prev.hotelInfo || {}),
-        ...(initialWedding.settings?.hotelInfo || {}),
-      },
+      hotelInfo: (() => {
+        const next = initialWedding.settings?.hotelInfo || prev.hotelInfo;
+        if (!next) return undefined;
+        return {
+          name: '',
+          address: '',
+          ...(prev.hotelInfo || {}),
+          ...(initialWedding.settings?.hotelInfo || {}),
+        };
+      })(),
       giftOptions: initialWedding.settings?.giftOptions ?? prev.giftOptions,
       photoGallery: initialWedding.settings?.photoGallery ?? prev.photoGallery,
       primaryColor: initialWedding.settings?.primaryColor || prev.primaryColor || '#667eea',
@@ -1059,6 +1065,60 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                 </div>
               </FormGroup>
 
+              {/* RSVP Form customization */}
+              <SectionTitle style={{ marginTop: '2rem' }}>
+                <Settings size={20} /> RSVP Form
+              </SectionTitle>
+              <FormGroup>
+                <Label>Fields & Sections</Label>
+                <div style={{ display: 'grid', gap: '0.5rem' }}>
+                  {[
+                    { key: 'attendanceEvents', label: 'Attendance (ceremony/reception checkboxes)' },
+                    { key: 'plusOnes', label: 'Plus ones section (still respects per-guest limits)' },
+                    { key: 'dietaryRestrictions', label: 'Dietary restrictions' },
+                    { key: 'songRequests', label: 'Song requests' },
+                    { key: 'transportation', label: 'Transportation needs' },
+                    { key: 'accommodation', label: 'Accommodation needs' },
+                    { key: 'contactPreference', label: 'Preferred contact method' },
+                    { key: 'emergencyContact', label: 'Emergency contact' },
+                    { key: 'specialRequests', label: 'Special requests' },
+                    { key: 'message', label: 'Personal message to couple' },
+                  ].map(item => (
+                    <label key={item.key} style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '0.5rem',
+                      padding: '0.5rem',
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '5px'
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={settings.rsvpFormVisibility?.[item.key as keyof NonNullable<typeof settings.rsvpFormVisibility>] ?? true}
+                        onChange={(e) => setSettings(prev => ({
+                          ...prev,
+                          rsvpFormVisibility: {
+                            attendanceEvents: true,
+                            plusOnes: true,
+                            dietaryRestrictions: true,
+                            songRequests: true,
+                            transportation: true,
+                            accommodation: true,
+                            contactPreference: true,
+                            emergencyContact: true,
+                            specialRequests: true,
+                            message: true,
+                            ...(prev.rsvpFormVisibility || {}),
+                            [item.key]: e.target.checked,
+                          }
+                        }))}
+                      />
+                      {item.label}
+                    </label>
+                  ))}
+                </div>
+              </FormGroup>
+
               <FormGroup>
                 <Label>{t.customization.backgroundType}</Label>
                 <select
@@ -1084,7 +1144,7 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     <Label>{t.customization.backgroundImage}</Label>
                     <ImageUpload
                       value={settings.backgroundImageUrl || ''}
-                      onChange={(imageUrl) => handleInputChange('backgroundImageUrl', imageUrl || '')}
+                      onChange={(imageUrl) => handleInputChange('backgroundImage', imageUrl || '')}
                       onUpload={async (file: File) => {
                         return await StorageService.uploadImage(file, `weddings/${wedding.id}/backgrounds`);
                       }}

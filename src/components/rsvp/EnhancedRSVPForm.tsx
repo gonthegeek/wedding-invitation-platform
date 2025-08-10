@@ -245,9 +245,17 @@ interface EnhancedRSVPFormProps {
   isSubmitting: boolean;
   defaultValues?: Partial<EnhancedRSVPFormData>;
   maxPlusOnes?: number;
+  // Section visibility toggles
+  showAttendanceEvents?: boolean;
   showTransportation?: boolean;
   showAccommodation?: boolean;
   showSongRequests?: boolean;
+  showPlusOnes?: boolean;
+  showDietaryRestrictions?: boolean;
+  showContactPreference?: boolean;
+  showEmergencyContact?: boolean;
+  showSpecialRequests?: boolean;
+  showMessage?: boolean;
   allowPlusOnes?: boolean;
   submitLabel?: string;
   primaryColor?: string;
@@ -259,9 +267,16 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
   isSubmitting,
   defaultValues,
   maxPlusOnes = 2,
+  showAttendanceEvents = true,
   showTransportation = true,
   showAccommodation = true,
   showSongRequests = true,
+  showPlusOnes = true,
+  showDietaryRestrictions = true,
+  showContactPreference = true,
+  showEmergencyContact = true,
+  showSpecialRequests = true,
+  showMessage = true,
   allowPlusOnes = true,
   submitLabel,
   primaryColor,
@@ -395,7 +410,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       </FormSection>
 
       {/* Ceremony and Reception Attendance (only if attending) */}
-      {isAttending && (
+      {isAttending && showAttendanceEvents && (
         <FormSection>
           <SectionTitle>{t.rsvp.whichEventsWillYouAttend}</SectionTitle>
           <CheckboxGroup>
@@ -418,7 +433,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       )}
 
       {/* Plus Ones (only if attending and allowed) */}
-      {isAttending && allowPlusOnes && (
+      {isAttending && allowPlusOnes && showPlusOnes && (
         <FormSection>
           <SectionTitle>
             <span>{t.rsvp.plusOnes}</span>
@@ -485,7 +500,7 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       )}
 
       {/* Dietary Restrictions */}
-      {isAttending && (
+      {isAttending && showDietaryRestrictions && (
         <FormSection>
           <SectionTitle>
             <UtensilsCrossed size={20} />
@@ -577,20 +592,22 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       )}
 
       {/* Contact Preference */}
-      <FormSection>
-        <SectionTitle>{t.rsvp.contactPreference}</SectionTitle>
-        <InputField>
-          <Label>{t.rsvp.contactPreferenceLabel}</Label>
-          <Select {...register('contactPreference')}>
-            <option value="email">{t.rsvp.email}</option>
-            <option value="phone">{t.rsvp.phoneCall}</option>
-            <option value="text">{t.rsvp.textMessage}</option>
-          </Select>
-        </InputField>
-      </FormSection>
+      {showContactPreference && (
+        <FormSection>
+          <SectionTitle>{t.rsvp.contactPreference}</SectionTitle>
+          <InputField>
+            <Label>{t.rsvp.contactPreferenceLabel}</Label>
+            <Select {...register('contactPreference')}>
+              <option value="email">{t.rsvp.email}</option>
+              <option value="phone">{t.rsvp.phoneCall}</option>
+              <option value="text">{t.rsvp.textMessage}</option>
+            </Select>
+          </InputField>
+        </FormSection>
+      )}
 
       {/* Emergency Contact (if attending) */}
-      {isAttending && (
+      {isAttending && showEmergencyContact && (
         <FormSection>
           <SectionTitle>{t.rsvp.emergencyContactOptional}</SectionTitle>
           <InputGroup>
@@ -614,36 +631,40 @@ export const EnhancedRSVPForm: React.FC<EnhancedRSVPFormProps> = ({
       )}
 
       {/* Special Requests */}
-      <FormSection>
-        <SectionTitle>{t.rsvp.specialRequestsTitle}</SectionTitle>
-        <InputField>
-          <Label>{t.rsvp.specialRequestsLabel}</Label>
-          <TextArea
-            {...register('specialRequests')}
-            placeholder={t.rsvp.specialRequestsPlaceholder}
-            rows={3}
-          />
-        </InputField>
-      </FormSection>
+      {showSpecialRequests && (
+        <FormSection>
+          <SectionTitle>{t.rsvp.specialRequestsTitle}</SectionTitle>
+          <InputField>
+            <Label>{t.rsvp.specialRequestsLabel}</Label>
+            <TextArea
+              {...register('specialRequests')}
+              placeholder={t.rsvp.specialRequestsPlaceholder}
+              rows={3}
+            />
+          </InputField>
+        </FormSection>
+      )}
 
       {/* Personal Message */}
-      <FormSection>
-        <SectionTitle>
-          <MessageSquare size={20} />
-          {t.rsvp.additionalMessage}
-        </SectionTitle>
-        <InputField>
-          <Label>{t.rsvp.shareSpecialMessage}</Label>
-          <TextArea
-            {...register('message')}
-            placeholder={t.rsvp.shareSpecialMessage}
-            rows={4}
-          />
-          <InfoText>
-            {t.rsvp.heartfeltMessage}
-          </InfoText>
-        </InputField>
-      </FormSection>
+      {showMessage && (
+        <FormSection>
+          <SectionTitle>
+            <MessageSquare size={20} />
+            {t.rsvp.additionalMessage}
+          </SectionTitle>
+          <InputField>
+            <Label>{t.rsvp.shareSpecialMessage}</Label>
+            <TextArea
+              {...register('message')}
+              placeholder={t.rsvp.shareSpecialMessage}
+              rows={4}
+            />
+            <InfoText>
+              {t.rsvp.heartfeltMessage}
+            </InfoText>
+          </InputField>
+        </FormSection>
+      )}
 
       {/* Submit Button */}
       <SubmitButton

@@ -102,11 +102,28 @@ export interface WeddingSettings {
   hotelInfo?: HotelInfo;
   // Section visibility controls
   sectionVisibility?: SectionVisibility;
+  
+  // RSVP form field visibility controls
+  rsvpFormVisibility?: RSVPFormVisibility;
+  
   // Background customization
   backgroundType?: 'gradient' | 'image';
   backgroundImageUrl?: string;
   backgroundPosition?: 'center' | 'top' | 'bottom';
   backgroundSize?: 'cover' | 'contain' | 'auto';
+}
+
+export interface RSVPFormVisibility {
+  attendanceEvents?: boolean; // ceremony/reception checkboxes
+  plusOnes?: boolean;         // global toggle, still respects per-guest allow/max
+  dietaryRestrictions?: boolean;
+  songRequests?: boolean;
+  transportation?: boolean;
+  accommodation?: boolean;
+  contactPreference?: boolean;
+  emergencyContact?: boolean;
+  specialRequests?: boolean;
+  message?: boolean;
 }
 
 export interface SectionVisibility {
