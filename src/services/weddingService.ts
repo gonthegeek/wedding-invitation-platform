@@ -190,12 +190,35 @@ export class WeddingService {
     }
   }
 
+  // Helper to deep-remove undefined values from objects/arrays before saving to Firestore
+  private static deepRemoveUndefined<T>(value: T): T {
+    if (Array.isArray(value)) {
+      // @ts-expect-error preserve generic typing
+      return value.map((v) => this.deepRemoveUndefined(v)).filter((v) => v !== undefined) as T;
+    }
+    if (value && typeof value === 'object' && !(value instanceof Date) && !(value instanceof File) && !(value instanceof Blob)) {
+      const result: Record<string, unknown> = {};
+      Object.entries(value as Record<string, unknown>).forEach(([k, v]) => {
+        if (v === undefined) return; // skip undefined
+        // @ts-expect-error recursive clean
+        const cleaned = this.deepRemoveUndefined(v);
+        if (cleaned !== undefined) {
+          result[k] = cleaned;
+        }
+      });
+      // @ts-expect-error cast back to T
+      return result as T;
+    }
+    return value;
+  }
+
   // Update wedding
   static async updateWedding(weddingId: string, updates: Partial<Wedding>): Promise<void> {
     try {
       const weddingRef = doc(db, this.COLLECTION, weddingId);
+      const cleaned = this.deepRemoveUndefined(updates);
       await updateDoc(weddingRef, {
-        ...updates,
+        ...cleaned,
         updatedAt: serverTimestamp(),
       });
     } catch (error) {

@@ -187,15 +187,20 @@ export const CustomizeInvitationPage: React.FC = () => {
       console.log('Saving wedding settings:', settings);
       console.log('Wedding ID:', wedding.id);
 
-      // Update the wedding with new settings
+      // Merge settings into existing settings instead of overwriting with partials
+      const mergedSettings: WeddingSettings = {
+        ...(wedding.settings || {}),
+        ...settings,
+      };
+
       await WeddingService.updateWedding(wedding.id, {
-        settings: settings
+        settings: mergedSettings
       });
 
       console.log('Wedding updated successfully');
 
       // Update local state
-      const updatedWedding = { ...wedding, settings };
+      const updatedWedding = { ...wedding, settings: mergedSettings } as Wedding;
       setWedding(updatedWedding);
       console.log('Local state updated:', updatedWedding);
 
@@ -217,13 +222,16 @@ export const CustomizeInvitationPage: React.FC = () => {
 
       console.log('Updating wedding data:', updatedWedding);
 
-      // Update the wedding with new data
-      await WeddingService.updateWedding(wedding.id, updatedWedding);
+      // Never overwrite settings here; that is handled by handleSave
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { settings: _ignoreSettings, ...safeUpdated } = updatedWedding;
+
+      await WeddingService.updateWedding(wedding.id, safeUpdated);
 
       console.log('Wedding updated successfully');
 
-      // Update local state
-      const newWedding = { ...wedding, ...updatedWedding };
+      // Update local state (merge)
+      const newWedding = { ...wedding, ...safeUpdated } as Wedding;
       setWedding(newWedding);
 
       // Show success message

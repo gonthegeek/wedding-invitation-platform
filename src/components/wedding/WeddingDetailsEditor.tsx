@@ -298,54 +298,50 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
   const [activeTab, setActiveTab] = useState<'content' | 'design' | 'additional' | 'venues' | 'weddingParty' | 'settings'>('content');
   const [wedding, setWedding] = useState<Wedding>(initialWedding);
   const [settings, setSettings] = useState<WeddingSettings>({
-    ...wedding.settings,
-    // Ensure all customizable fields have default values
-    loveQuote: wedding.settings?.loveQuote || "Love is composed of a single soul inhabiting two bodies.",
-    brideFatherName: wedding.settings?.brideFatherName || "",
-    brideMotherName: wedding.settings?.brideMotherName || "",
-    groomFatherName: wedding.settings?.groomFatherName || "",
-    groomMotherName: wedding.settings?.groomMotherName || "",
-    dressCode: wedding.settings?.dressCode || "Formal",
-    dressCodeDescription: wedding.settings?.dressCodeDescription || "Men: Suit\nWomen: Cocktail Dress",
-    rsvpTitle: wedding.settings?.rsvpTitle || "We Want to Share This Special Moment With You!",
-    rsvpMessage: wedding.settings?.rsvpMessage || "Please help us by confirming your attendance.",
-    rsvpButtonText: wedding.settings?.rsvpButtonText || "CONFIRM ATTENDANCE",
-    childrenNote: wedding.settings?.childrenNote || "We would love for you to bring your children,",
-    childrenNoteDetails: wedding.settings?.childrenNoteDetails || "but we ask that you take care of them during the event.",
-    giftMessage: wedding.settings?.giftMessage || "Your presence at our wedding is the greatest gift we could ask for. If you wish to honor us with a gift, we have prepared some suggestions for you.",
-    footerMessage: wedding.settings?.footerMessage || "Thank you for being part of one of the best days of our lives!",
-    footerSignature: wedding.settings?.footerSignature || "With love:",
-    primaryColor: wedding.settings?.primaryColor || "#667eea",
-    secondaryColor: wedding.settings?.secondaryColor || "#ff6b9d",
+    ...initialWedding.settings,
+    loveQuote: initialWedding.settings?.loveQuote || "Love is composed of a single soul inhabiting two bodies.",
+    brideFatherName: initialWedding.settings?.brideFatherName || "",
+    brideMotherName: initialWedding.settings?.brideMotherName || "",
+    groomFatherName: initialWedding.settings?.groomFatherName || "",
+    groomMotherName: initialWedding.settings?.groomMotherName || "",
+    dressCode: initialWedding.settings?.dressCode || "Formal",
+    dressCodeDescription: initialWedding.settings?.dressCodeDescription || "Men: Suit\nWomen: Cocktail Dress",
+    rsvpTitle: initialWedding.settings?.rsvpTitle || "We Want to Share This Special Moment With You!",
+    rsvpMessage: initialWedding.settings?.rsvpMessage || "Please help us by confirming your attendance.",
+    rsvpButtonText: initialWedding.settings?.rsvpButtonText || "CONFIRM ATTENDANCE",
+    childrenNote: initialWedding.settings?.childrenNote || "We would love for you to bring your children,",
+    childrenNoteDetails: initialWedding.settings?.childrenNoteDetails || "but we ask that you take care of them during the event.",
+    giftMessage: initialWedding.settings?.giftMessage || "Your presence at our wedding is the greatest gift we could ask for. If you wish to honor us with a gift, we have prepared some suggestions for you.",
+    footerMessage: initialWedding.settings?.footerMessage || "Thank you for being part of one of the best days of our lives!",
+    footerSignature: initialWedding.settings?.footerSignature || "With love:",
+    primaryColor: initialWedding.settings?.primaryColor || "#667eea",
+    secondaryColor: initialWedding.settings?.secondaryColor || "#ff6b9d",
   });
   const [saving, setSaving] = useState(false);
 
   // Update settings when wedding prop changes
   useEffect(() => {
-    setSettings({
-      ...wedding.settings,
-      // Ensure all customizable fields have default values
-      loveQuote: wedding.settings?.loveQuote || "Love is composed of a single soul inhabiting two bodies.",
-      brideFatherName: wedding.settings?.brideFatherName || "",
-      brideMotherName: wedding.settings?.brideMotherName || "",
-      groomFatherName: wedding.settings?.groomFatherName || "",
-      groomMotherName: wedding.settings?.groomMotherName || "",
-      dressCode: wedding.settings?.dressCode || "Formal",
-      dressCodeDescription: wedding.settings?.dressCodeDescription || "Men: Suit\nWomen: Cocktail Dress",
-      rsvpTitle: wedding.settings?.rsvpTitle || "We Want to Share This Special Moment With You!",
-      rsvpMessage: wedding.settings?.rsvpMessage || "Please help us by confirming your attendance.",
-      rsvpButtonText: wedding.settings?.rsvpButtonText || "CONFIRM ATTENDANCE",
-      childrenNote: wedding.settings?.childrenNote || "We would love for you to bring your children,",
-      childrenNoteDetails: wedding.settings?.childrenNoteDetails || "but we ask that you take care of them during the event.",
-      giftMessage: wedding.settings?.giftMessage || "Your presence at our wedding is the greatest gift we could ask for. If you wish to honor us with a gift, we have prepared some suggestions for you.",
-      footerMessage: wedding.settings?.footerMessage || "Thank you for being part of one of the best days of our lives!",
-      footerSignature: wedding.settings?.footerSignature || "With love:",
-      primaryColor: wedding.settings?.primaryColor || "#667eea",
-      secondaryColor: wedding.settings?.secondaryColor || "#ff6b9d",
-    });
-  }, [wedding]);
+    // Sync local state when parent wedding changes (e.g., after save)
+    setWedding(initialWedding);
+    setSettings(prev => ({
+      ...prev,
+      ...initialWedding.settings,
+      sectionVisibility: {
+        ...(prev.sectionVisibility || {}),
+        ...(initialWedding.settings?.sectionVisibility || {}),
+      },
+      hotelInfo: {
+        ...(prev.hotelInfo || {}),
+        ...(initialWedding.settings?.hotelInfo || {}),
+      },
+      giftOptions: initialWedding.settings?.giftOptions ?? prev.giftOptions,
+      photoGallery: initialWedding.settings?.photoGallery ?? prev.photoGallery,
+      primaryColor: initialWedding.settings?.primaryColor || prev.primaryColor || '#667eea',
+      secondaryColor: initialWedding.settings?.secondaryColor || prev.secondaryColor || '#ff6b9d',
+    }));
+  }, [initialWedding]);
 
-    const handleInputChange = (field: string, value: string | string[]) => {
+  const handleInputChange = (field: string, value: string | string[]) => {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
 

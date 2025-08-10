@@ -1094,8 +1094,12 @@ export const PublicWeddingInvitation: React.FC = () => {
                 <EventTitle>{t.invitation.dressCodeTitle}</EventTitle>
                 <EventTime>{wedding.settings?.dressCode || t.wedding.dressCode}</EventTime>
                 <EventLocation>
-                  {wedding.settings?.dressCode || t.wedding.dressCode}
-                  <br />
+                  {wedding.settings?.dressCodeDescription && (
+                    <>
+                      {wedding.settings.dressCodeDescription}
+                      <br />
+                    </>
+                  )}
                   <small>*{t.invitation.dressCodeNote}*</small>
                 </EventLocation>
               </EventCard>
