@@ -1144,12 +1144,22 @@ export const WeddingDetailsEditor: React.FC<WeddingDetailsEditorProps> = ({
                     <Label>{t.customization.backgroundImage}</Label>
                     <ImageUpload
                       value={settings.backgroundImageUrl || ''}
-                      onChange={(imageUrl) => handleInputChange('backgroundImage', imageUrl || '')}
+                      onChange={(imageUrl) => handleInputChange('backgroundImageUrl', imageUrl || '')}
                       onUpload={async (file: File) => {
                         return await StorageService.uploadImage(file, `weddings/${wedding.id}/backgrounds`);
                       }}
                       label={t.customization.uploadBackgroundImage}
                     />
+                    {settings.backgroundImageUrl && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleInputChange('backgroundImageUrl', '')}
+                        style={{ marginTop: '0.5rem' }}
+                      >
+                        {t.customization.removeBackgroundImage}
+                      </Button>
+                    )}
                   </FormGroup>
 
                   <FormGroup>

@@ -906,7 +906,7 @@ export const PublicWeddingInvitation: React.FC = () => {
       primaryColor={primaryColor} 
       secondaryColor={secondaryColor}
       backgroundType={wedding.settings?.backgroundType}
-      backgroundImageUrl={wedding.settings?.backgroundImageUrl}
+      backgroundImageUrl={wedding.settings?.backgroundImageUrl || (wedding.settings as Partial<import('../types').WeddingSettings>)?.backgroundImage}
       backgroundPosition={wedding.settings?.backgroundPosition}
       backgroundSize={wedding.settings?.backgroundSize}
       fontFamily={wedding.settings?.fontFamily}
