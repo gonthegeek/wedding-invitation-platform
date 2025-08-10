@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import { LanguageSelector } from './LanguageSelector';
 import { LogOut, User, Crown, Heart, Menu, ChevronRight, SunMedium, Moon } from 'lucide-react';
-import { useThemeContext } from '../../contexts/ThemeContext';
+import { useThemeContext } from '../../contexts/ThemeContextBase';
 
 const HeaderContainer = styled.header`
   background: ${(p) => p.theme.colors.surface};

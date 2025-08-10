@@ -11,7 +11,7 @@ import { FloatingLanguageSelector } from '../components/shared/FloatingLanguageS
 import { useTranslation, useLanguage } from '../hooks/useLanguage';
 import { formatDate, formatTime } from '../utils/i18nUtils';
 import type { Wedding, Guest } from '../types';
-import { useThemeContext } from '../contexts/ThemeContext';
+import { useThemeContext } from '../contexts/ThemeContextBase';
 
 // Animations
 const fadeIn = keyframes`

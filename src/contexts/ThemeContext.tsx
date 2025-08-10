@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ThemeProvider as SCThemeProvider, createGlobalStyle } from 'styled-components';
 import { darkTheme, lightTheme, type AppTheme } from '../styles/theme';
 import { ThemeContext, type ThemeMode } from './ThemeContextBase';
 
 // styled-components theme typing augmentation
 declare module 'styled-components' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface DefaultTheme extends AppTheme {}
 }
 
@@ -63,8 +63,4 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-export const useThemeContext = () => {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useThemeContext must be used within ThemeProvider');
-  return ctx;
-};
+// File now only exports React component(s)
