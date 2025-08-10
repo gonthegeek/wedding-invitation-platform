@@ -10,29 +10,24 @@ const LanguageSelectorContainer = styled.div`
 `;
 
 const LanguageButton = styled.button`
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
-  color: white;
+  padding: 0.5rem 0.75rem;
+  background: ${(p) => p.theme.colors.surface};
+  border: 1px solid ${(p) => p.theme.colors.border};
+  border-radius: 9999px;
+  color: ${(p) => p.theme.colors.textPrimary};
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: ${(p) => p.theme.colors.surfaceAlt};
   }
 
-  &:focus {
-    outline: none;
-    ring: 2px;
-    ring-color: rgba(255, 255, 255, 0.5);
-  }
+  svg { color: ${(p) => p.theme.colors.textSecondary}; }
 `;
 
 const LanguageDropdown = styled.div<{ $isOpen: boolean }>`
@@ -40,11 +35,11 @@ const LanguageDropdown = styled.div<{ $isOpen: boolean }>`
   top: 100%;
   right: 0;
   margin-top: 0.5rem;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: ${(p) => p.theme.colors.surface};
+  border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 0.5rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  min-width: 140px;
+  min-width: 160px;
   z-index: 1000;
   opacity: ${props => props.$isOpen ? 1 : 0};
   visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
@@ -57,29 +52,24 @@ const LanguageOption = styled.button<{ $isSelected: boolean }>`
   padding: 0.75rem 1rem;
   text-align: left;
   border: none;
-  background: ${props => props.$isSelected ? '#f8fafc' : 'transparent'};
-  color: ${props => props.$isSelected ? '#3b82f6' : '#374151'};
-  font-weight: ${props => props.$isSelected ? '500' : '400'};
+  background: ${(p) => (p.$isSelected ? p.theme.colors.surfaceAlt : 'transparent')};
+  color: ${(p) => (p.$isSelected ? p.theme.colors.primary : p.theme.colors.textPrimary)};
+  font-weight: ${(p) => (p.$isSelected ? 600 : 400)};
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f8fafc;
-    color: #3b82f6;
+    background: ${(p) => p.theme.colors.surfaceAlt};
+    color: ${(p) => p.theme.colors.primary};
   }
 
-  &:first-child {
-    border-radius: 0.5rem 0.5rem 0 0;
-  }
-
-  &:last-child {
-    border-radius: 0 0 0.5rem 0.5rem;
-  }
+  &:first-child { border-radius: 0.5rem 0.5rem 0 0; }
+  &:last-child { border-radius: 0 0 0.5rem 0.5rem; }
 `;
 
 const FlagEmoji = styled.span`
-  margin-right: 0.5rem;
-  font-size: 1.1em;
+  margin-right: 0.25rem;
+  font-size: 1.05em;
 `;
 
 interface LanguageSelectorProps {
