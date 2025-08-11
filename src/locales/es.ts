@@ -395,5 +395,32 @@ export const spanishTranslations: TranslationKeys = {
     messagesAndRequestsTitle: 'Mensajes y Solicitudes',
     specialRequests: 'Solicitudes Especiales:',
     messageLabel: 'Mensaje:'
+  },
+  guestManagement: {
+    statsTotalGuests: 'Invitados Totales',
+    statsResponded: 'Respondieron',
+    statsAttending: 'Asistiendo',
+    statsPlusOnes: 'Acompañantes',
+    searchPlaceholder: 'Buscar invitados por nombre o teléfono...',
+    filterAllStatuses: 'Todos los estados',
+    filterPending: 'Pendiente',
+    filterAttending: 'Asistiendo',
+    filterNotAttending: 'No Asiste',
+    filterMaybe: 'Tal vez',
+    tableName: 'Nombre',
+    tablePhone: 'Teléfono',
+    tableStatus: 'Estado',
+    tablePlusOnes: 'Acompañantes',
+    tableInviteCode: 'Código de Invitación',
+    tableActions: 'Acciones',
+    emptyNoResults: 'Ningún invitado coincide con tu búsqueda.',
+    emptyNoGuests: 'Aún no hay invitados. ¡Comienza agregando tu primer invitado!',
+    noPhone: 'Sin teléfono',
+    loadingGuests: 'Cargando invitados...',
+    errorPrefix: 'Error al cargar invitados: {error}',
+    confirmDelete: '¿Seguro que deseas eliminar a {name}?',
+    deleteFailed: 'No se pudo eliminar al invitado. Inténtalo de nuevo.',
+    editGuestTitle: 'Editar invitado',
+    deleteGuestTitle: 'Eliminar invitado'
   }
 };

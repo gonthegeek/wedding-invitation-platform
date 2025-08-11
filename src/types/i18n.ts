@@ -396,4 +396,31 @@ export interface TranslationKeys {
     specialRequests: string;
     messageLabel: string;
   };
+  guestManagement: {
+    statsTotalGuests: string;
+    statsResponded: string;
+    statsAttending: string;
+    statsPlusOnes: string;
+    searchPlaceholder: string;
+    filterAllStatuses: string;
+    filterPending: string;
+    filterAttending: string;
+    filterNotAttending: string;
+    filterMaybe: string;
+    tableName: string;
+    tablePhone: string;
+    tableStatus: string;
+    tablePlusOnes: string;
+    tableInviteCode: string;
+    tableActions: string;
+    emptyNoResults: string;
+    emptyNoGuests: string;
+    noPhone: string;
+    loadingGuests: string;
+    errorPrefix: string; // expects {error}
+    confirmDelete: string; // expects {name}
+    deleteFailed: string;
+    editGuestTitle: string;
+    deleteGuestTitle: string;
+  };
 }

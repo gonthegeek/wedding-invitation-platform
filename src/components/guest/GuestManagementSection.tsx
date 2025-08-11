@@ -7,6 +7,7 @@ import { SendInvitationsModal } from './SendInvitationsModal';
 import { DeletedGuestsModal } from './DeletedGuestsModal';
 import { Users, Search } from 'lucide-react';
 import type { Guest } from '../../types/guest';
+import { useTranslation } from '../../hooks/useLanguage';
 
 const ContentContainer = styled.div`
   width: 100%;
@@ -259,6 +260,8 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
   const [isDeletedGuestsModalOpen, setIsDeletedGuestsModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
 
+  const t = useTranslation();
+
   // Update selectedGuest when guests array changes (after refresh)
   useEffect(() => {
     if (selectedGuest && guests.length > 0) {
@@ -308,17 +311,17 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
   };
 
   const handleDeleteGuest = async (guest: Guest) => {
-    if (confirm(`Are you sure you want to delete ${guest.firstName} ${guest.lastName}?`)) {
+    if (confirm(t.guestManagement.confirmDelete.replace('{name}', `${guest.firstName} ${guest.lastName}`))) {
       try {
         const success = await deleteGuest(guest.id);
         if (success) {
           refreshGuests(); // Refresh the guest list
         } else {
-          alert('Failed to delete guest. Please try again.');
+          alert(t.guestManagement.deleteFailed);
         }
       } catch (error) {
         console.error('Error deleting guest:', error);
-        alert('Failed to delete guest. Please try again.');
+        alert(t.guestManagement.deleteFailed);
       }
     }
   };
@@ -327,7 +330,7 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
     return (
       <ContentContainer>
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          Loading guests...
+          {t.guestManagement.loadingGuests}
         </div>
       </ContentContainer>
     );
@@ -337,7 +340,7 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
     return (
       <ContentContainer>
         <div style={{ textAlign: 'center', padding: '2rem', color: '#dc2626' }}>
-          Error loading guests: {error}
+          {t.guestManagement.errorPrefix.replace('{error}', String(error))}
         </div>
       </ContentContainer>
     );
@@ -352,28 +355,28 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
             <Users size={20} />
           </StatIcon>
           <StatValue>{stats?.totalGuests || 0}</StatValue>
-          <StatLabel>Total Guests</StatLabel>
+          <StatLabel>{t.guestManagement.statsTotalGuests}</StatLabel>
         </StatCard>
         <StatCard>
           <StatIcon color="#10b981">
             <Users size={20} />
           </StatIcon>
           <StatValue>{stats?.respondedCount || 0}</StatValue>
-          <StatLabel>Responded</StatLabel>
+          <StatLabel>{t.guestManagement.statsResponded}</StatLabel>
         </StatCard>
         <StatCard>
           <StatIcon color="#f59e0b">
             <Users size={20} />
           </StatIcon>
           <StatValue>{stats?.attendingCount || 0}</StatValue>
-          <StatLabel>Attending</StatLabel>
+          <StatLabel>{t.guestManagement.statsAttending}</StatLabel>
         </StatCard>
         <StatCard>
           <StatIcon color="#8b5cf6">
             <Users size={20} />
           </StatIcon>
           <StatValue>{guests.reduce((sum, g) => sum + (g.plusOnes?.length || 0), 0)}</StatValue>
-          <StatLabel>Plus Ones</StatLabel>
+          <StatLabel>{t.guestManagement.statsPlusOnes}</StatLabel>
         </StatCard>
       </StatsContainer>
 
@@ -383,7 +386,7 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
           <SearchIcon />
           <SearchInput
             type="text"
-            placeholder="Search guests by name or phone..."
+            placeholder={t.guestManagement.searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -392,40 +395,47 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
-          <option value="all">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="attending">Attending</option>
-          <option value="not_attending">Not Attending</option>
-          <option value="maybe">Maybe</option>
+          <option value="all">{t.guestManagement.filterAllStatuses}</option>
+          <option value="pending">{t.guestManagement.filterPending}</option>
+          <option value="attending">{t.guestManagement.filterAttending}</option>
+          <option value="not_attending">{t.guestManagement.filterNotAttending}</option>
+          <option value="maybe">{t.guestManagement.filterMaybe}</option>
         </FilterSelect>
       </SearchAndFilters>
 
       {/* Guest Table */}
       <GuestTable>
         <TableHeader>
-          <div>Name</div>
-          <div>Phone</div>
-          <div>Status</div>
-          <div>Plus Ones</div>
-          <div>Invite Code</div>
-          <div>Actions</div>
+          <div>{t.guestManagement.tableName}</div>
+          <div>{t.guestManagement.tablePhone}</div>
+          <div>{t.guestManagement.tableStatus}</div>
+          <div>{t.guestManagement.tablePlusOnes}</div>
+          <div>{t.guestManagement.tableInviteCode}</div>
+          <div>{t.guestManagement.tableActions}</div>
         </TableHeader>
         
         {filteredGuests.length === 0 ? (
           <EmptyState>
             {searchTerm || statusFilter !== 'all' ? 
-              'No guests match your search criteria.' : 
-              'No guests added yet. Start by adding your first guest!'
+              t.guestManagement.emptyNoResults : 
+              t.guestManagement.emptyNoGuests
             }
           </EmptyState>
         ) : (
           filteredGuests.map((guest, index) => (
             <TableRow key={guest.id} $isEven={index % 2 === 1}>
               <GuestName>{guest.firstName} {guest.lastName}</GuestName>
-              <GuestPhone>{guest.phone || 'No phone'}</GuestPhone>
+              <GuestPhone>{guest.phone || t.guestManagement.noPhone}</GuestPhone>
               <div>
                 <StatusBadge status={guest.rsvpStatus}>
-                  {guest.rsvpStatus.replace('_', ' ')}
+                  {(() => {
+                    switch (guest.rsvpStatus) {
+                      case 'attending': return t.rsvpAnalytics.statusAttending;
+                      case 'not_attending': return t.rsvpAnalytics.statusNotAttending;
+                      case 'maybe': return t.rsvpAnalytics.statusMaybe;
+                      default: return t.rsvpAnalytics.statusPending;
+                    }
+                  })()}
                 </StatusBadge>
               </div>
               <div>{guest.plusOnes?.length || 0}</div>
@@ -435,13 +445,13 @@ export const GuestManagementContent: React.FC<GuestManagementContentProps> = ({
               <ActionButtonsCell>
                 <SmallActionButton
                   onClick={() => handleEditGuest(guest)}
-                  title="Edit guest"
+                  title={t.guestManagement.editGuestTitle}
                 >
                   ✏️
                 </SmallActionButton>
                 <SmallActionButton
                   onClick={() => handleDeleteGuest(guest)}
-                  title="Delete guest"
+                  title={t.guestManagement.deleteGuestTitle}
                 >
                   🗑️
                 </SmallActionButton>

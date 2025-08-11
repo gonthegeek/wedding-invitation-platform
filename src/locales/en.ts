@@ -395,5 +395,32 @@ export const englishTranslations: TranslationKeys = {
     messagesAndRequestsTitle: 'Messages & Requests',
     specialRequests: 'Special Requests:',
     messageLabel: 'Message:'
+  },
+  guestManagement: {
+    statsTotalGuests: 'Total Guests',
+    statsResponded: 'Responded',
+    statsAttending: 'Attending',
+    statsPlusOnes: 'Plus Ones',
+    searchPlaceholder: 'Search guests by name or phone...',
+    filterAllStatuses: 'All Statuses',
+    filterPending: 'Pending',
+    filterAttending: 'Attending',
+    filterNotAttending: 'Not Attending',
+    filterMaybe: 'Maybe',
+    tableName: 'Name',
+    tablePhone: 'Phone',
+    tableStatus: 'Status',
+    tablePlusOnes: 'Plus Ones',
+    tableInviteCode: 'Invite Code',
+    tableActions: 'Actions',
+    emptyNoResults: 'No guests match your search criteria.',
+    emptyNoGuests: 'No guests added yet. Start by adding your first guest!',
+    noPhone: 'No phone',
+    loadingGuests: 'Loading guests...',
+    errorPrefix: 'Error loading guests: {error}',
+    confirmDelete: 'Are you sure you want to delete {name}?',
+    deleteFailed: 'Failed to delete guest. Please try again.',
+    editGuestTitle: 'Edit guest',
+    deleteGuestTitle: 'Delete guest'
   }
 };
