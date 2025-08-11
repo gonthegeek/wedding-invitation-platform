@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import type { Wedding } from '../../../types';
+import { useTranslation } from '../../../hooks/useLanguage';
 
 const StepContainer = styled.div`
   display: flex;
@@ -73,16 +74,17 @@ export default function DetailsStep() {
     register,
     formState: { errors },
   } = useFormContext<Partial<Wedding>>();
+  const t = useTranslation();
 
   return (
     <StepContainer>
       <div>
-        <SectionTitle>Ceremony Details</SectionTitle>
+        <SectionTitle>{t.wizard?.ceremonyDetails || 'Ceremony Details'}</SectionTitle>
         
         <LocationSection>
           <FormRow>
             <FormGroup>
-              <Label htmlFor="ceremonyTime">Ceremony Time</Label>
+              <Label htmlFor="ceremonyTime">{t.wedding.ceremonyTime}</Label>
               <Input
                 {...register('ceremonyTime')}
                 id="ceremonyTime"
@@ -90,96 +92,96 @@ export default function DetailsStep() {
                 className={errors.ceremonyTime ? 'error' : ''}
               />
               {errors.ceremonyTime && (
-                <ErrorMessage>{errors.ceremonyTime.message}</ErrorMessage>
+                <ErrorMessage>{errors.ceremonyTime.message as string}</ErrorMessage>
               )}
             </FormGroup>
           </FormRow>
 
           <FormRow style={{ marginTop: '1rem' }}>
             <FormGroup>
-              <Label htmlFor="ceremonyLocation.name">Venue Name</Label>
+              <Label htmlFor="ceremonyLocation.name">{t.customization.venueName}</Label>
               <Input
                 {...register('ceremonyLocation.name')}
                 id="ceremonyLocation.name"
                 type="text"
                 className={errors.ceremonyLocation?.name ? 'error' : ''}
-                placeholder="Enter ceremony venue name"
+                placeholder={t.wizard?.venueNamePlaceholder || 'Enter venue name'}
               />
               {errors.ceremonyLocation?.name && (
-                <ErrorMessage>{errors.ceremonyLocation.name.message}</ErrorMessage>
+                <ErrorMessage>{errors.ceremonyLocation.name.message as string}</ErrorMessage>
               )}
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="ceremonyLocation.address">Address</Label>
+              <Label htmlFor="ceremonyLocation.address">{t.customization.venueAddress}</Label>
               <Input
                 {...register('ceremonyLocation.address')}
                 id="ceremonyLocation.address"
                 type="text"
                 className={errors.ceremonyLocation?.address ? 'error' : ''}
-                placeholder="Enter ceremony venue address"
+                placeholder={t.wizard?.addressPlaceholder || 'Enter address'}
               />
               {errors.ceremonyLocation?.address && (
-                <ErrorMessage>{errors.ceremonyLocation.address.message}</ErrorMessage>
+                <ErrorMessage>{errors.ceremonyLocation.address.message as string}</ErrorMessage>
               )}
             </FormGroup>
           </FormRow>
 
           <FormRow style={{ marginTop: '1rem' }}>
             <FormGroup>
-              <Label htmlFor="ceremonyLocation.city">City</Label>
+              <Label htmlFor="ceremonyLocation.city">{t.customization.city}</Label>
               <Input
                 {...register('ceremonyLocation.city')}
                 id="ceremonyLocation.city"
                 type="text"
                 className={errors.ceremonyLocation?.city ? 'error' : ''}
-                placeholder="Enter city"
+                placeholder={t.wizard?.cityPlaceholder || 'Enter city'}
               />
               {errors.ceremonyLocation?.city && (
-                <ErrorMessage>{errors.ceremonyLocation.city.message}</ErrorMessage>
+                <ErrorMessage>{errors.ceremonyLocation.city.message as string}</ErrorMessage>
               )}
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="ceremonyLocation.state">State</Label>
+              <Label htmlFor="ceremonyLocation.state">{t.customization.state}</Label>
               <Input
                 {...register('ceremonyLocation.state')}
                 id="ceremonyLocation.state"
                 type="text"
                 className={errors.ceremonyLocation?.state ? 'error' : ''}
-                placeholder="Enter state"
+                placeholder={t.wizard?.statePlaceholder || 'Enter state'}
               />
               {errors.ceremonyLocation?.state && (
-                <ErrorMessage>{errors.ceremonyLocation.state.message}</ErrorMessage>
+                <ErrorMessage>{errors.ceremonyLocation.state.message as string}</ErrorMessage>
               )}
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="ceremonyLocation.zipCode">Zip Code</Label>
+              <Label htmlFor="ceremonyLocation.zipCode">{t.customization.zipCode}</Label>
               <Input
                 {...register('ceremonyLocation.zipCode')}
                 id="ceremonyLocation.zipCode"
                 type="text"
                 className={errors.ceremonyLocation?.zipCode ? 'error' : ''}
-                placeholder="Enter zip code"
+                placeholder={t.wizard?.zipPlaceholder || 'Enter zip code'}
               />
               {errors.ceremonyLocation?.zipCode && (
-                <ErrorMessage>{errors.ceremonyLocation.zipCode.message}</ErrorMessage>
+                <ErrorMessage>{errors.ceremonyLocation.zipCode.message as string}</ErrorMessage>
               )}
             </FormGroup>
           </FormRow>
 
           <FormRow style={{ marginTop: '1rem' }}>
             <FormGroup>
-              <Label htmlFor="ceremonyLocation.googleMapsUrl">Google Maps Link (Optional)</Label>
+              <Label htmlFor="ceremonyLocation.googleMapsUrl">{t.customization.googleMapsOptional}</Label>
               <Input
                 {...register('ceremonyLocation.googleMapsUrl')}
                 id="ceremonyLocation.googleMapsUrl"
                 type="url"
-                placeholder="https://maps.google.com/... (paste from Google Maps)"
+                placeholder="https://maps.google.com/..."
               />
               <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
-                Go to Google Maps, search your venue, click "Share" and copy the link
+                {t.wizard?.googleMapsHint || 'Go to Google Maps, search your venue, click "Share" and copy the link'}
               </small>
             </FormGroup>
           </FormRow>
@@ -187,12 +189,12 @@ export default function DetailsStep() {
       </div>
 
       <div>
-        <SectionTitle>Reception Details</SectionTitle>
+        <SectionTitle>{t.wizard?.receptionDetails || 'Reception Details'}</SectionTitle>
         
         <LocationSection>
           <FormRow>
             <FormGroup>
-              <Label htmlFor="receptionTime">Reception Time</Label>
+              <Label htmlFor="receptionTime">{t.wedding.receptionTime}</Label>
               <Input
                 {...register('receptionTime')}
                 id="receptionTime"
@@ -200,96 +202,96 @@ export default function DetailsStep() {
                 className={errors.receptionTime ? 'error' : ''}
               />
               {errors.receptionTime && (
-                <ErrorMessage>{errors.receptionTime.message}</ErrorMessage>
+                <ErrorMessage>{errors.receptionTime.message as string}</ErrorMessage>
               )}
             </FormGroup>
           </FormRow>
 
           <FormRow style={{ marginTop: '1rem' }}>
             <FormGroup>
-              <Label htmlFor="receptionLocation.name">Venue Name</Label>
+              <Label htmlFor="receptionLocation.name">{t.customization.venueName}</Label>
               <Input
                 {...register('receptionLocation.name')}
                 id="receptionLocation.name"
                 type="text"
                 className={errors.receptionLocation?.name ? 'error' : ''}
-                placeholder="Enter reception venue name"
+                placeholder={t.wizard?.venueNamePlaceholder || 'Enter venue name'}
               />
               {errors.receptionLocation?.name && (
-                <ErrorMessage>{errors.receptionLocation.name.message}</ErrorMessage>
+                <ErrorMessage>{errors.receptionLocation.name.message as string}</ErrorMessage>
               )}
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="receptionLocation.address">Address</Label>
+              <Label htmlFor="receptionLocation.address">{t.customization.venueAddress}</Label>
               <Input
                 {...register('receptionLocation.address')}
                 id="receptionLocation.address"
                 type="text"
                 className={errors.receptionLocation?.address ? 'error' : ''}
-                placeholder="Enter reception venue address"
+                placeholder={t.wizard?.addressPlaceholder || 'Enter address'}
               />
               {errors.receptionLocation?.address && (
-                <ErrorMessage>{errors.receptionLocation.address.message}</ErrorMessage>
+                <ErrorMessage>{errors.receptionLocation.address.message as string}</ErrorMessage>
               )}
             </FormGroup>
           </FormRow>
 
           <FormRow style={{ marginTop: '1rem' }}>
             <FormGroup>
-              <Label htmlFor="receptionLocation.city">City</Label>
+              <Label htmlFor="receptionLocation.city">{t.customization.city}</Label>
               <Input
                 {...register('receptionLocation.city')}
                 id="receptionLocation.city"
                 type="text"
                 className={errors.receptionLocation?.city ? 'error' : ''}
-                placeholder="Enter city"
+                placeholder={t.wizard?.cityPlaceholder || 'Enter city'}
               />
               {errors.receptionLocation?.city && (
-                <ErrorMessage>{errors.receptionLocation.city.message}</ErrorMessage>
+                <ErrorMessage>{errors.receptionLocation.city.message as string}</ErrorMessage>
               )}
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="receptionLocation.state">State</Label>
+              <Label htmlFor="receptionLocation.state">{t.customization.state}</Label>
               <Input
                 {...register('receptionLocation.state')}
                 id="receptionLocation.state"
                 type="text"
                 className={errors.receptionLocation?.state ? 'error' : ''}
-                placeholder="Enter state"
+                placeholder={t.wizard?.statePlaceholder || 'Enter state'}
               />
               {errors.receptionLocation?.state && (
-                <ErrorMessage>{errors.receptionLocation.state.message}</ErrorMessage>
+                <ErrorMessage>{errors.receptionLocation.state.message as string}</ErrorMessage>
               )}
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="receptionLocation.zipCode">Zip Code</Label>
+              <Label htmlFor="receptionLocation.zipCode">{t.customization.zipCode}</Label>
               <Input
                 {...register('receptionLocation.zipCode')}
                 id="receptionLocation.zipCode"
                 type="text"
                 className={errors.receptionLocation?.zipCode ? 'error' : ''}
-                placeholder="Enter zip code"
+                placeholder={t.wizard?.zipPlaceholder || 'Enter zip code'}
               />
               {errors.receptionLocation?.zipCode && (
-                <ErrorMessage>{errors.receptionLocation.zipCode.message}</ErrorMessage>
+                <ErrorMessage>{errors.receptionLocation.zipCode.message as string}</ErrorMessage>
               )}
             </FormGroup>
           </FormRow>
 
           <FormRow style={{ marginTop: '1rem' }}>
             <FormGroup>
-              <Label htmlFor="receptionLocation.googleMapsUrl">Google Maps Link (Optional)</Label>
+              <Label htmlFor="receptionLocation.googleMapsUrl">{t.customization.googleMapsOptional}</Label>
               <Input
                 {...register('receptionLocation.googleMapsUrl')}
                 id="receptionLocation.googleMapsUrl"
                 type="url"
-                placeholder="https://maps.google.com/... (paste from Google Maps)"
+                placeholder="https://maps.google.com/..."
               />
               <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
-                Go to Google Maps, search your venue, click "Share" and copy the link
+                {t.wizard?.googleMapsHint || 'Go to Google Maps, search your venue, click "Share" and copy the link'}
               </small>
             </FormGroup>
           </FormRow>

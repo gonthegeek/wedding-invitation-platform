@@ -2,7 +2,23 @@
 
 A comprehensive wedding invitation platform built with React TypeScript and Firebase, supporting multiple user roles and customizable wedding invitations. Features include bilingual support (English/Spanish), wedding party management, RSVP analytics, and modern responsive design.
 
-## 🌟 Current Features (Updated: July 2025)
+## What's New (August 2025)
+- Internationalization
+  - Strictly typed TranslationKeys with schema parity across en/es
+  - Full i18n for SendInvitationsModal (URLs, email section, actions, placeholders)
+  - Wedding Creation Wizard: shell and all steps localized (labels, placeholders, review). Validation messages are being migrated next
+  - New i18n maintenance scripts: npm run i18n:unused and npm run i18n:prune
+- UX fixes
+  - Removed nested layout in RSVP dashboard to avoid duplicate header/sidebar
+- Stack updates
+  - Upgraded to React 19 and React Router 7
+- Theming
+  - Global ThemeProvider with light/dark/system modes and shared theme tokens
+  - Theme-aware UI across guest management, editors, dashboards, and RSVP
+- Optional dynamic translations
+  - Firebase Callable + GCP Translate API with local and Firestore caching (see docs/BILINGUAL_SUPPORT_GUIDE.md)
+
+## 🌟 Current Features (Updated: August 2025)
 
 ### ✅ **Production-Ready Features**
 
@@ -27,6 +43,7 @@ A comprehensive wedding invitation platform built with React TypeScript and Fire
   - Comprehensive guest list management with search and filtering
   - CSV import/export functionality for bulk operations
   - Individual invitation URL generation for easy sharing
+  - Customizable WhatsApp/SMS templates with placeholders {firstName} and {url} (persisted in localStorage)
   - Guest status tracking (invited, confirmed, declined)
 - **RSVP Analytics Dashboard**: 
   - Real-time response tracking with visual charts
@@ -39,27 +56,13 @@ A comprehensive wedding invitation platform built with React TypeScript and Fire
   - Language selector with persistent user preference
   - 240+ translation keys covering all UI elements
 
-#### For Guests
-- **Beautiful Responsive Invitations**: Mobile-first design with elegant animations
-- **Enhanced RSVP System**: 
-  - Intuitive multi-step confirmation process
-  - Dietary restrictions and allergy management
-  - Plus-one support with individual details
-  - Special requests and messages to couple
-  - Song requests for reception
-- **Wedding Information Display**: 
-  - Event details (ceremony/reception locations and times)
-  - Interactive wedding party member showcase
-  - Cultural elements (Mexican Padrinos traditions)
-  - Responsive design for all devices
-
 ## 🚀 Technology Stack
 
-- **Frontend**: React 18 + TypeScript + Vite
+- **Frontend**: React 19 + TypeScript + Vite
 - **Backend**: Firebase (Auth, Firestore, Storage, Functions, Hosting)
-- **Styling**: CSS-in-JS with styled-components + Google Fonts
+- **Styling**: CSS-in-JS with styled-components (ThemeProvider, theme tokens; light/dark/system) + Google Fonts
 - **Forms**: React Hook Form with Yup validation
-- **Routing**: React Router v6
+- **Routing**: React Router v7
 - **Icons**: Lucide React
 - **Development**: ESLint, Prettier, TypeScript
 - **Testing**: Jest + React Testing Library (configured)
@@ -102,6 +105,10 @@ npm run lint
 
 # Build for production
 npm run build
+
+# i18n maintenance
+npm run i18n:unused   # list unused translation keys
+npm run i18n:prune    # prune unused keys (with backup)
 ```
 
 ### 3. Firebase Setup
@@ -130,7 +137,7 @@ firebase deploy
 │  - Forms         - Auth       - State     - Firebase    │
 │  - Modals        - Dashboard  - Effects   - Storage     │
 ├─────────────────────────────────────────────────────────┤
-│              React Router v6 + Context API              │
+│              React Router v7 + Context API              │
 ├─────────────────────────────────────────────────────────┤
 │         Styled Components + TypeScript Types            │
 └─────────────────────────────────────────────────────────┘
@@ -229,7 +236,7 @@ export interface Wedding {
 // components/feature/NewComponent.tsx
 import React from 'react';
 import styled from 'styled-components';
-import { useLanguage } from '../../hooks/useLanguage';
+import { useTranslation } from '../../hooks/useLanguage';
 
 interface NewComponentProps {
   title: string;
@@ -238,20 +245,19 @@ interface NewComponentProps {
 
 const Container = styled.div`
   padding: var(--spacing-md);
-  // Use CSS variables for consistency
 `;
 
 export const NewComponent: React.FC<NewComponentProps> = ({ 
   title, 
   onAction 
 }) => {
-  const { t } = useLanguage();
+  const t = useTranslation();
   
   return (
     <Container>
       <h2>{title}</h2>
       <button onClick={onAction}>
-        {t.common.save}
+        {t.common.refresh}
       </button>
     </Container>
   );
@@ -292,11 +298,11 @@ export class NewFeatureService {
 export const translations = {
   // ... existing translations
   newFeature: {
-    title: 'New Feature' | 'Nueva Funcionalidad',
-    description: 'Feature description' | 'Descripción de la funcionalidad',
+    title: 'New Feature',
+    description: 'Feature description',
     actions: {
-      save: 'Save' | 'Guardar',
-      cancel: 'Cancel' | 'Cancelar'
+      save: 'Save',
+      cancel: 'Cancel'
     }
   }
 };
@@ -313,23 +319,6 @@ Collections:
 ├── guests/             # Guest information linked to weddings
 ├── rsvps/              # RSVP responses with analytics data
 └── weddingParty/       # Wedding party members
-
-// Example wedding document structure
-{
-  id: "wedding123",
-  coupleId: "user456", 
-  brideFirstName: "María",
-  groomFirstName: "José",
-  weddingDate: Timestamp,
-  settings: {
-    primaryColor: "#8B4513",
-    fontFamily: "Dancing Script",
-    backgroundType: "gradient",
-    // ... design settings
-  },
-  createdAt: Timestamp,
-  updatedAt: Timestamp
-}
 ```
 
 #### **2. Security Rules Structure**
@@ -359,90 +348,27 @@ service cloud.firestore {
 const CoupleDashboard = lazy(() => import('./pages/CoupleDashboard'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
-// Component wrapping
-<Suspense fallback={<LoadingSpinner />}>
+<Suspense fallback={<div>Loading...</div>}>
   <CoupleDashboard />
 </Suspense>
 ```
 
-#### **2. Image Optimization**
-```typescript
-// storageService.ts - Automatic image compression
-export const uploadImage = async (file: File, path: string): Promise<string> => {
-  // Compress image before upload
-  const compressedFile = await compressImage(file, {
-    maxWidth: 1200,
-    quality: 0.8,
-    format: 'webp'
-  });
-  
-  const storageRef = ref(storage, `${path}/${uuid()}`);
-  await uploadBytes(storageRef, compressedFile);
-  return getDownloadURL(storageRef);
-};
-```
-
-#### **3. Firebase Query Optimization**
-```typescript
-// Efficient queries with proper indexing
-const getWeddingGuests = async (weddingId: string): Promise<Guest[]> => {
-  const q = query(
-    collection(db, 'guests'),
-    where('weddingId', '==', weddingId),
-    where('isDeleted', '==', false),
-    orderBy('lastName', 'asc'),
-    limit(100)
-  );
-  
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Guest));
-};
-```
-
-### **Development Workflow**
-
-#### **Feature Branch Workflow**
-```bash
-git checkout -b feature/new-feature-name
-# Make changes
-git commit -m "feat: add new feature description"
-git push origin feature/new-feature-name
-# Create Pull Request
-```
-
-#### **Code Review Checklist**
-- [ ] TypeScript compilation without errors
-- [ ] ESLint passes without warnings
-- [ ] Mobile responsiveness verified
-- [ ] Accessibility considerations addressed
-- [ ] Firebase security rules updated if needed
-- [ ] Performance impact assessed
-
-#### **Testing Requirements**
-- All new components should have basic render tests
-- Service functions should have unit tests
-- Integration tests for critical user flows
-- Manual testing on mobile devices
-
 ### **Internationalization (i18n) Implementation**
 
-#### **Translation System Architecture**
+#### Translation System Architecture
 ```typescript
-// Language context pattern
-export const LanguageContext = createContext<{
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: TranslationFunction;
-}>({
-  language: 'en',
-  setLanguage: () => {},
-  t: (key: string) => key
-});
+// use in components
+import { useTranslation } from '../hooks/useLanguage';
 
-// Usage in components
-const { t } = useLanguage();
-return <h1>{t.wedding.title}</h1>;
+const t = useTranslation();
+return <h1>{t.nav.platformTitle}</h1>;
 ```
+
+- Strict TypeScript typing via `TranslationKeys` prevents missing/mistyped keys
+- Analyzer scripts help keep locales healthy:
+  - `npm run i18n:unused` to list unused keys
+  - `npm run i18n:prune` to safely prune unused keys
+- Optional dynamic translations at runtime via Firebase Callable + GCP Translate with local/Firestore caching. See BILINGUAL_SUPPORT_GUIDE.md
 
 ## 📂 **Current Project Structure**
 
@@ -571,168 +497,83 @@ wedding-invitation-platform/
 
 ## 📈 **Project Status & Development Roadmap**
 
-### 🎉 **PRODUCTION READY - Current Status (July 2025)**
+### 🎉 **PRODUCTION READY - Current Status (August 2025)**
 
 #### ✅ **Phase 1: Foundation** - **COMPLETED**
-- [x] React 18 + TypeScript + Vite setup with hot reload
-- [x] Firebase integration (Auth, Firestore, Storage, Functions)
-- [x] Authentication system with JWT and role-based access (Admin/Couple/Guest)
-- [x] ESLint + Prettier + TypeScript strict configuration
-- [x] Responsive design foundation with styled-components
-- [x] Basic routing with React Router v6
+- React + TypeScript + Vite setup with hot reload
+- Firebase integration (Auth, Firestore, Storage, Functions)
+- Authentication system with role-based access (Admin/Couple/Guest)
+- ESLint + Prettier + TypeScript strict configuration
+- Responsive design foundation with styled-components
+- Routing with React Router v7
 
 #### ✅ **Phase 2: Core Wedding Features** - **COMPLETED**
-- [x] Multi-step wedding creation wizard (4 steps)
-- [x] Comprehensive wedding details editor with live preview
-- [x] Dynamic invitation design system with 13+ Google Fonts
-- [x] Advanced color scheme customization (primary/secondary)
-- [x] Background customization (gradients, images, patterns)
-- [x] Section visibility controls for personalized layouts
+- Multi-step wedding creation wizard (4 steps)
+- Comprehensive wedding details editor with live preview
+- Dynamic invitation design system with Google Fonts
+- Advanced color scheme customization (primary/secondary)
+- Background customization (gradients, images, patterns)
+- Section visibility controls for personalized layouts
 
 #### ✅ **Phase 3A: Guest Management** - **COMPLETED**
-- [x] Complete guest CRUD operations with search and filtering
-- [x] CSV import/export functionality for bulk operations
-- [x] Individual invitation URL generation and sharing
-- [x] Guest status tracking (invited, confirmed, declined)
-- [x] Soft delete system with recovery capabilities
+- Complete guest CRUD operations with search and filtering
+- CSV import/export functionality for bulk operations
+- Individual invitation URL generation and sharing
+- Guest status tracking (invited, confirmed, declined)
+- Soft delete system with recovery capabilities
 
 #### ✅ **Phase 3B: Enhanced RSVP System** - **COMPLETED**
-- [x] Comprehensive RSVP form with validation and error handling
-- [x] Advanced guest information collection (dietary restrictions, allergies)
-- [x] Plus-one management with individual guest details
-- [x] Real-time RSVP analytics dashboard with visual charts
-- [x] Response tracking and attendance rate calculations
+- Comprehensive RSVP form with validation and error handling
+- Advanced guest information collection (dietary restrictions, allergies)
+- Plus-one management with individual guest details
+- Real-time RSVP analytics dashboard with visual charts
+- Response tracking and attendance rate calculations
 
 #### ✅ **Phase 3C: Wedding Party Management** - **COMPLETED**
-- [x] Complete wedding party CRUD interface with role management
-- [x] Role-based organization (Bridesmaids, Groomsmen, Mexican Padrinos)
-- [x] Professional image upload with Firebase Storage integration
-- [x] Automatic image compression and optimization
-- [x] Responsive wedding party display in public invitations
+- Complete wedding party CRUD interface with role management
+- Role-based organization (Bridesmaids, Groomsmen, Mexican Padrinos)
+- Professional image upload with Firebase Storage integration
+- Automatic image compression and optimization
+- Responsive wedding party display in public invitations
 
-#### ✅ **Phase 3D: Internationalization** - **COMPLETED**
-- [x] Complete bilingual support (English/Spanish)
-- [x] 240+ translation keys covering all UI elements
-- [x] Cultural appropriateness for Mexican wedding traditions
-- [x] Persistent language preference with context management
-- [x] Professional translation quality for both languages
-
-#### ✅ **Phase 3E: Code Quality & Production Readiness** - **COMPLETED**
-- [x] Comprehensive TypeScript type coverage (no `any` types)
-- [x] Production-ready code without debug statements
-- [x] Clean architecture with service layer pattern
-- [x] Error boundary implementation with graceful handling
-- [x] Performance optimization (code splitting, image optimization)
-- [x] Mobile-first responsive design with accessibility considerations
+#### ✅ **Phase 3D: Internationalization** - **COMPLETED / CONTINUOUS**
+- Complete bilingual support (English/Spanish)
+- 240+ translation keys covering all UI elements
+- Typed i18n with schema parity and maintenance scripts
+- Ongoing: migrate remaining validation strings to i18n
 
 ---
 
 ### 🚀 **NEXT DEVELOPMENT PHASES**
 
 #### 🔄 **Phase 4: Communication & Automation** - **IN PROGRESS**
-- [x] Email service configuration and basic templates
-- [x] SMTP integration with secure credential management
-- [ ] **Automated RSVP reminder system** (Next Priority)
-- [ ] **Thank you email automation after RSVP submission**
-- [ ] **Wedding day countdown emails**
-- [ ] **SMS notifications for critical updates** (Optional)
+- Email service configuration and basic templates
+- SMTP integration with secure credential management
+- Automated RSVP reminder system
+- Thank you email automation after RSVP submission
+- Wedding day countdown emails
+- SMS notifications for critical updates (Optional)
 
 #### 📋 **Phase 5: Advanced Features** - **PLANNED (Q3-Q4 2025)**
-- [ ] **Multiple invitation template system**
-  - Modern, Classic, Rustic, Elegant theme options
-  - Template preview and switching capability
-- [ ] **Advanced photo gallery with albums**
-  - Engagement photos, venue photos, couple story
-  - Album organization and guest photo contributions
-- [ ] **Gift registry integration**
-  - Multiple registry platform support (Amazon, Target, etc.)
-  - Gift tracking and thank you management
-- [ ] **Wedding timeline/itinerary management**
-  - Day-of schedule creation and sharing
-  - Vendor coordination timeline
-- [ ] **QR code generation for quick invitation access**
-  - Mobile-friendly QR codes for easy sharing
-  - Analytics on QR code usage
+- Multiple invitation template system
+- Advanced photo gallery with albums
+- Gift registry integration
+- Wedding timeline/itinerary management
+- QR code generation for quick invitation access
 
 #### 🔧 **Phase 6: Production Optimization** - **PLANNED (Q1 2026)**
-- [ ] **Advanced SEO implementation**
-  - Meta tags, Open Graph, structured data
-  - Search engine optimization for public invitations
-- [ ] **Comprehensive testing suite**
-  - Unit tests for all components and services
-  - Integration tests for critical user flows
-  - End-to-end testing with Cypress
-- [ ] **Performance monitoring and analytics**
-  - Real user metrics and performance tracking
-  - Error monitoring with Firebase Crashlytics
-- [ ] **CDN integration for global image delivery**
-  - Optimized image delivery worldwide
-  - Caching strategies for better performance
+- Advanced SEO implementation
+- Comprehensive testing suite
+- Performance monitoring and analytics
+- CDN integration for global image delivery
 
 #### 🌟 **Phase 7: Advanced Platform Features** - **FUTURE (2026)**
-- [ ] **Multi-event support**
-  - Engagement parties, bridal showers, bachelor/bachelorette
-  - Unified event management system
-- [ ] **Real-time collaboration for couples**
-  - Live editing and commenting system
-  - Change tracking and approval workflows
-- [ ] **Advanced analytics dashboard**
-  - Guest behavior analytics
-  - Response prediction modeling
-  - Performance insights and recommendations
-- [ ] **API development for third-party integrations**
-  - Wedding planning tool integrations
-  - Calendar app synchronization
-  - Social media platform connectivity
+- Multi-event support
+- Real-time collaboration for couples
+- Advanced analytics dashboard
+- API development for third-party integrations
 
 ---
-
-### 📊 **Current Production Metrics**
-
-#### **Technical Debt**: ⭐⭐⭐⭐⭐ (Minimal)
-- Clean, well-documented codebase
-- No major refactoring needed
-- Production-ready architecture
-
-#### **Feature Completeness**: 🎯 85% Production Ready
-- ✅ Core wedding invitation functionality
-- ✅ Complete guest and RSVP management
-- ✅ Professional design customization
-- ✅ Bilingual support
-- 🔄 Email automation (in progress)
-
-#### **Performance**: ⚡ Optimized
-- Fast loading times with Vite build optimization
-- Efficient Firebase queries with proper indexing
-- Image compression and optimization
-- Mobile-responsive with smooth animations
-
-#### **Security**: 🔒 Enterprise-Grade
-- Role-based access control
-- Firebase security rules implementation
-- Input validation and sanitization
-- HTTPS everywhere with secure data transmission
-
----
-
-### 🎯 **2025-2026 Development Priorities**
-
-1. **Q3 2025**: Complete email automation system
-2. **Q4 2025**: Advanced photo gallery and template system
-3. **Q1 2026**: Comprehensive testing and performance optimization
-4. **Q2 2026**: API development and third-party integrations
-
-### 🚀 **Ready for Production Use**
-
-The wedding invitation platform is **production-ready** for couples who want:
-- ✅ Beautiful, professional wedding invitations
-- ✅ Complete guest management with RSVP tracking
-- ✅ Bilingual support (English/Spanish)
-- ✅ Mobile-responsive design
-- ✅ Real-time analytics and insights
-- ✅ Secure, reliable Firebase backend
-
-**Perfect for**: Mexican-American weddings, bilingual ceremonies, tech-savvy couples, wedding planners, and anyone wanting a modern, professional wedding invitation solution.
 
 ## 🔧 Troubleshooting & Common Issues
 
@@ -740,7 +581,6 @@ The wedding invitation platform is **production-ready** for couples who want:
 ```bash
 # Check Firebase configuration
 npm run dev
-# Look for "Firebase Config Check" in console
 
 # Reset Firebase CLI
 firebase logout
@@ -755,11 +595,6 @@ firebase firestore:rules:get
 # Clear TypeScript cache
 rm -rf node_modules/.cache
 npm run type-check
-
-# Common fixes:
-# 1. Restart TypeScript server in VS Code
-# 2. Check import paths are correct
-# 3. Verify type definitions are up to date
 ```
 
 ### Build Issues
@@ -768,55 +603,29 @@ npm run type-check
 rm -rf dist/
 npm run build
 
-# Check for missing environment variables
-echo $VITE_FIREBASE_API_KEY
-
 # Verify all imports are correct
 npm run lint
 ```
 
 ## 📚 Documentation
 
-For detailed implementation guides, see the `/docs` directory:
-
-- **[BILINGUAL_SUPPORT_GUIDE.md](docs/BILINGUAL_SUPPORT_GUIDE.md)** - i18n implementation guide
-- **[EMAIL_SERVICE_SETUP.md](docs/EMAIL_SERVICE_SETUP.md)** - Email configuration guide
-- **[FUTURE_IMPROVEMENTS.md](docs/FUTURE_IMPROVEMENTS.md)** - Development roadmap
-- **[GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)** - CI/CD configuration
-- **[INVITATION_METHODS.md](docs/INVITATION_METHODS.md)** - Invitation sending methods
-
-## 🤝 Contributing
-
 ### Development Process
 1. **Feature Branch Workflow**:
    ```bash
    git checkout -b feature/new-feature-name
-   # Make changes
    git commit -m "feat: add new feature description"
    git push origin feature/new-feature-name
-   # Create Pull Request
    ```
 
 2. **Code Style & Standards**:
-   - **TypeScript**: Strict mode enabled, no `any` types
-   - **ESLint + Prettier**: Configured for consistent formatting
-   - **Component naming**: PascalCase for components, camelCase for functions
-   - **File naming**: PascalCase for React components, camelCase for utilities
-   - **Git commits**: Conventional commit format (`feat:`, `fix:`, `docs:`, etc.)
+   - TypeScript strict mode
+   - ESLint + Prettier
+   - Conventional commits
 
 3. **Testing Requirements**:
-   - All new components should have basic render tests
-   - Service functions should have unit tests
-   - Integration tests for critical user flows
-   - Manual testing on mobile devices
-
-4. **Code Review Checklist**:
-   - [ ] TypeScript compilation without errors
-   - [ ] ESLint passes without warnings
-   - [ ] Mobile responsiveness verified
-   - [ ] Accessibility considerations addressed
-   - [ ] Firebase security rules updated if needed
-   - [ ] Performance impact assessed
+   - Render tests for components
+   - Unit tests for services
+   - Integration tests for critical flows
 
 ## 📄 License
 
@@ -830,4 +639,4 @@ For support, create an issue in this repository or contact the development team.
 
 **Made with ❤️ for creating beautiful wedding memories**
 
-*Last Updated: July 2025*
+*Last Updated: August 2025*

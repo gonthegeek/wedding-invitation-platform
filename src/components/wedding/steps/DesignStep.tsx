@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import type { Wedding } from '../../../types';
+import { useTranslation } from '../../../hooks/useLanguage';
 
 const StepContainer = styled.div`
   display: flex;
@@ -148,21 +149,6 @@ const ColorGroup = styled.div`
   gap: 1rem;
 `;
 
-const templates = [
-  { id: 'classic', name: 'Classic', description: 'Elegant and timeless design' },
-  { id: 'modern', name: 'Modern', description: 'Clean and contemporary style' },
-  { id: 'rustic', name: 'Rustic', description: 'Natural and cozy feel' },
-  { id: 'elegant', name: 'Elegant', description: 'Sophisticated and luxurious' },
-];
-
-const fontOptions = [
-  { value: 'Inter', label: 'Inter (Modern Sans-serif)' },
-  { value: 'Playfair Display', label: 'Playfair Display (Elegant Serif)' },
-  { value: 'Dancing Script', label: 'Dancing Script (Script)' },
-  { value: 'Montserrat', label: 'Montserrat (Clean Sans-serif)' },
-  { value: 'Crimson Text', label: 'Crimson Text (Classic Serif)' },
-];
-
 export default function DesignStep() {
   const {
     register,
@@ -170,6 +156,22 @@ export default function DesignStep() {
     watch,
     setValue,
   } = useFormContext<Partial<Wedding>>();
+  const t = useTranslation();
+
+  const templates = [
+    { id: 'classic', name: t.wizard?.templateClassicName || 'Classic', description: t.wizard?.templateClassicDesc || 'Elegant and timeless design' },
+    { id: 'modern', name: t.wizard?.templateModernName || 'Modern', description: t.wizard?.templateModernDesc || 'Clean and contemporary style' },
+    { id: 'rustic', name: t.wizard?.templateRusticName || 'Rustic', description: t.wizard?.templateRusticDesc || 'Natural and cozy feel' },
+    { id: 'elegant', name: t.wizard?.templateElegantName || 'Elegant', description: t.wizard?.templateElegantDesc || 'Sophisticated and luxurious' },
+  ];
+
+  const fontOptions = [
+    { value: 'Inter', label: 'Inter (Modern Sans-serif)' },
+    { value: 'Playfair Display', label: 'Playfair Display (Elegant Serif)' },
+    { value: 'Dancing Script', label: 'Dancing Script (Script)' },
+    { value: 'Montserrat', label: 'Montserrat (Clean Sans-serif)' },
+    { value: 'Crimson Text', label: 'Crimson Text (Classic Serif)' },
+  ];
 
   const selectedTemplate = watch('template.templateId');
   const primaryColor = watch('template.primaryColor');
@@ -182,7 +184,7 @@ export default function DesignStep() {
   return (
     <StepContainer>
       <div>
-        <SectionTitle>Choose Template</SectionTitle>
+        <SectionTitle>{t.wizard?.chooseTemplate || 'Choose Template'}</SectionTitle>
         <TemplateGrid>
           {templates.map((template) => (
             <TemplateCard
@@ -196,16 +198,16 @@ export default function DesignStep() {
           ))}
         </TemplateGrid>
         {errors.template?.templateId && (
-          <ErrorMessage>{errors.template.templateId.message}</ErrorMessage>
+          <ErrorMessage>{errors.template.templateId.message as string}</ErrorMessage>
         )}
       </div>
 
       <div>
-        <SectionTitle>Color Scheme</SectionTitle>
+        <SectionTitle>{t.wizard?.colorScheme || 'Color Scheme'}</SectionTitle>
         <FormRow>
           <ColorGroup>
             <FormGroup>
-              <Label htmlFor="template.primaryColor">Primary Color</Label>
+              <Label htmlFor="template.primaryColor">{t.customization.primaryColor}</Label>
               <Input
                 {...register('template.primaryColor')}
                 id="template.primaryColor"
@@ -213,7 +215,7 @@ export default function DesignStep() {
                 className={errors.template?.primaryColor ? 'error' : ''}
               />
               {errors.template?.primaryColor && (
-                <ErrorMessage>{errors.template.primaryColor.message}</ErrorMessage>
+                <ErrorMessage>{errors.template.primaryColor.message as string}</ErrorMessage>
               )}
             </FormGroup>
             <ColorPreview color={primaryColor || '#3b82f6'} />
@@ -221,7 +223,7 @@ export default function DesignStep() {
 
           <ColorGroup>
             <FormGroup>
-              <Label htmlFor="template.secondaryColor">Secondary Color</Label>
+              <Label htmlFor="template.secondaryColor">{t.customization.secondaryColor}</Label>
               <Input
                 {...register('template.secondaryColor')}
                 id="template.secondaryColor"
@@ -229,7 +231,7 @@ export default function DesignStep() {
                 className={errors.template?.secondaryColor ? 'error' : ''}
               />
               {errors.template?.secondaryColor && (
-                <ErrorMessage>{errors.template.secondaryColor.message}</ErrorMessage>
+                <ErrorMessage>{errors.template.secondaryColor.message as string}</ErrorMessage>
               )}
             </FormGroup>
             <ColorPreview color={secondaryColor || '#1f2937'} />
@@ -238,10 +240,10 @@ export default function DesignStep() {
       </div>
 
       <div>
-        <SectionTitle>Typography</SectionTitle>
+        <SectionTitle>{t.wizard?.typography || 'Typography'}</SectionTitle>
         <FormRow>
           <FormGroup>
-            <Label htmlFor="template.fontFamily">Font Family</Label>
+            <Label htmlFor="template.fontFamily">{t.customization.fontFamily}</Label>
             <Select
               {...register('template.fontFamily')}
               id="template.fontFamily"
@@ -254,24 +256,24 @@ export default function DesignStep() {
               ))}
             </Select>
             {errors.template?.fontFamily && (
-              <ErrorMessage>{errors.template.fontFamily.message}</ErrorMessage>
+              <ErrorMessage>{errors.template.fontFamily.message as string}</ErrorMessage>
             )}
           </FormGroup>
         </FormRow>
       </div>
 
       <div>
-        <SectionTitle>Welcome Message</SectionTitle>
+        <SectionTitle>{t.wizard?.welcomeMessage || 'Welcome Message'}</SectionTitle>
         <FormGroup>
-          <Label htmlFor="settings.welcomeMessage">Custom Welcome Message (Optional)</Label>
+          <Label htmlFor="settings.welcomeMessage">{t.wizard?.welcomeMessageLabel || 'Custom Welcome Message (Optional)'}</Label>
           <TextArea
             {...register('settings.welcomeMessage')}
             id="settings.welcomeMessage"
             className={errors.settings?.welcomeMessage ? 'error' : ''}
-            placeholder="Add a personal welcome message for your guests..."
+            placeholder={t.customization.welcomeMessagePlaceholder}
           />
           {errors.settings?.welcomeMessage && (
-            <ErrorMessage>{errors.settings.welcomeMessage.message}</ErrorMessage>
+            <ErrorMessage>{errors.settings.welcomeMessage.message as string}</ErrorMessage>
           )}
         </FormGroup>
       </div>

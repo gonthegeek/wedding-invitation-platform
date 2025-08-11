@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import type { Wedding } from '../../../types';
+import { useTranslation } from '../../../hooks/useLanguage';
 
 const StepContainer = styled.div`
   display: flex;
@@ -89,6 +90,7 @@ const TemplatePreview = styled.div.withConfig({
 
 export default function ReviewStep() {
   const { watch } = useFormContext<Partial<Wedding>>();
+  const t = useTranslation();
 
   const formData = watch();
 
@@ -115,41 +117,41 @@ export default function ReviewStep() {
   return (
     <StepContainer>
       <h2 style={{ textAlign: 'center', color: '#1f2937', marginBottom: '1rem' }}>
-        Review Your Wedding Invitation
+        {t.wizard?.reviewTitle || 'Review Your Wedding Invitation'}
       </h2>
       
       <ReviewCard>
-        <SectionTitle>Couple Information</SectionTitle>
+        <SectionTitle>{t.wizard?.coupleInformation || 'Couple Information'}</SectionTitle>
         <InfoRow>
-          <InfoLabel>Bride:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelBride || 'Bride:'}</InfoLabel>
           <InfoValue>{formData.brideFirstName} {formData.brideLastName}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Groom:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelGroom || 'Groom:'}</InfoLabel>
           <InfoValue>{formData.groomFirstName} {formData.groomLastName}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Wedding Date:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelWeddingDate || 'Wedding Date:'}</InfoLabel>
           <InfoValue>{formatDate(formData.weddingDate)}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Invitation URL:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelInvitationUrl || 'Invitation URL:'}</InfoLabel>
           <InfoValue>{formData.subdomain}.yourweddingdomain.com</InfoValue>
         </InfoRow>
       </ReviewCard>
 
       <ReviewCard>
-        <SectionTitle>Ceremony Details</SectionTitle>
+        <SectionTitle>{t.wizard?.ceremonyDetails || 'Ceremony Details'}</SectionTitle>
         <InfoRow>
-          <InfoLabel>Time:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelTime || 'Time:'}</InfoLabel>
           <InfoValue>{formatTime(formData.ceremonyTime)}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Venue:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelVenue || 'Venue:'}</InfoLabel>
           <InfoValue>{formData.ceremonyLocation?.name}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Address:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelAddress || 'Address:'}</InfoLabel>
           <InfoValue>
             {formData.ceremonyLocation?.address}, {formData.ceremonyLocation?.city}, {formData.ceremonyLocation?.state} {formData.ceremonyLocation?.zipCode}
           </InfoValue>
@@ -157,17 +159,17 @@ export default function ReviewStep() {
       </ReviewCard>
 
       <ReviewCard>
-        <SectionTitle>Reception Details</SectionTitle>
+        <SectionTitle>{t.wizard?.receptionDetails || 'Reception Details'}</SectionTitle>
         <InfoRow>
-          <InfoLabel>Time:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelTime || 'Time:'}</InfoLabel>
           <InfoValue>{formatTime(formData.receptionTime)}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Venue:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelVenue || 'Venue:'}</InfoLabel>
           <InfoValue>{formData.receptionLocation?.name}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Address:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelAddress || 'Address:'}</InfoLabel>
           <InfoValue>
             {formData.receptionLocation?.address}, {formData.receptionLocation?.city}, {formData.receptionLocation?.state} {formData.receptionLocation?.zipCode}
           </InfoValue>
@@ -175,45 +177,47 @@ export default function ReviewStep() {
       </ReviewCard>
 
       <ReviewCard>
-        <SectionTitle>Design & Template</SectionTitle>
+        <SectionTitle>{t.wizard?.designAndTemplate || 'Design & Template'}</SectionTitle>
         <InfoRow>
-          <InfoLabel>Template:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelTemplate || 'Template:'}</InfoLabel>
           <InfoValue>{formData.template?.templateId}</InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Primary Color:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelPrimaryColor || 'Primary Color:'}</InfoLabel>
           <InfoValue>
             {formData.template?.primaryColor}
             <ColorPreview color={formData.template?.primaryColor || '#3b82f6'} />
           </InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Secondary Color:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelSecondaryColor || 'Secondary Color:'}</InfoLabel>
           <InfoValue>
             {formData.template?.secondaryColor}
             <ColorPreview color={formData.template?.secondaryColor || '#1f2937'} />
           </InfoValue>
         </InfoRow>
         <InfoRow>
-          <InfoLabel>Font:</InfoLabel>
+          <InfoLabel>{t.wizard?.labelFont || 'Font:'}</InfoLabel>
           <InfoValue>{formData.template?.fontFamily}</InfoValue>
         </InfoRow>
         {formData.settings?.welcomeMessage && (
           <InfoRow>
-            <InfoLabel>Welcome Message:</InfoLabel>
-            <InfoValue style={{ fontStyle: 'italic' }}>"{formData.settings.welcomeMessage}"</InfoValue>
+            <InfoLabel>{t.wizard?.labelWelcomeMessage || 'Welcome Message:'}</InfoLabel>
+            <InfoValue style={{ fontStyle: 'italic' }}>
+              "{formData.settings.welcomeMessage}"
+            </InfoValue>
           </InfoRow>
         )}
       </ReviewCard>
 
       <ReviewCard>
-        <SectionTitle>Invitation Preview</SectionTitle>
+        <SectionTitle>{t.wizard?.invitationPreview || 'Invitation Preview'}</SectionTitle>
         <TemplatePreview
           primaryColor={formData.template?.primaryColor || '#3b82f6'}
           secondaryColor={formData.template?.secondaryColor || '#1f2937'}
           fontFamily={formData.template?.fontFamily || 'Inter'}
         >
-          <div className="preview-title">You're Invited!</div>
+          <div className="preview-title">{t.wizard?.previewHeading || "You're Invited!"}</div>
           <div className="preview-names">
             {formData.brideFirstName} & {formData.groomFirstName}
           </div>

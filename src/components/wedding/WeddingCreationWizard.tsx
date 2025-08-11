@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useWedding } from '../../hooks/useWedding';
 import type { Wedding } from '../../types';
+import { useTranslation } from '../../hooks/useLanguage';
 
 // Step components
 import { BasicInfoStep, DetailsStep, DesignStep, ReviewStep } from './steps';
@@ -179,13 +180,14 @@ const LoadingSpinner = styled.div`
 `;
 
 const steps = [
-  { key: 'basic', label: 'Basic Info', schema: basicInfoSchema },
-  { key: 'details', label: 'Details', schema: detailsSchema },
-  { key: 'design', label: 'Design', schema: designSchema },
-  { key: 'review', label: 'Review', schema: yup.object() },
+  { key: 'basic', labelKey: 'stepBasicInfo' as const, schema: basicInfoSchema },
+  { key: 'details', labelKey: 'stepDetails' as const, schema: detailsSchema },
+  { key: 'design', labelKey: 'stepDesign' as const, schema: designSchema },
+  { key: 'review', labelKey: 'stepReview' as const, schema: yup.object() },
 ];
 
 export default function WeddingCreationWizard() {
+  const t = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const { createWedding, loading } = useWedding();
@@ -256,97 +258,67 @@ export default function WeddingCreationWizard() {
   };
 
   const handleStepClick = (stepIndex: number) => {
-    if (stepIndex <= Math.max(...completedSteps, -1) + 1) {
+    if (stepIndex <= currentStep || completedSteps.includes(stepIndex)) {
       setCurrentStep(stepIndex);
     }
   };
 
   const onSubmit = async (data: Partial<Wedding>) => {
-    try {
-      const weddingId = await createWedding(data);
-      if (weddingId) {
-        navigate('/couple/dashboard');
-      }
-    } catch (error) {
-      console.error('Error creating wedding:', error);
-    }
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 0:
-        return <BasicInfoStep />;
-      case 1:
-        return <DetailsStep />;
-      case 2:
-        return <DesignStep />;
-      case 3:
-        return <ReviewStep />;
-      default:
-        return null;
+    const id = await createWedding(data);
+    if (id) {
+      navigate(`/weddings/${id}`);
     }
   };
 
   return (
     <WizardContainer>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem', color: '#1f2937' }}>
-        Create Your Wedding Invitation
+      <h1 style={{ textAlign: 'center', color: '#111827', marginBottom: '2rem' }}>
+        {t.wizard?.title || 'Create Your Wedding Invitation'}
       </h1>
 
       <StepIndicator>
-        {steps.map((step, index) => (
-          <Step
-            key={step.key}
-            isActive={currentStep === index}
-            isCompleted={completedSteps.includes(index)}
-            onClick={() => handleStepClick(index)}
-            style={{ cursor: index <= Math.max(...completedSteps, -1) + 1 ? 'pointer' : 'default' }}
-          >
-            <div className="step-circle">
-              {completedSteps.includes(index) ? '✓' : index + 1}
-            </div>
-            <div className="step-label">{step.label}</div>
-          </Step>
-        ))}
+        {steps.map((s, idx) => {
+          const isActive = idx === currentStep;
+          const isCompleted = completedSteps.includes(idx);
+          return (
+            <Step
+              key={s.key}
+              isActive={isActive}
+              isCompleted={isCompleted}
+              onClick={() => handleStepClick(idx)}
+              style={{ cursor: idx <= currentStep || isCompleted ? 'pointer' : 'default', width: '25%' }}
+            >
+              <div className="step-circle">{idx + 1}</div>
+              <div className="step-label">{t.wizard?.[s.labelKey] || s.key}</div>
+            </Step>
+          );
+        })}
       </StepIndicator>
 
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <StepContent>
-            {renderStepContent()}
-          </StepContent>
+        <StepContent>
+          {currentStep === 0 && <BasicInfoStep />}
+          {currentStep === 1 && <DetailsStep />}
+          {currentStep === 2 && <DesignStep />}
+          {currentStep === 3 && <ReviewStep />}
+        </StepContent>
 
-          <NavigationButtons>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handlePrevious}
-              disabled={currentStep === 0}
-            >
-              Previous
+        <NavigationButtons>
+          <Button variant="secondary" onClick={handlePrevious} disabled={currentStep === 0}>
+            {t.wizard?.previous || 'Previous'}
+          </Button>
+
+          {currentStep < steps.length - 1 ? (
+            <Button variant="primary" onClick={handleNext} disabled={!isValid}>
+              {t.wizard?.next || 'Next'}
             </Button>
-
-            {currentStep === steps.length - 1 ? (
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={!isValid || loading}
-              >
-                {loading && <LoadingSpinner />}
-                Create Wedding
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                variant="primary"
-                onClick={handleNext}
-                disabled={!isValid}
-              >
-                Next
-              </Button>
-            )}
-          </NavigationButtons>
-        </form>
+          ) : (
+            <Button variant="primary" onClick={handleSubmit(onSubmit)} disabled={!isValid || loading}>
+              {loading && <LoadingSpinner />}
+              {t.wizard?.createWedding || 'Create Wedding'}
+            </Button>
+          )}
+        </NavigationButtons>
       </FormProvider>
     </WizardContainer>
   );

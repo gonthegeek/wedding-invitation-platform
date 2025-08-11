@@ -6,6 +6,7 @@ import { EmailService } from '../../services/emailService';
 import { generateSharingURL } from '../../config/invitationConfig';
 import type { Guest } from '../../types/guest';
 import { Mail, Copy, Send, CheckCircle, AlertCircle, Users, ExternalLink, MessageCircle, Smartphone } from 'lucide-react';
+import { useTranslation } from '../../hooks/useLanguage';
 
 // Default invitation message templates (module scope so they are stable)
 const DEFAULT_INVITATION_TEMPLATES = {
@@ -361,6 +362,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
   guests,
   onInvitationsSent 
 }) => {
+  const t = useTranslation();
   const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -477,7 +479,6 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
   };
 
   const getInvitationURL = (guest: Guest) => {
-    // In a real app, this would be the actual domain
     const baseURL = window.location.origin;
     return `${baseURL}/invite/${guest.inviteCode}`;  // Updated to new format with embedded RSVP
   };
@@ -488,7 +489,6 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
         remindersSent: guest.remindersSent + 1,
         invitedAt: new Date(),
       });
-      // Refresh the guest list to reflect changes
       onInvitationsSent();
     } catch (error) {
       console.error('Failed to update guest invitation status:', error);
@@ -503,8 +503,6 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
 
     try {
       const selectedGuestsList = guests.filter(guest => selectedGuests.has(guest.id));
-      
-      // Update all selected guests to mark invitations as sent
       for (const guest of selectedGuestsList) {
         await GuestService.updateGuest(guest.id, {
           remindersSent: guest.remindersSent + 1,
@@ -512,12 +510,14 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
         });
       }
 
+      const anyReminders = selectedGuestsList.some(g => g.remindersSent > 0);
       setStatusMessage({
         type: 'success',
-        message: `Successfully ${selectedGuestsList.some(g => g.remindersSent > 0) ? 'sent reminders to' : 'marked'} ${selectedGuestsList.length} guest${selectedGuestsList.length === 1 ? '' : 's'} ${selectedGuestsList.some(g => g.remindersSent > 0) ? '!' : 'as invited!'}`
+        message: anyReminders
+          ? t.guestManagement.markAllSuccessReminded?.replace('{count}', String(selectedGuestsList.length)) || `Successfully sent reminders to ${selectedGuestsList.length} guest(s)!`
+          : t.guestManagement.markAllSuccessInvited?.replace('{count}', String(selectedGuestsList.length)) || `Successfully marked ${selectedGuestsList.length} guest(s) as invited!`
       });
 
-      // Refresh the guest list and close modal after a brief delay
       setTimeout(() => {
         onInvitationsSent();
         setSelectedGuests(new Set());
@@ -527,7 +527,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
       console.error('Error marking guests as invited:', error);
       setStatusMessage({
         type: 'error',
-        message: 'Failed to mark guests as invited. Please try again.'
+        message: t.guestManagement.markAllError || 'Failed to mark guests as invited. Please try again.'
       });
     } finally {
       setIsLoading(false);
@@ -536,7 +536,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
 
   const shareViaWhatsApp = async (guest: Guest) => {
     if (!guest.phone) {
-      alert(`${guest.firstName} ${guest.lastName} doesn't have a phone number. Please add one first or use the copy URL option.`);
+      alert((t.guestManagement.noPhoneForShare || "{name} doesn't have a phone number. Please add one first or use the copy URL option.").replace('{name}', `${guest.firstName} ${guest.lastName}`));
       return;
     }
 
@@ -548,7 +548,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
 
   const shareViaSMS = async (guest: Guest) => {
     if (!guest.phone) {
-      alert(`${guest.firstName} ${guest.lastName} doesn't have a phone number. Please add one first or use the copy URL option.`);
+      alert((t.guestManagement.noPhoneForShare || "{name} doesn't have a phone number. Please add one first or use the copy URL option.").replace('{name}', `${guest.firstName} ${guest.lastName}`));
       return;
     }
 
@@ -563,10 +563,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
     try {
       await navigator.clipboard.writeText(url);
       setCopiedURLs(prev => new Set([...prev, guest.id]));
-      
-      // Mark guest as invited when URL is copied
       await markGuestAsInvited(guest);
-      
       setTimeout(() => {
         setCopiedURLs(prev => {
           const newSet = new Set(prev);
@@ -587,58 +584,39 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
 
     try {
       const selectedGuestsList = guests.filter(guest => selectedGuests.has(guest.id));
-      
-      // Check if we have weddingId (should be available from guests data)
       const weddingId = selectedGuestsList[0]?.weddingId;
       if (!weddingId) {
         throw new Error('Wedding ID not found');
       }
 
-      // Use EmailService to send real emails
       const result = await EmailService.sendInvitationEmails({
         weddingId,
         guests: selectedGuestsList
       });
 
       if (result.success) {
-        setStatusMessage({
-          type: 'success',
-          message: `Successfully sent ${result.totalSent} invitation${result.totalSent === 1 ? '' : 's'}!` +
-            (result.totalFailed > 0 ? ` (${result.totalFailed} failed)` : '')
-        });
-
+        const successMsg = result.totalFailed > 0
+          ? (t.guestManagement.emailSendPartial || 'Successfully sent {sent} invitation(s). ({failed} failed)')
+              .replace('{sent}', String(result.totalSent))
+              .replace('{failed}', String(result.totalFailed))
+          : (t.guestManagement.emailSendSuccess || 'Successfully sent {count} invitation(s)!')
+              .replace('{count}', String(result.totalSent));
+        setStatusMessage({ type: 'success', message: successMsg });
         onInvitationsSent();
-        
-        // Auto-close after success
-        setTimeout(() => {
-          onClose();
-        }, 2000);
+        setTimeout(() => { onClose(); }, 2000);
       } else {
-        setStatusMessage({
-          type: 'error',
-          message: 'Some invitations failed to send. Please try again.'
-        });
+        setStatusMessage({ type: 'error', message: t.guestManagement.emailSendSomeFailed || 'Some invitations failed to send. Please try again.' });
       }
 
     } catch (error) {
       console.error('Error sending invitations:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      
       if (errorMessage.includes('not authenticated')) {
-        setStatusMessage({
-          type: 'error',
-          message: 'Authentication required. Please log in again.'
-        });
+        setStatusMessage({ type: 'error', message: t.guestManagement.emailSendAuthRequired || 'Authentication required. Please log in again.' });
       } else if (errorMessage.includes('email service')) {
-        setStatusMessage({
-          type: 'error',
-          message: 'Email service not configured. Please contact support or use URL sharing method.'
-        });
+        setStatusMessage({ type: 'error', message: t.guestManagement.emailServiceNotConfigured || 'Email service not configured. Please contact support or use URL sharing method.' });
       } else {
-        setStatusMessage({
-          type: 'error',
-          message: 'Failed to send invitations. Please try again or use URL sharing method.'
-        });
+        setStatusMessage({ type: 'error', message: t.guestManagement.emailSendFailed || 'Failed to send invitations. Please try again or use URL sharing method.' });
       }
     } finally {
       setIsLoading(false);
@@ -647,7 +625,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
 
   const selectedGuestsList = guests.filter(guest => selectedGuests.has(guest.id));
   const hasInvitedGuests = guests.some(guest => guest.remindersSent > 0);
-  const modalTitle = hasInvitedGuests ? "Send Invitations & Reminders" : "Send Invitations";
+  const modalTitle = hasInvitedGuests ? (t.guestManagement.sendModalTitleInvitationsAndReminders || 'Send Invitations & Reminders') : (t.guestManagement.sendModalTitleInvitations || 'Send Invitations');
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={modalTitle} maxWidth="700px">
@@ -656,10 +634,10 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
         <Section>
           <SectionTitle>
             <Users size={20} />
-            Select Guests
+            {t.guestManagement.selectGuestsTitle || 'Select Guests'}
           </SectionTitle>
           <SectionDescription>
-            Choose guests to invite or send reminders to. Use the tabs below to filter by invitation status.
+            {t.guestManagement.selectGuestsDescription || 'Choose guests to invite or send reminders to. Use the tabs below to filter by invitation status.'}
           </SectionDescription>
 
           {/* Guest Filter Tabs */}
@@ -668,36 +646,38 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
               $active={guestFilter === 'pending'} 
               onClick={() => setGuestFilter('pending')}
             >
-              📋 Pending ({guests.filter(g => g.remindersSent === 0).length})
+              {(t.guestManagement.filterPendingLabel || '📋 Pending ({count})').replace('{count}', String(guests.filter(g => g.remindersSent === 0).length))}
             </FilterTab>
             <FilterTab 
               $active={guestFilter === 'invited'} 
               onClick={() => setGuestFilter('invited')}
             >
-              ✉️ Invited ({guests.filter(g => g.remindersSent > 0).length})
+              {(t.guestManagement.filterInvitedLabel || '✉️ Invited ({count})').replace('{count}', String(guests.filter(g => g.remindersSent > 0).length))}
             </FilterTab>
             <FilterTab 
               $active={guestFilter === 'all'} 
               onClick={() => setGuestFilter('all')}
             >
-              👥 All ({guests.length})
+              {(t.guestManagement.filterAllLabel || '👥 All ({count})').replace('{count}', String(guests.length))}
             </FilterTab>
           </FilterTabs>
 
           {filteredGuests.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
-              {guestFilter === 'pending' && 'All guests have already been sent invitations!'}
-              {guestFilter === 'invited' && 'No guests have been invited yet.'}
-              {guestFilter === 'all' && 'No guests found.'}
+              {guestFilter === 'pending' && (t.guestManagement.emptyAllInvited || 'All guests have already been sent invitations!')}
+              {guestFilter === 'invited' && (t.guestManagement.emptyNoInvited || 'No guests have been invited yet.')}
+              {guestFilter === 'all' && (t.guestManagement.emptyNoGuestsFound || 'No guests found.')}
             </div>
           ) : (
             <>
               <SelectionSummary>
                 <div>
-                  <strong>{selectedGuests.size}</strong> of <strong>{filteredGuests.length}</strong> guests selected
+                  {(t.guestManagement.summarySelected || '{selected} of {total} guests selected')
+                    .replace('{selected}', String(selectedGuests.size))
+                    .replace('{total}', String(filteredGuests.length))}
                 </div>
                 <Button onClick={toggleSelectAll}>
-                  {allSelected ? 'Deselect All' : 'Select All'}
+                  {allSelected ? (t.guestManagement.deselectAll || 'Deselect All') : (t.guestManagement.selectAll || 'Select All')}
                 </Button>
               </SelectionSummary>
 
@@ -715,10 +695,12 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                     />
                     <GuestInfo>
                       <GuestName>{guest.firstName} {guest.lastName}</GuestName>
-                      <GuestPhone>{guest.phone || 'No phone provided'}</GuestPhone>
+                      <GuestPhone>{guest.phone || (t.guestManagement.noPhoneProvided || 'No phone provided')}</GuestPhone>
                     </GuestInfo>
                     <GuestStatus $status={guest.remindersSent > 0 ? 'sent' : 'pending'}>
-                      {guest.remindersSent > 0 ? `Sent (${guest.remindersSent}x)` : 'Pending'}
+                      {guest.remindersSent > 0 
+                        ? (t.guestManagement.statusSent || 'Sent ({count}x)').replace('{count}', String(guest.remindersSent))
+                        : (t.guestManagement.statusPending || 'Pending')}
                     </GuestStatus>
                   </GuestItem>
                 ))}
@@ -732,7 +714,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
           <Section>
             <SectionTitle>
               <Mail size={20} />
-              {selectedGuestsList.some(g => g.remindersSent > 0) ? 'Send Reminders' : 'Invitation Method'}
+              {selectedGuestsList.some(g => g.remindersSent > 0) ? (t.guestManagement.sendRemindersTitle || 'Send Reminders') : (t.guestManagement.invitationMethodTitle || 'Invitation Method')}
             </SectionTitle>
             
             <MethodTabs>
@@ -740,13 +722,13 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                 $active={invitationMethod === 'urls'} 
                 onClick={() => setInvitationMethod('urls')}
               >
-                📱 Share URLs (Recommended)
+                {t.guestManagement.urlsTab || '📱 Share URLs (Recommended)'}
               </MethodTab>
               <MethodTab 
                 $active={invitationMethod === 'email'} 
                 onClick={() => setInvitationMethod('email')}
               >
-                ✉️ Email (Advanced)
+                {t.guestManagement.emailTab || '✉️ Email (Advanced)'}
               </MethodTab>
             </MethodTabs>
 
@@ -756,13 +738,13 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                 <div>
                   <strong>
                     {selectedGuestsList.some(g => g.remindersSent > 0) 
-                      ? 'Send gentle reminders!' 
-                      : 'Cost-effective and personal!'
+                      ? (t.guestManagement.urlsInfoTitleReminders || 'Send gentle reminders!')
+                      : (t.guestManagement.urlsInfoTitleInvites || 'Cost-effective and personal!')
                     }
-                  </strong> Copy invitation URLs and share them directly via WhatsApp, text message, or social media. 
+                  </strong> {t.guestManagement.urlsInfoBody || 'Copy invitation URLs and share them directly via WhatsApp, text message, or social media.'}
                   {selectedGuestsList.some(g => g.remindersSent > 0) 
-                    ? " Perfect for following up with guests who haven't responded yet."
-                    : ' This method is free and often more personal than email.'
+                    ? (t.guestManagement.urlsInfoTailReminders || " Perfect for following up with guests who haven't responded yet.")
+                    : (t.guestManagement.urlsInfoTailInvites || ' This method is free and often more personal than email.')
                   }
                 </div>
               </InfoBox>
@@ -774,15 +756,13 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                 <div>
                   {emailServiceStatus?.available ? (
                     <>
-                      <strong>Email service ready:</strong> Using {emailServiceStatus.provider} for email delivery. 
-                      Emails will be sent professionally with tracking and delivery confirmation.
+                      <strong>{t.guestManagement.emailInfoReadyTitle || 'Email service ready:'}</strong> {(t.guestManagement.emailInfoReadyBody || 'Using {provider} for email delivery. Emails will be sent professionally with tracking and delivery confirmation.').replace('{provider}', emailServiceStatus.provider)}
                     </>
                   ) : (
                     <>
-                      <strong>Email service required:</strong> To send real emails, you'll need to configure an email service provider. 
-                      {emailServiceStatus?.error && ` (${emailServiceStatus.error})`}
+                      <strong>{t.guestManagement.emailInfoRequiredTitle || 'Email service required:'}</strong> {t.guestManagement.emailInfoRequiredBody || "To send real emails, you'll need to configure an email service provider."}
                       <br />
-                      <small>Consider using URL sharing method instead - it's free and often more personal!</small>
+                      <small>{t.guestManagement.emailInfoConsider || "Consider using URL sharing method instead - it's free and often more personal!"}</small>
                     </>
                   )}
                 </div>
@@ -796,28 +776,30 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
           <Section>
             <SectionTitle>
               <ExternalLink size={20} />
-              {selectedGuestsList.some(g => g.remindersSent > 0) ? 'Reminder URLs' : 'Invitation URLs'}
+              {selectedGuestsList.some(g => g.remindersSent > 0) ? (t.guestManagement.urlsSectionTitleReminders || 'Reminder URLs') : (t.guestManagement.urlsSectionTitleInvites || 'Invitation URLs')}
             </SectionTitle>
             <SectionDescription>
-              Copy individual invitation URLs to share via WhatsApp, text message, or other channels. 
+              {t.guestManagement.urlsSectionDescription || 'Copy individual invitation URLs to share via WhatsApp, text message, or other channels.'}
               <br />
-              <strong>📱 Direct Integration:</strong> WhatsApp and SMS buttons will open directly to the guest's phone number if available.
+              <strong>{t.guestManagement.urlsSectionDirectIntegration || "📱 Direct Integration: WhatsApp and SMS buttons will open directly to the guest's phone number if available."}</strong>
               {selectedGuestsList.some(g => g.remindersSent > 0) 
-                ? ' Reminder counts will be updated when you copy/share URLs, helping you track follow-ups.'
-                : ' Guests will be automatically marked as "invited" when you copy/share their URLs, or you can use "Mark All as Invited" for bulk tracking.'
+                ? (t.guestManagement.urlsSectionTailReminders || ' Reminder counts will be updated when you copy/share URLs, helping you track follow-ups.')
+                : (t.guestManagement.urlsSectionTailInvites || ' Guests will be automatically marked as "invited" when you copy/share their URLs, or you can use "Mark All as Invited" for bulk tracking.')
               }
             </SectionDescription>
 
-            {/* New: Language and Template editor */}
+            {/* Language and Template editor */}
             <TemplateControls>
               <TemplateRow>
-                <label htmlFor="msgLang" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Message language</label>
+                <label htmlFor="msgLang" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{t.guestManagement.messageLanguageLabel || 'Message language'}</label>
                 <Select id="msgLang" value={messageLang} onChange={e => setMessageLang(e.target.value as 'en' | 'es')}>
                   <option value="en">English</option>
                   <option value="es">Español</option>
                 </Select>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Available placeholders: {'{firstName}'} and {'{url}'}
+                  {(t.guestManagement.placeholdersHelp || 'Available placeholders: {firstName} and {url}')
+                    .replace('{firstName}', '{firstName}')
+                    .replace('{url}', '{url}')}
                 </div>
               </TemplateRow>
               <div>
@@ -837,28 +819,28 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                     </div>
                     <URLText>{getInvitationURL(guest)}</URLText>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                      Preview: {buildMessageForGuest(guest)}
+                      {t.guestManagement.previewLabel || 'Preview:'} {buildMessageForGuest(guest)}
                     </div>
                     <SocialButtons>
                       <SocialButton 
                         $color="#25D366" 
                         onClick={() => shareViaWhatsApp(guest)}
-                        title={guest.phone ? "Send WhatsApp message directly" : "No phone number - add one to enable WhatsApp"}
+                        title={guest.phone ? (t.guestManagement.socialWhatsAppTitleEnabled || 'Send WhatsApp message directly') : (t.guestManagement.socialWhatsAppTitleDisabled || 'No phone number - add one to enable WhatsApp')}
                         disabled={!guest.phone}
                         style={{ opacity: guest.phone ? 1 : 0.5, cursor: guest.phone ? 'pointer' : 'not-allowed' }}
                       >
                         <MessageCircle size={12} />
-                        WhatsApp {!guest.phone && '(No phone)'}
+                        {t.guestManagement.socialWhatsAppLabel || 'WhatsApp'} {!guest.phone && `(${t.guestManagement.noPhoneProvided || 'No phone'})`}
                       </SocialButton>
                       <SocialButton 
                         $color="#007AFF" 
                         onClick={() => shareViaSMS(guest)}
-                        title={guest.phone ? "Send SMS message directly" : "No phone number - add one to enable SMS"}
+                        title={guest.phone ? 'Send SMS message directly' : 'No phone number - add one to enable SMS'}
                         disabled={!guest.phone}
                         style={{ opacity: guest.phone ? 1 : 0.5, cursor: guest.phone ? 'pointer' : 'not-allowed' }}
                       >
                         <Smartphone size={12} />
-                        SMS {!guest.phone && '(No phone)'}
+                        {t.guestManagement.socialSMSLabel || 'SMS'} {!guest.phone && `(${t.guestManagement.noPhoneProvided || 'No phone'})`}
                       </SocialButton>
                     </SocialButtons>
                   </div>
@@ -866,12 +848,12 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                     {copiedURLs.has(guest.id) ? (
                       <>
                         <CheckCircle size={12} />
-                        Copied!
+                        {t.guestManagement.copyButtonCopied || 'Copied!'}
                       </>
                     ) : (
                       <>
                         <Copy size={12} />
-                        Copy
+                        {t.guestManagement.copyButtonCopy || 'Copy'}
                       </>
                     )}
                   </CopyButton>
@@ -884,9 +866,8 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
               <InfoBox type="info">
                 <CheckCircle size={16} />
                 <div>
-                  <strong>Tip:</strong> After sharing URLs manually, click 
-                  "{selectedGuestsList.some(g => g.remindersSent > 0) ? 'Mark All Reminded' : 'Mark All as Invited'}" 
-                  to update tracking status.
+                  <strong>{t.guestManagement.tipLabel || 'Tip:'}</strong> {(t.guestManagement.tipMarkAll || 'After sharing URLs manually, click "{action}" to update tracking status.')
+                    .replace('{action}', selectedGuestsList.some(g => g.remindersSent > 0) ? (t.guestManagement.markAllPrimaryLabelReminders || 'Mark All Reminded') : (t.guestManagement.markAllPrimaryLabelInvites || 'Mark All as Invited'))}
                 </div>
               </InfoBox>
               <div style={{ marginTop: '1rem' }}>
@@ -898,12 +879,12 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                   {isLoading ? (
                     <>
                       <div style={{ animation: 'spin 1s linear infinite', marginRight: '0.5rem' }}>⏳</div>
-                      {selectedGuestsList.some(g => g.remindersSent > 0) ? 'Sending Reminders...' : 'Marking as Invited...'}
+                      {selectedGuestsList.some(g => g.remindersSent > 0) ? (t.guestManagement.markAllPrimaryLoadingReminders || 'Sending Reminders...') : (t.guestManagement.markAllPrimaryLoadingInvites || 'Marking as Invited...')}
                     </>
                   ) : (
                     <>
                       <CheckCircle size={16} />
-                      {selectedGuestsList.some(g => g.remindersSent > 0) ? 'Mark All Reminded' : 'Mark All as Invited'}
+                      {selectedGuestsList.some(g => g.remindersSent > 0) ? (t.guestManagement.markAllPrimaryLabelReminders || 'Mark All Reminded') : (t.guestManagement.markAllPrimaryLabelInvites || 'Mark All as Invited')}
                     </>
                   )}
                 </Button>
@@ -917,10 +898,10 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
           <Section>
             <SectionTitle>
               <Mail size={20} />
-              Send Email Invitations
+              {t.guestManagement.emailSectionTitle || 'Send Email Invitations'}
             </SectionTitle>
             <SectionDescription>
-              Send beautiful email invitations with personalized invitation links to selected guests.
+              {t.guestManagement.emailSectionDescription || 'Send beautiful email invitations with personalized invitation links to selected guests.'}
             </SectionDescription>
 
             <div style={{ textAlign: 'center' }}>
@@ -939,12 +920,12 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
                       borderRadius: '50%',
                       animation: 'spin 1s linear infinite'
                     }} />
-                    Sending...
+                    {t.guestManagement.sendingLabel || 'Sending...'}
                   </>
                 ) : (
                   <>
                     <Send size={16} />
-                    Send {selectedGuests.size} Invitation{selectedGuests.size === 1 ? '' : 's'}
+                    {(selectedGuests.size === 1 ? (t.guestManagement.sendInvitationSingular || 'Send {count} Invitation') : (t.guestManagement.sendInvitationPlural || 'Send {count} Invitations')).replace('{count}', String(selectedGuests.size))}
                   </>
                 )}
               </Button>
@@ -965,7 +946,7 @@ export const SendInvitationsModal: React.FC<SendInvitationsModalProps> = ({
 
         <ButtonGroup>
           <Button onClick={onClose} disabled={isLoading}>
-            {isLoading ? 'Please wait...' : 'Close'}
+            {isLoading ? (t.common.pleaseWait || 'Please wait...') : (t.common.close || 'Close')}
           </Button>
         </ButtonGroup>
       </Container>

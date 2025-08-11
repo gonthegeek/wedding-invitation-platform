@@ -7,6 +7,9 @@ export interface TranslationKeys {
     cancel: string;
     optional?: string;
     unknown?: string;
+    // New common labels
+    close?: string;
+    pleaseWait?: string;
   };
   auth: {
     email: string;
@@ -467,7 +470,7 @@ export interface TranslationKeys {
     updateGuest?: string;
     updatingGuest?: string;
     updateFailed?: string;
-    // DeletedGuestsModal
+    // Deleted Guests Modal
     deletedGuestsTitle?: string;
     loadingDeletedGuests?: string;
     loadDeletedGuestsFailed?: string;
@@ -476,10 +479,130 @@ export interface TranslationKeys {
     deletedLabel?: string;
     restoring?: string;
     restore?: string;
+    // SendInvitationsModal
+    sendModalTitleInvitations?: string;
+    sendModalTitleInvitationsAndReminders?: string;
+    selectGuestsTitle?: string;
+    selectGuestsDescription?: string;
+    filterPendingLabel?: string; // expects {count}
+    filterInvitedLabel?: string; // expects {count}
+    filterAllLabel?: string; // expects {count}
+    emptyAllInvited?: string;
+    emptyNoInvited?: string;
+    emptyNoGuestsFound?: string;
+    summarySelected?: string; // expects {selected} {total}
+    deselectAll?: string;
+    selectAll?: string;
+    noPhoneProvided?: string;
+    statusSent?: string; // expects {count}
+    statusPending?: string;
+    sendRemindersTitle?: string;
+    invitationMethodTitle?: string;
+    urlsTab?: string;
+    emailTab?: string;
+    urlsInfoTitleReminders?: string;
+    urlsInfoTitleInvites?: string;
+    urlsInfoBody?: string;
+    urlsInfoTailReminders?: string;
+    urlsInfoTailInvites?: string;
+    emailInfoReadyTitle?: string;
+    emailInfoReadyBody?: string; // expects {provider}
+    emailInfoRequiredTitle?: string;
+    emailInfoRequiredBody?: string;
+    emailInfoConsider?: string;
+    urlsSectionTitleReminders?: string;
+    urlsSectionTitleInvites?: string;
+    urlsSectionDescription?: string;
+    urlsSectionDirectIntegration?: string;
+    urlsSectionTailReminders?: string;
+    urlsSectionTailInvites?: string;
+    messageLanguageLabel?: string;
+    placeholdersHelp?: string;
+    previewLabel?: string;
+    socialWhatsAppTitleEnabled?: string;
+    socialWhatsAppTitleDisabled?: string;
+    socialWhatsAppLabel?: string;
+    socialSMSLabel?: string;
+    copyButtonCopied?: string;
+    copyButtonCopy?: string;
+    tipLabel?: string;
+    tipMarkAll?: string; // expects {action}
+    markAllPrimaryLoadingReminders?: string;
+    markAllPrimaryLoadingInvites?: string;
+    markAllPrimaryLabelReminders?: string;
+    markAllPrimaryLabelInvites?: string;
+    emailSectionTitle?: string;
+    emailSectionDescription?: string;
+    sendingLabel?: string;
+    sendInvitationSingular?: string; // expects {count}
+    sendInvitationPlural?: string; // expects {count}
+    markAllSuccessInvited?: string; // expects {count}
+    markAllSuccessReminded?: string; // expects {count}
+    markAllError?: string;
+    emailSendSuccess?: string; // expects {count}
+    emailSendPartial?: string; // expects {sent} {failed}
+    emailSendSomeFailed?: string;
+    emailSendAuthRequired?: string;
+    emailServiceNotConfigured?: string;
+    emailSendFailed?: string;
+    noPhoneForShare?: string; // expects {name}
   };
   weddingManagement: {
     tabAnalytics: string;
     tabResponses: string;
     tabGuests: string;
+  };
+  // New: Wedding Creation Wizard
+  wizard?: {
+    title?: string;
+    stepBasicInfo?: string;
+    stepDetails?: string;
+    stepDesign?: string;
+    stepReview?: string;
+    previous?: string;
+    next?: string;
+    createWedding?: string;
+    coupleInformation?: string;
+    weddingDetails?: string;
+    invitationURL?: string;
+    subdomainPlaceholder?: string;
+    invitationUrlHelp?: string; // expects {url}
+    ceremonyDetails?: string;
+    receptionDetails?: string;
+    venueNamePlaceholder?: string;
+    addressPlaceholder?: string;
+    cityPlaceholder?: string;
+    statePlaceholder?: string;
+    zipPlaceholder?: string;
+    googleMapsHint?: string;
+    chooseTemplate?: string;
+    colorScheme?: string;
+    typography?: string;
+    welcomeMessage?: string;
+    welcomeMessageLabel?: string;
+    templateClassicName?: string;
+    templateClassicDesc?: string;
+    templateModernName?: string;
+    templateModernDesc?: string;
+    templateRusticName?: string;
+    templateRusticDesc?: string;
+    templateElegantName?: string;
+    templateElegantDesc?: string;
+    reviewTitle?: string;
+    designAndTemplate?: string;
+    invitationPreview?: string;
+    labelBride?: string;
+    labelGroom?: string;
+    labelWeddingDate?: string;
+    labelInvitationUrl?: string;
+    labelTime?: string;
+    labelVenue?: string;
+    labelAddress?: string;
+    labelTemplate?: string;
+    labelPrimaryColor?: string;
+    labelSecondaryColor?: string;
+    labelFont?: string;
+    labelWelcomeMessage?: string;
+    previewHeading?: string;
   };
 }

@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import type { Wedding } from '../../../types';
+import { useTranslation } from '../../../hooks/useLanguage';
 
 const StepContainer = styled.div`
   display: flex;
@@ -73,6 +74,7 @@ export default function BasicInfoStep() {
     formState: { errors },
     watch,
   } = useFormContext<Partial<Wedding>>();
+  const t = useTranslation();
 
   const brideFirstName = watch('brideFirstName');
   const groomFirstName = watch('groomFirstName');
@@ -86,78 +88,81 @@ export default function BasicInfoStep() {
     return '';
   };
 
+  const subdomainPlaceholder = t.wizard?.subdomainPlaceholder || 'yourwedding';
+  const urlHintBase = subdomain || generateSubdomain() || subdomainPlaceholder;
+
   return (
     <StepContainer>
       <div>
-        <SectionTitle>Couple Information</SectionTitle>
+        <SectionTitle>{t.wizard?.coupleInformation || 'Couple Information'}</SectionTitle>
         
         <FormRow>
           <FormGroup>
-            <Label htmlFor="brideFirstName">Bride's First Name</Label>
+            <Label htmlFor="brideFirstName">{t.wedding.brideFirstName}</Label>
             <Input
               {...register('brideFirstName')}
               id="brideFirstName"
               type="text"
               className={errors.brideFirstName ? 'error' : ''}
-              placeholder="Enter bride's first name"
+              placeholder={t.rsvp.enterFirstName}
             />
             {errors.brideFirstName && (
-              <ErrorMessage>{errors.brideFirstName.message}</ErrorMessage>
+              <ErrorMessage>{errors.brideFirstName.message as string}</ErrorMessage>
             )}
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="brideLastName">Bride's Last Name</Label>
+            <Label htmlFor="brideLastName">{t.wedding.brideLastName}</Label>
             <Input
               {...register('brideLastName')}
               id="brideLastName"
               type="text"
               className={errors.brideLastName ? 'error' : ''}
-              placeholder="Enter bride's last name"
+              placeholder={t.rsvp.enterLastName}
             />
             {errors.brideLastName && (
-              <ErrorMessage>{errors.brideLastName.message}</ErrorMessage>
+              <ErrorMessage>{errors.brideLastName.message as string}</ErrorMessage>
             )}
           </FormGroup>
         </FormRow>
 
         <FormRow>
           <FormGroup>
-            <Label htmlFor="groomFirstName">Groom's First Name</Label>
+            <Label htmlFor="groomFirstName">{t.wedding.groomFirstName}</Label>
             <Input
               {...register('groomFirstName')}
               id="groomFirstName"
               type="text"
               className={errors.groomFirstName ? 'error' : ''}
-              placeholder="Enter groom's first name"
+              placeholder={t.rsvp.enterFirstName}
             />
             {errors.groomFirstName && (
-              <ErrorMessage>{errors.groomFirstName.message}</ErrorMessage>
+              <ErrorMessage>{errors.groomFirstName.message as string}</ErrorMessage>
             )}
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="groomLastName">Groom's Last Name</Label>
+            <Label htmlFor="groomLastName">{t.wedding.groomLastName}</Label>
             <Input
               {...register('groomLastName')}
               id="groomLastName"
               type="text"
               className={errors.groomLastName ? 'error' : ''}
-              placeholder="Enter groom's last name"
+              placeholder={t.rsvp.enterLastName}
             />
             {errors.groomLastName && (
-              <ErrorMessage>{errors.groomLastName.message}</ErrorMessage>
+              <ErrorMessage>{errors.groomLastName.message as string}</ErrorMessage>
             )}
           </FormGroup>
         </FormRow>
       </div>
 
       <div>
-        <SectionTitle>Wedding Details</SectionTitle>
+        <SectionTitle>{t.wizard?.weddingDetails || 'Wedding Details'}</SectionTitle>
         
         <FormRow>
           <FormGroup>
-            <Label htmlFor="weddingDate">Wedding Date</Label>
+            <Label htmlFor="weddingDate">{t.wedding.weddingDate}</Label>
             <Input
               {...register('weddingDate')}
               id="weddingDate"
@@ -165,24 +170,25 @@ export default function BasicInfoStep() {
               className={errors.weddingDate ? 'error' : ''}
             />
             {errors.weddingDate && (
-              <ErrorMessage>{errors.weddingDate.message}</ErrorMessage>
+              <ErrorMessage>{errors.weddingDate.message as string}</ErrorMessage>
             )}
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="subdomain">Invitation URL</Label>
+            <Label htmlFor="subdomain">{t.wizard?.invitationURL || 'Invitation URL'}</Label>
             <Input
               {...register('subdomain')}
               id="subdomain"
               type="text"
               className={errors.subdomain ? 'error' : ''}
-              placeholder={generateSubdomain() || 'yourwedding'}
+              placeholder={generateSubdomain() || subdomainPlaceholder}
             />
             <HelpText>
-              Your invitation will be available at: {subdomain || generateSubdomain() || 'yourwedding'}.yourweddingdomain.com
+              {(t.wizard?.invitationUrlHelp || 'Your invitation will be available at: {url}.yourweddingdomain.com')
+                .replace('{url}', urlHintBase)}
             </HelpText>
             {errors.subdomain && (
-              <ErrorMessage>{errors.subdomain.message}</ErrorMessage>
+              <ErrorMessage>{errors.subdomain.message as string}</ErrorMessage>
             )}
           </FormGroup>
         </FormRow>
