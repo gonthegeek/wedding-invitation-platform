@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Globe } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import type { Language } from '../../types/i18n';
+import { createPortal } from 'react-dom';
 
 const LanguageSelectorContainer = styled.div`
   position: relative;
@@ -30,17 +31,18 @@ const LanguageButton = styled.button`
   svg { color: ${(p) => p.theme.colors.textSecondary}; }
 `;
 
-const LanguageDropdown = styled.div<{ $isOpen: boolean }>`
+const LanguageDropdown = styled.div<{ $isOpen: boolean; $coords?: { left: number; top: number; width: number } }>`
   position: absolute;
-  top: 100%;
-  right: 0;
+  top: ${({ $coords }) => ($coords ? `${$coords.top}px` : '100%')};
+  left: ${({ $coords }) => ($coords ? `${$coords.left}px` : 'auto')};
+  right: ${({ $coords }) => ($coords ? 'auto' : 0)};
   margin-top: 0.5rem;
   background: ${(p) => p.theme.colors.surface};
   border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 0.5rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   min-width: 160px;
-  z-index: 1000;
+  z-index: 2000;
   opacity: ${props => props.$isOpen ? 1 : 0};
   visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
   transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-10px)'};
@@ -81,6 +83,8 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 }) => {
   const { language, setLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = React.useState(false);
+  const [coords, setCoords] = React.useState<{ left: number; top: number; width: number }>();
+  const btnRef = React.useRef<HTMLButtonElement>(null);
 
   const languages: Array<{ code: Language; name: string; flag: string }> = [
     { code: 'en', name: t.language.english, flag: '🇺🇸' },
@@ -103,14 +107,34 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   React.useEffect(() => {
     if (isOpen) {
+      const rect = btnRef.current?.getBoundingClientRect();
+      if (rect) {
+        setCoords({ left: rect.right - 160, top: rect.bottom + window.scrollY, width: rect.width });
+      }
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [isOpen, handleClickOutside]);
 
+  const dropdown = (
+    <LanguageDropdown $isOpen={isOpen} $coords={coords}>
+      {languages.map((lang) => (
+        <LanguageOption
+          key={lang.code}
+          $isSelected={language === lang.code}
+          onClick={() => handleLanguageChange(lang.code)}
+        >
+          <FlagEmoji>{lang.flag}</FlagEmoji>
+          {lang.name}
+        </LanguageOption>
+      ))}
+    </LanguageDropdown>
+  );
+
   return (
     <LanguageSelectorContainer className={className} data-language-selector>
       <LanguageButton
+        ref={btnRef}
         onClick={() => setIsOpen(!isOpen)}
         aria-label={t.language.selectLanguage}
         title={t.language.selectLanguage}
@@ -119,19 +143,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         <FlagEmoji>{currentLanguage?.flag}</FlagEmoji>
         {currentLanguage?.name}
       </LanguageButton>
-      
-      <LanguageDropdown $isOpen={isOpen}>
-        {languages.map((lang) => (
-          <LanguageOption
-            key={lang.code}
-            $isSelected={language === lang.code}
-            onClick={() => handleLanguageChange(lang.code)}
-          >
-            <FlagEmoji>{lang.flag}</FlagEmoji>
-            {lang.name}
-          </LanguageOption>
-        ))}
-      </LanguageDropdown>
+      {createPortal(dropdown, document.body)}
     </LanguageSelectorContainer>
   );
 };

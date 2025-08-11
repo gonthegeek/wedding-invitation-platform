@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRSVPAnalytics } from '../../hooks/useRSVPAnalytics';
 import { useTranslation } from '../../hooks/useLanguage';
+import { Layout } from '../shared/Layout';
 
 interface RSVPDashboardProps {
   weddingId: string;
@@ -11,6 +12,8 @@ const DashboardContainer = styled.div`
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const PageTitle = styled.h1`
@@ -242,27 +245,33 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
 
   if (loading) {
     return (
-      <DashboardContainer>
-        <LoadingSpinner>{t.rsvpAnalytics.loading}</LoadingSpinner>
-      </DashboardContainer>
+      <Layout>
+        <DashboardContainer>
+          <LoadingSpinner>{t.rsvpAnalytics.loading}</LoadingSpinner>
+        </DashboardContainer>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <DashboardContainer>
-        <ErrorMessage>
-          {t.rsvpAnalytics.errorPrefix} {error}
-        </ErrorMessage>
-      </DashboardContainer>
+      <Layout>
+        <DashboardContainer>
+          <ErrorMessage>
+            {t.rsvpAnalytics.errorPrefix} {error}
+          </ErrorMessage>
+        </DashboardContainer>
+      </Layout>
     );
   }
 
   if (!analytics) {
     return (
-      <DashboardContainer>
-        <LoadingSpinner>{t.rsvpAnalytics.noData}</LoadingSpinner>
-      </DashboardContainer>
+      <Layout>
+        <DashboardContainer>
+          <LoadingSpinner>{t.rsvpAnalytics.noData}</LoadingSpinner>
+        </DashboardContainer>
+      </Layout>
     );
   }
 
@@ -289,163 +298,165 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
   };
 
   return (
-    <DashboardContainer>
-      <PageTitle>{t.rsvpAnalytics.pageTitle}</PageTitle>
-      <PageDescription>
-        {t.rsvpAnalytics.pageDescription}
-      </PageDescription>
+    <Layout>
+      <DashboardContainer>
+        <PageTitle>{t.rsvpAnalytics.pageTitle}</PageTitle>
+        <PageDescription>
+          {t.rsvpAnalytics.pageDescription}
+        </PageDescription>
 
-      <StatsGrid>
-        <StatCard>
-          <StatValue className="primary">{analytics.respondedCount}</StatValue>
-          <StatLabel>{t.rsvpAnalytics.responsesReceived}</StatLabel>
-          <StatSubtext>
-            {t.rsvpAnalytics.responseRate.replace('{rate}', analytics.responseRate.toFixed(1))}
-          </StatSubtext>
-        </StatCard>
+        <StatsGrid>
+          <StatCard>
+            <StatValue className="primary">{analytics.respondedCount}</StatValue>
+            <StatLabel>{t.rsvpAnalytics.responsesReceived}</StatLabel>
+            <StatSubtext>
+              {t.rsvpAnalytics.responseRate.replace('{rate}', analytics.responseRate.toFixed(1))}
+            </StatSubtext>
+          </StatCard>
 
-        <StatCard>
-          <StatValue className="success">{analytics.attendingCeremony}</StatValue>
-          <StatLabel>{t.rsvpAnalytics.attendingCeremony}</StatLabel>
-          <StatSubtext>
-            {t.rsvpAnalytics.plusNPlusOnes.replace('{count}', String(analytics.plusOnesData.attending))}
-          </StatSubtext>
-        </StatCard>
+          <StatCard>
+            <StatValue className="success">{analytics.attendingCeremony}</StatValue>
+            <StatLabel>{t.rsvpAnalytics.attendingCeremony}</StatLabel>
+            <StatSubtext>
+              {t.rsvpAnalytics.plusNPlusOnes.replace('{count}', String(analytics.plusOnesData.attending))}
+            </StatSubtext>
+          </StatCard>
 
-        <StatCard>
-          <StatValue className="warning">{analytics.pendingCount}</StatValue>
-          <StatLabel>{t.rsvpAnalytics.pendingResponses}</StatLabel>
-          <StatSubtext>
-            {t.rsvpAnalytics.outOfInvited.replace('{total}', String(analytics.totalInvited))}
-          </StatSubtext>
-        </StatCard>
+          <StatCard>
+            <StatValue className="warning">{analytics.pendingCount}</StatValue>
+            <StatLabel>{t.rsvpAnalytics.pendingResponses}</StatLabel>
+            <StatSubtext>
+              {t.rsvpAnalytics.outOfInvited.replace('{total}', String(analytics.totalInvited))}
+            </StatSubtext>
+          </StatCard>
 
-        <StatCard>
-          <StatValue className="primary">{analytics.attendingReception}</StatValue>
-          <StatLabel>{t.rsvpAnalytics.attendingReception}</StatLabel>
-          <StatSubtext>
-            {t.rsvpAnalytics.attendanceRate.replace('{rate}', analytics.attendanceRate.toFixed(1))}
-          </StatSubtext>
-        </StatCard>
-      </StatsGrid>
+          <StatCard>
+            <StatValue className="primary">{analytics.attendingReception}</StatValue>
+            <StatLabel>{t.rsvpAnalytics.attendingReception}</StatLabel>
+            <StatSubtext>
+              {t.rsvpAnalytics.attendanceRate.replace('{rate}', analytics.attendanceRate.toFixed(1))}
+            </StatSubtext>
+          </StatCard>
+        </StatsGrid>
 
-      <ChartsSection>
-        <ChartCard>
-          <ChartTitle>{t.rsvpAnalytics.responseProgressTitle}</ChartTitle>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>{`${t.rsvpAnalytics.attending} (${analytics.attendingCeremony})`}</span>
-              <span>{((analytics.attendingCeremony / analytics.totalGuests) * 100).toFixed(1)}%</span>
+        <ChartsSection>
+          <ChartCard>
+            <ChartTitle>{t.rsvpAnalytics.responseProgressTitle}</ChartTitle>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
+                <span>{`${t.rsvpAnalytics.attending} (${analytics.attendingCeremony})`}</span>
+                <span>{((analytics.attendingCeremony / analytics.totalGuests) * 100).toFixed(1)}%</span>
+              </div>
+              <ProgressBar>
+                <ProgressFill 
+                  percentage={(analytics.attendingCeremony / analytics.totalGuests) * 100}
+                  color="#10b981"
+                />
+              </ProgressBar>
             </div>
-            <ProgressBar>
-              <ProgressFill 
-                percentage={(analytics.attendingCeremony / analytics.totalGuests) * 100}
-                color="#10b981"
-              />
-            </ProgressBar>
-          </div>
 
-          <div style={{ marginTop: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>{`${t.rsvpAnalytics.notAttending} (${analytics.notAttending})`}</span>
-              <span>{((analytics.notAttending / analytics.totalGuests) * 100).toFixed(1)}%</span>
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
+                <span>{`${t.rsvpAnalytics.notAttending} (${analytics.notAttending})`}</span>
+                <span>{((analytics.notAttending / analytics.totalGuests) * 100).toFixed(1)}%</span>
+              </div>
+              <ProgressBar>
+                <ProgressFill 
+                  percentage={(analytics.notAttending / analytics.totalGuests) * 100}
+                  color="#ef4444"
+                />
+              </ProgressBar>
             </div>
-            <ProgressBar>
-              <ProgressFill 
-                percentage={(analytics.notAttending / analytics.totalGuests) * 100}
-                color="#ef4444"
-              />
-            </ProgressBar>
-          </div>
 
-          <div style={{ marginTop: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>{`${t.rsvpAnalytics.maybe} (${analytics.maybeCount})`}</span>
-              <span>{((analytics.maybeCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
+                <span>{`${t.rsvpAnalytics.maybe} (${analytics.maybeCount})`}</span>
+                <span>{((analytics.maybeCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
+              </div>
+              <ProgressBar>
+                <ProgressFill 
+                  percentage={(analytics.maybeCount / analytics.totalGuests) * 100}
+                  color="#f59e0b"
+                />
+              </ProgressBar>
             </div>
-            <ProgressBar>
-              <ProgressFill 
-                percentage={(analytics.maybeCount / analytics.totalGuests) * 100}
-                color="#f59e0b"
-              />
-            </ProgressBar>
-          </div>
 
-          <div style={{ marginTop: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>{`${t.rsvpAnalytics.pending} (${analytics.pendingCount})`}</span>
-              <span>{((analytics.pendingCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
+                <span>{`${t.rsvpAnalytics.pending} (${analytics.pendingCount})`}</span>
+                <span>{((analytics.pendingCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
+              </div>
+              <ProgressBar>
+                <ProgressFill 
+                  percentage={(analytics.pendingCount / analytics.totalGuests) * 100}
+                  color="#6b7280"
+                />
+              </ProgressBar>
             </div>
-            <ProgressBar>
-              <ProgressFill 
-                percentage={(analytics.pendingCount / analytics.totalGuests) * 100}
-                color="#6b7280"
-              />
-            </ProgressBar>
-          </div>
-        </ChartCard>
+          </ChartCard>
 
-        <ChartCard>
-          <ChartTitle>{t.rsvpAnalytics.dietaryRestrictionsTitle}</ChartTitle>
-          {analytics.dietaryRestrictions.length > 0 ? (
-            <DietaryRestrictionsList>
-              {analytics.dietaryRestrictions.slice(0, 8).map((restriction, index) => (
-                <DietaryItem key={index}>
-                  <DietaryRestriction>{restriction.restriction}</DietaryRestriction>
-                  <DietaryCount>{restriction.count}</DietaryCount>
-                </DietaryItem>
-              ))}
-              {analytics.dietaryRestrictions.length > 8 && (
-                <DietaryItem>
-                  <DietaryRestriction>
-                    {t.rsvpAnalytics.moreRestrictions.replace('{count}', String(analytics.dietaryRestrictions.length - 8))}
-                  </DietaryRestriction>
-                  <DietaryCount>
-                    {analytics.dietaryRestrictions.slice(8).reduce((sum, r) => sum + r.count, 0)}
-                  </DietaryCount>
-                </DietaryItem>
-              )}
-            </DietaryRestrictionsList>
+          <ChartCard>
+            <ChartTitle>{t.rsvpAnalytics.dietaryRestrictionsTitle}</ChartTitle>
+            {analytics.dietaryRestrictions.length > 0 ? (
+              <DietaryRestrictionsList>
+                {analytics.dietaryRestrictions.slice(0, 8).map((restriction, index) => (
+                  <DietaryItem key={index}>
+                    <DietaryRestriction>{restriction.restriction}</DietaryRestriction>
+                    <DietaryCount>{restriction.count}</DietaryCount>
+                  </DietaryItem>
+                ))}
+                {analytics.dietaryRestrictions.length > 8 && (
+                  <DietaryItem>
+                    <DietaryRestriction>
+                      {t.rsvpAnalytics.moreRestrictions.replace('{count}', String(analytics.dietaryRestrictions.length - 8))}
+                    </DietaryRestriction>
+                    <DietaryCount>
+                      {analytics.dietaryRestrictions.slice(8).reduce((sum, r) => sum + r.count, 0)}
+                    </DietaryCount>
+                  </DietaryItem>
+                )}
+              </DietaryRestrictionsList>
+            ) : (
+              <div style={{ color: '#6b7280', fontStyle: 'italic' }}>
+                {t.rsvpAnalytics.noDietaryRestrictions}
+              </div>
+            )}
+          </ChartCard>
+        </ChartsSection>
+
+        <RecentActivity>
+          <ChartTitle>{t.rsvpAnalytics.recentActivityTitle}</ChartTitle>
+          {analytics.recentResponses.length > 0 ? (
+            analytics.recentResponses.map((response, index) => (
+              <ActivityItem key={index}>
+                <ActivityInfo>
+                  <ActivityName>{response.guestName}</ActivityName>
+                  <ActivityDetails>
+                    {response.attendingCeremony && response.attendingReception 
+                      ? t.rsvpAnalytics.attendingCeremonyAndReception
+                      : response.attendingCeremony 
+                      ? t.rsvpAnalytics.attendingCeremonyOnly
+                      : response.attendingReception
+                      ? t.rsvpAnalytics.attendingReceptionOnly
+                      : t.rsvpAnalytics.notAttendingLong
+                    }
+                  </ActivityDetails>
+                </ActivityInfo>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                  <StatusBadge status={response.status}>
+                    {formatRSVPStatus(response.status)}
+                  </StatusBadge>
+                  <ActivityDate>{formatDate(response.date)}</ActivityDate>
+                </div>
+              </ActivityItem>
+            ))
           ) : (
-            <div style={{ color: '#6b7280', fontStyle: 'italic' }}>
-              {t.rsvpAnalytics.noDietaryRestrictions}
+            <div style={{ color: '#6b7280', fontStyle: 'italic', textAlign: 'center', padding: '24px' }}>
+              {t.rsvpAnalytics.noResponsesYet}
             </div>
           )}
-        </ChartCard>
-      </ChartsSection>
-
-      <RecentActivity>
-        <ChartTitle>{t.rsvpAnalytics.recentActivityTitle}</ChartTitle>
-        {analytics.recentResponses.length > 0 ? (
-          analytics.recentResponses.map((response, index) => (
-            <ActivityItem key={index}>
-              <ActivityInfo>
-                <ActivityName>{response.guestName}</ActivityName>
-                <ActivityDetails>
-                  {response.attendingCeremony && response.attendingReception 
-                    ? t.rsvpAnalytics.attendingCeremonyAndReception
-                    : response.attendingCeremony 
-                    ? t.rsvpAnalytics.attendingCeremonyOnly
-                    : response.attendingReception
-                    ? t.rsvpAnalytics.attendingReceptionOnly
-                    : t.rsvpAnalytics.notAttendingLong
-                  }
-                </ActivityDetails>
-              </ActivityInfo>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                <StatusBadge status={response.status}>
-                  {formatRSVPStatus(response.status)}
-                </StatusBadge>
-                <ActivityDate>{formatDate(response.date)}</ActivityDate>
-              </div>
-            </ActivityItem>
-          ))
-        ) : (
-          <div style={{ color: '#6b7280', fontStyle: 'italic', textAlign: 'center', padding: '24px' }}>
-            {t.rsvpAnalytics.noResponsesYet}
-          </div>
-        )}
-      </RecentActivity>
-    </DashboardContainer>
+        </RecentActivity>
+      </DashboardContainer>
+    </Layout>
   );
 };

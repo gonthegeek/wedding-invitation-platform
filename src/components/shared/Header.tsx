@@ -17,7 +17,7 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1200;
 `;
 
 const HeaderLeft = styled.div`
