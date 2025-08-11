@@ -310,6 +310,7 @@ export const spanishTranslations: TranslationKeys = {
     roleCouple: 'Pareja',
     roleGuest: 'Invitado',
     roleUser: 'Usuario',
-    weddingDetails: 'Detalles de la Boda'
+    weddingDetails: 'Detalles de la Boda',
+    platformTitle: 'Plataforma de Bodas'
   }
 };

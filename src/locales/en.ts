@@ -310,6 +310,7 @@ export const englishTranslations: TranslationKeys = {
     roleCouple: 'Couple',
     roleGuest: 'Guest',
     roleUser: 'User',
-    weddingDetails: 'Wedding Details'
+    weddingDetails: 'Wedding Details',
+    platformTitle: 'Wedding Platform'
   }
 };

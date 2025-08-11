@@ -10,6 +10,7 @@ import {
   Crown
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from '../../hooks/useLanguage';
 
 const SidebarContainer = styled.div<{ $isOpen: boolean }>`
   position: fixed;
@@ -121,6 +122,7 @@ interface NavigationSidebarProps {
 export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { currentUser } = useAuth();
+  const t = useTranslation();
 
   const isActive = (path: string) => {
     return location.pathname.startsWith(path);
@@ -131,9 +133,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, on
       case 'admin':
         return [
           {
-            section: 'Overview',
+            section: t.nav.overview,
             items: [
-              { path: '/admin/dashboard', label: 'Dashboard', icon: Home },
+              { path: '/admin/dashboard', label: t.nav.dashboard, icon: Home },
             ]
           }
         ];
@@ -141,18 +143,18 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, on
       case 'couple':
         return [
           {
-            section: 'Overview',
+            section: t.nav.overview,
             items: [
-              { path: '/couple/dashboard', label: 'Dashboard', icon: Home },
-              { path: '/couple/rsvp-dashboard', label: 'RSVP Analytics', icon: BarChart3 },
+              { path: '/couple/dashboard', label: t.nav.dashboard, icon: Home },
+              { path: '/couple/rsvp-dashboard', label: t.nav.rsvpAnalytics, icon: BarChart3 },
             ]
           },
           {
-            section: 'Wedding Management',
+            section: t.nav.weddingManagement,
             items: [
-              { path: '/couple/wedding-management', label: 'Wedding Management', icon: Heart },
-              { path: '/couple/wedding-details', label: 'Wedding Details', icon: Calendar },
-              { path: '/couple/customize', label: 'Customize Invitation', icon: Users },
+              { path: '/couple/wedding-management', label: t.nav.weddingManagement, icon: Heart },
+              { path: '/couple/wedding-details', label: t.nav.weddingDetails, icon: Calendar },
+              { path: '/couple/customize', label: t.customization.customizeInvitation, icon: Users },
             ]
           }
         ];
@@ -171,7 +173,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, on
             <LogoIcon>
               {currentUser?.role === 'admin' ? <Crown size={18} /> : <Heart size={18} />}
             </LogoIcon>
-            Wedding Platform
+            {t.nav.platformTitle}
           </Logo>
         </SidebarHeader>
         

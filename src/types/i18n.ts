@@ -311,5 +311,6 @@ export interface TranslationKeys {
     roleGuest: string;
     roleUser: string;
     weddingDetails: string;
+    platformTitle: string;
   };
 }
