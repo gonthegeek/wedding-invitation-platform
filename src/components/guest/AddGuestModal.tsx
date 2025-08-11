@@ -4,6 +4,7 @@ import { Modal } from '../shared/Modal';
 import { GuestService } from '../../services/guestService';
 import { isValidPhoneNumber } from '../../utils/phoneUtils';
 import type { Guest } from '../../types/guest';
+import { useTranslation } from '../../hooks/useLanguage';
 
 interface AddGuestModalProps {
   isOpen: boolean;
@@ -146,6 +147,8 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   weddingId, 
   onGuestAdded 
 }) => {
+  const t = useTranslation();
+
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -162,25 +165,25 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
     const newErrors: FormErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = t.rsvp.firstNameRequired;
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = t.rsvp.lastNameRequired;
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = t.guestManagement.phoneRequired;
     } else if (!isValidPhoneNumber(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number (include country code if international)';
+      newErrors.phone = t.guestManagement.phoneInvalid;
     }
 
     if (!formData.groupName.trim()) {
-      newErrors.groupName = 'Group name is required';
+      newErrors.groupName = t.guestManagement.groupNameRequired;
     }
 
     if (formData.allowPlusOnes && formData.maxPlusOnes <= 0) {
-      newErrors.maxPlusOnes = 'Maximum plus ones must be greater than 0';
+      newErrors.maxPlusOnes = t.guestManagement.maxPlusOnesMin;
     }
 
     setErrors(newErrors);
@@ -197,19 +200,17 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      // Find or create guest group
       const groupId = await GuestService.findOrCreateGroup(
         weddingId,
         formData.groupName,
         formData.allowPlusOnes
       );
 
-      // Create guest data
       const guestData: Omit<Guest, 'id' | 'inviteCode' | 'invitedAt' | 'createdAt' | 'updatedAt' | 'remindersSent'> = {
         weddingId,
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
-        email: '', // Not using email anymore, focusing on phone
+        email: '',
         phone: formData.phone.trim(),
         groupId,
         rsvpStatus: 'pending',
@@ -220,10 +221,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         maxPlusOnes: formData.allowPlusOnes ? formData.maxPlusOnes : 0,
       };
 
-      // Add guest
       await GuestService.createGuest(weddingId, guestData);
-      
-      // Reset form and close modal
       setFormData({
         firstName: '',
         lastName: '',
@@ -237,7 +235,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error adding guest:', error);
-      setErrors({ phone: 'Failed to add guest. Please try again.' });
+      setErrors({ phone: t.guestManagement.addFailed });
     } finally {
       setIsSubmitting(false);
     }
@@ -245,7 +243,6 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
 
   const handleInputChange = (field: keyof FormData, value: string | boolean | number) => {
     setFormData(prev => {
-      // Handle linked changes between allowPlusOnes and maxPlusOnes
       if (field === 'allowPlusOnes') {
         const allow = Boolean(value);
         return {
@@ -258,7 +255,6 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       return { ...prev, [field]: value } as FormData;
     });
     
-    // Clear error when user starts typing
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -280,10 +276,10 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Add New Guest">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t.guestManagement.addGuestTitle}>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label htmlFor="firstName">First Name *</Label>
+          <Label htmlFor="firstName">{t.rsvp.firstName} *</Label>
           <Input
             id="firstName"
             type="text"
@@ -296,7 +292,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="lastName">Last Name *</Label>
+          <Label htmlFor="lastName">{t.rsvp.lastName} *</Label>
           <Input
             id="lastName"
             type="text"
@@ -309,7 +305,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="phone">Phone Number *</Label>
+          <Label htmlFor="phone">{t.guestManagement.phoneNumberLabel}</Label>
           <Input
             id="phone"
             type="tel"
@@ -317,13 +313,13 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
             onChange={(e) => handleInputChange('phone', e.target.value)}
             $error={!!errors.phone}
             disabled={isSubmitting}
-            placeholder="e.g., +1 (555) 123-4567 or 555-123-4567"
+            placeholder={t.guestManagement.phonePlaceholder}
           />
           {errors.phone && <ErrorMessage>{errors.phone}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="groupName">Group Name *</Label>
+          <Label htmlFor="groupName">{t.guestManagement.groupNameLabel}</Label>
           <Input
             id="groupName"
             type="text"
@@ -331,7 +327,7 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
             onChange={(e) => handleInputChange('groupName', e.target.value)}
             $error={!!errors.groupName}
             disabled={isSubmitting}
-            placeholder="e.g., Family, Friends, Coworkers"
+            placeholder={t.guestManagement.groupNamePlaceholder}
           />
           {errors.groupName && <ErrorMessage>{errors.groupName}</ErrorMessage>}
         </FormGroup>
@@ -344,23 +340,23 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
               onChange={(e) => handleInputChange('allowPlusOnes', e.target.checked)}
               disabled={isSubmitting}
             />
-            Allow plus ones for this guest
+            {t.guestManagement.allowPlusOnesLabel}
           </CheckboxLabel>
         </FormGroup>
 
         {formData.allowPlusOnes && (
           <FormGroup>
-            <Label htmlFor="maxPlusOnes">Maximum Plus Ones</Label>
+            <Label htmlFor="maxPlusOnes">{t.guestManagement.maxPlusOnesLabel}</Label>
             <Select
               id="maxPlusOnes"
               value={formData.maxPlusOnes}
               onChange={(e) => handleInputChange('maxPlusOnes', parseInt(e.target.value))}
               disabled={isSubmitting}
             >
-              <option value={1}>1 Plus One</option>
-              <option value={2}>2 Plus Ones</option>
-              <option value={3}>3 Plus Ones</option>
-              <option value={4}>4 Plus Ones</option>
+              <option value={1}>{t.guestManagement.singlePlusOne}</option>
+              <option value={2}>{t.guestManagement.pluralPlusOnes.replace('{count}', '2')}</option>
+              <option value={3}>{t.guestManagement.pluralPlusOnes.replace('{count}', '3')}</option>
+              <option value={4}>{t.guestManagement.pluralPlusOnes.replace('{count}', '4')}</option>
             </Select>
             {errors.maxPlusOnes && <ErrorMessage>{errors.maxPlusOnes}</ErrorMessage>}
           </FormGroup>
@@ -368,10 +364,10 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
 
         <ButtonGroup>
           <Button type="button" onClick={handleClose} disabled={isSubmitting}>
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button type="submit" variant="primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Adding Guest...' : 'Add Guest'}
+            {isSubmitting ? t.guestManagement.addingGuest : t.guestManagement.addGuestBtn}
           </Button>
         </ButtonGroup>
       </Form>

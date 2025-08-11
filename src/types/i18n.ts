@@ -4,13 +4,17 @@ export interface TranslationKeys {
   common: {
     loading: string;
     refresh: string;
+    cancel: string;
+    optional?: string;
+    unknown?: string;
   };
   auth: {
     email: string;
-    password: string;
+    passwordLabel: string;
     loginTitle: string;
     createAccount: string;
     dontHaveAccount: string;
+    forgotPassword: string;
   };
   wedding: {
     brideFirstName: string;
@@ -275,6 +279,7 @@ export interface TranslationKeys {
   };
   validation: {
     required: string;
+    emailInvalid?: string;
   };
   errors: {
     authError: string;
@@ -431,6 +436,46 @@ export interface TranslationKeys {
     sendInvitationsBtn: string;
     viewDeletedBtn: string;
     importGuestsBtn: string;
+    // AddGuestModal
+    addGuestTitle: string;
+    phoneNumberLabel: string;
+    groupNameLabel: string;
+    allowPlusOnesLabel: string;
+    phoneRequired: string;
+    phoneInvalid: string;
+    groupNameRequired: string;
+    maxPlusOnesMin: string;
+    phonePlaceholder: string;
+    groupNamePlaceholder: string;
+    addFailed: string;
+    addingGuest: string;
+    maxPlusOnesLabel: string;
+    singlePlusOne: string;
+    pluralPlusOnes: string; // expects {count}
+    // EditGuestModal
+    infoInviteCode?: string;
+    infoInvited?: string;
+    infoPlusOnes?: string;
+    rsvpStatusLabel?: string;
+    attendingCeremonyLabel?: string;
+    attendingReceptionLabel?: string;
+    dietaryRestrictionsLabel?: string;
+    dietaryRestrictionsPlaceholder?: string;
+    specialRequestsLabel?: string;
+    specialRequestsPlaceholder?: string;
+    deletingGuest?: string;
+    updateGuest?: string;
+    updatingGuest?: string;
+    updateFailed?: string;
+    // DeletedGuestsModal
+    deletedGuestsTitle?: string;
+    loadingDeletedGuests?: string;
+    loadDeletedGuestsFailed?: string;
+    noDeletedGuestsFound?: string;
+    allGuestsActive?: string;
+    deletedLabel?: string;
+    restoring?: string;
+    restore?: string;
   };
   weddingManagement: {
     tabAnalytics: string;

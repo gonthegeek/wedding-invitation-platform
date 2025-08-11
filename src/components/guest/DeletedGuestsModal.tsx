@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import type { Guest } from '../../types';
+import { useTranslation } from '../../hooks/useLanguage';
 
 // Extended Guest type for deleted guests
 interface DeletedGuest extends Guest {
@@ -150,6 +151,7 @@ export function DeletedGuestsModal({
   getDeletedGuests,
   restoreGuest,
 }: DeletedGuestsModalProps) {
+  const t = useTranslation();
   const [deletedGuests, setDeletedGuests] = useState<DeletedGuest[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -163,11 +165,11 @@ export function DeletedGuestsModal({
       setDeletedGuests(guests);
     } catch (err) {
       console.error('Error fetching deleted guests:', err);
-      setError('Failed to load deleted guests');
+      setError(t.guestManagement.loadDeletedGuestsFailed || 'Failed to load deleted guests');
     } finally {
       setLoading(false);
     }
-  }, [getDeletedGuests]);
+  }, [getDeletedGuests, t]);
 
   useEffect(() => {
     if (isOpen) {
@@ -192,8 +194,8 @@ export function DeletedGuestsModal({
   };
 
   const formatDate = (date: Date | undefined) => {
-    if (!date) return 'Unknown';
-    return new Intl.DateTimeFormat('en-US', {
+    if (!date) return t.common.unknown || 'Unknown';
+    return new Intl.DateTimeFormat(undefined, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -208,12 +210,12 @@ export function DeletedGuestsModal({
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
-          <Title>Deleted Guests</Title>
+          <Title>{t.guestManagement.deletedGuestsTitle || 'Deleted Guests'}</Title>
           <CloseButton onClick={onClose}>&times;</CloseButton>
         </ModalHeader>
 
         {loading && (
-          <LoadingState>Loading deleted guests...</LoadingState>
+          <LoadingState>{t.guestManagement.loadingDeletedGuests || 'Loading deleted guests...'}</LoadingState>
         )}
 
         {error && (
@@ -222,7 +224,8 @@ export function DeletedGuestsModal({
 
         {!loading && !error && deletedGuests.length === 0 && (
           <EmptyState>
-            No deleted guests found. All guests are active!
+            {t.guestManagement.noDeletedGuestsFound || 'No deleted guests found.'}
+            <div>{t.guestManagement.allGuestsActive || 'All guests are active!'}</div>
           </EmptyState>
         )}
 
@@ -235,18 +238,18 @@ export function DeletedGuestsModal({
                     {guest.firstName} {guest.lastName}
                   </GuestName>
                   <GuestDetails>
-                    {guest.phone || 'No phone provided'}
+                    {guest.phone || t.guestManagement.noPhone}
                     {guest.email && ` • ${guest.email}`}
                   </GuestDetails>
                   <DeletedDate>
-                    Deleted: {formatDate(guest.deletedAt)}
+                    {(t.guestManagement.deletedLabel || 'Deleted') + ': '}{formatDate(guest.deletedAt)}
                   </DeletedDate>
                 </GuestInfo>
                 <RestoreButton
                   onClick={() => handleRestore(guest.id)}
                   disabled={restoringId === guest.id}
                 >
-                  {restoringId === guest.id ? 'Restoring...' : 'Restore'}
+                  {restoringId === guest.id ? (t.guestManagement.restoring || 'Restoring...') : (t.guestManagement.restore || 'Restore')}
                 </RestoreButton>
               </GuestCard>
             ))}

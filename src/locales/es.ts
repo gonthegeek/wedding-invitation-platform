@@ -3,14 +3,18 @@ import type { TranslationKeys } from '../types/i18n';
 export const spanishTranslations: TranslationKeys = {
   common: {
     loading: 'Cargando...',
-    refresh: 'Refrescar'
+    refresh: 'Refrescar',
+    cancel: 'Cancelar',
+    optional: 'Opcional',
+    unknown: 'Desconocido'
   },
   auth: {
     email: 'Correo Electrónico',
-    password: 'Contraseña',
+    passwordLabel: 'Contraseña',
     loginTitle: 'Inicia Sesión en tu Cuenta',
     createAccount: 'Crear Cuenta',
-    dontHaveAccount: '¿No tienes cuenta?'
+    dontHaveAccount: '¿No tienes cuenta?',
+    forgotPassword: '¿Olvidaste tu contraseña?'
   },
   wedding: {
     brideFirstName: 'Nombre de la Novia',
@@ -274,7 +278,8 @@ export const spanishTranslations: TranslationKeys = {
     daysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
   },
   validation: {
-    required: 'Este campo es requerido'
+    required: 'Este campo es requerido',
+    emailInvalid: 'Por favor ingresa un correo electrónico válido'
   },
   errors: {
     authError: 'Error de autenticación. Por favor inicia sesión de nuevo.',
@@ -410,8 +415,6 @@ export const spanishTranslations: TranslationKeys = {
     filterAttending: 'Asistiendo',
     filterNotAttending: 'No Asiste',
     filterMaybe: 'Tal vez',
-    sectionTitle: 'Gestión de Lista de Invitados',
-    sectionSubtext: 'Administra tu lista, envía invitaciones y rastrea respuestas',
     addGuestBtn: 'Agregar Invitado',
     sendInvitationsBtn: 'Enviar Invitaciones',
     viewDeletedBtn: 'Ver Eliminados',
@@ -430,7 +433,48 @@ export const spanishTranslations: TranslationKeys = {
     confirmDelete: '¿Seguro que deseas eliminar a {name}?',
     deleteFailed: 'No se pudo eliminar al invitado. Inténtalo de nuevo.',
     editGuestTitle: 'Editar invitado',
-    deleteGuestTitle: 'Eliminar invitado'
+    deleteGuestTitle: 'Eliminar invitado',
+    sectionTitle: 'Gestión de Lista de Invitados',
+    sectionSubtext: 'Administra tu lista, envía invitaciones y rastrea respuestas',
+    addGuestTitle: 'Agregar Nuevo Invitado',
+    phoneNumberLabel: 'Número de Teléfono *',
+    groupNameLabel: 'Nombre del Grupo *',
+    allowPlusOnesLabel: 'Permitir acompañantes para este invitado',
+    phoneRequired: 'El número de teléfono es requerido',
+    phoneInvalid: 'Ingresa un número de teléfono válido (incluye código de país si es internacional)',
+    groupNameRequired: 'El nombre del grupo es requerido',
+    maxPlusOnesMin: 'El máximo de acompañantes debe ser mayor que 0',
+    phonePlaceholder: 'ej., +52 55 1234 5678 o 55 1234 5678',
+    groupNamePlaceholder: 'ej., Familia, Amigos, Compañeros de trabajo',
+    addFailed: 'No se pudo agregar al invitado. Inténtalo de nuevo.',
+    addingGuest: 'Agregando invitado...',
+    maxPlusOnesLabel: 'Máximo de acompañantes',
+    singlePlusOne: '1 acompañante',
+    pluralPlusOnes: '{count} acompañantes',
+    // EditGuestModal additions
+    infoInviteCode: 'Código de Invitación',
+    infoInvited: 'Invitado',
+    infoPlusOnes: 'Acompañantes',
+    rsvpStatusLabel: 'Estado de RSVP',
+    attendingCeremonyLabel: 'Asistirá a la Ceremonia',
+    attendingReceptionLabel: 'Asistirá a la Recepción',
+    dietaryRestrictionsLabel: 'Restricciones Alimentarias',
+    dietaryRestrictionsPlaceholder: '¿Alguna restricción alimentaria o alergia?',
+    specialRequestsLabel: 'Solicitudes Especiales',
+    specialRequestsPlaceholder: 'Cualquier solicitud especial o nota...',
+    deletingGuest: 'Eliminando...',
+    updateGuest: 'Actualizar Invitado',
+    updatingGuest: 'Actualizando...',
+    updateFailed: 'No se pudo actualizar al invitado. Inténtalo de nuevo.',
+    // Deleted Guests Modal
+    deletedGuestsTitle: 'Invitados Eliminados',
+    loadingDeletedGuests: 'Cargando invitados eliminados...',
+    loadDeletedGuestsFailed: 'No se pudieron cargar los invitados eliminados',
+    noDeletedGuestsFound: 'No se encontraron invitados eliminados.',
+    allGuestsActive: '¡Todos los invitados están activos!',
+    deletedLabel: 'Eliminado',
+    restoring: 'Restaurando...',
+    restore: 'Restaurar'
   },
   weddingManagement: {
     tabAnalytics: 'Analítica de Confirmaciones',

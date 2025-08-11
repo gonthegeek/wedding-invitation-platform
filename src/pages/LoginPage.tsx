@@ -188,7 +188,7 @@ export const LoginPage: React.FC = () => {
           </FormGroup>
           
           <FormGroup>
-            <Label htmlFor="password">{t.auth.password}</Label>
+            <Label htmlFor="password">{t.auth.passwordLabel}</Label>
             <Input
               id="password"
               type="password"

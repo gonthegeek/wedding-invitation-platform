@@ -3,14 +3,18 @@ import type { TranslationKeys } from '../types/i18n';
 export const englishTranslations: TranslationKeys = {
   common: {
     loading: 'Loading...',
-    refresh: 'Refresh'
+    refresh: 'Refresh',
+    cancel: 'Cancel',
+    optional: 'Optional',
+    unknown: 'Unknown'
   },
   auth: {
     email: 'Email',
-    password: 'Password',
+    passwordLabel: 'Password',
     loginTitle: 'Sign In to Your Account',
     createAccount: 'Create Account',
-    dontHaveAccount: 'Don\'t have an account?'
+    dontHaveAccount: 'Don\'t have an account?',
+    forgotPassword: 'Forgot Password?'
   },
   wedding: {
     brideFirstName: 'Bride\'s First Name',
@@ -274,7 +278,8 @@ export const englishTranslations: TranslationKeys = {
     daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   },
   validation: {
-    required: 'This field is required'
+    required: 'This field is required',
+    emailInvalid: 'Please enter a valid email address'
   },
   errors: {
     authError: 'Authentication error. Please sign in again.',
@@ -430,7 +435,46 @@ export const englishTranslations: TranslationKeys = {
     confirmDelete: 'Are you sure you want to delete {name}?',
     deleteFailed: 'Failed to delete guest. Please try again.',
     editGuestTitle: 'Edit guest',
-    deleteGuestTitle: 'Delete guest'
+    deleteGuestTitle: 'Delete guest',
+    addGuestTitle: 'Add New Guest',
+    phoneNumberLabel: 'Phone Number *',
+    groupNameLabel: 'Group Name *',
+    allowPlusOnesLabel: 'Allow plus ones for this guest',
+    phoneRequired: 'Phone number is required',
+    phoneInvalid: 'Please enter a valid phone number (include country code if international)',
+    groupNameRequired: 'Group name is required',
+    maxPlusOnesMin: 'Maximum plus ones must be greater than 0',
+    phonePlaceholder: 'e.g., +1 (555) 123-4567 or 555-123-4567',
+    groupNamePlaceholder: 'e.g., Family, Friends, Coworkers',
+    addFailed: 'Failed to add guest. Please try again.',
+    addingGuest: 'Adding Guest...',
+    maxPlusOnesLabel: 'Maximum Plus Ones',
+    singlePlusOne: '1 Plus One',
+    pluralPlusOnes: '{count} Plus Ones',
+    // EditGuestModal additions
+    infoInviteCode: 'Invite Code',
+    infoInvited: 'Invited',
+    infoPlusOnes: 'Plus Ones',
+    rsvpStatusLabel: 'RSVP Status',
+    attendingCeremonyLabel: 'Attending Ceremony',
+    attendingReceptionLabel: 'Attending Reception',
+    dietaryRestrictionsLabel: 'Dietary Restrictions',
+    dietaryRestrictionsPlaceholder: 'Any dietary restrictions or allergies...',
+    specialRequestsLabel: 'Special Requests',
+    specialRequestsPlaceholder: 'Any special requests or notes...',
+    deletingGuest: 'Deleting...',
+    updateGuest: 'Update Guest',
+    updatingGuest: 'Updating...',
+    updateFailed: 'Failed to update guest. Please try again.',
+    // Deleted Guests Modal
+    deletedGuestsTitle: 'Deleted Guests',
+    loadingDeletedGuests: 'Loading deleted guests...',
+    loadDeletedGuestsFailed: 'Failed to load deleted guests',
+    noDeletedGuestsFound: 'No deleted guests found.',
+    allGuestsActive: 'All guests are active!'
+    ,deletedLabel: 'Deleted',
+    restoring: 'Restoring...',
+    restore: 'Restore'
   },
   weddingManagement: {
     tabAnalytics: 'RSVP Analytics',

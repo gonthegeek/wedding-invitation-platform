@@ -4,6 +4,7 @@ import { Modal } from '../shared/Modal';
 import { GuestService } from '../../services/guestService';
 import { isValidPhoneNumber } from '../../utils/phoneUtils';
 import type { Guest, RSVPStatus } from '../../types/guest';
+import { useTranslation } from '../../hooks/useLanguage';
 
 interface EditGuestModalProps {
   isOpen: boolean;
@@ -200,6 +201,8 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
   guest,
   onGuestUpdated 
 }) => {
+  const t = useTranslation();
+
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -239,27 +242,29 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
     const newErrors: FormErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = t.rsvp.firstNameRequired;
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = t.rsvp.lastNameRequired;
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = t.guestManagement.phoneRequired;
     } else if (!isValidPhoneNumber(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number (include country code if international)';
+      newErrors.phone = t.guestManagement.phoneInvalid;
     }
 
     // Email is optional, but if provided, validate it
     if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = t.validation.emailInvalid || 'Invalid email';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };  const handleSubmit = async (e: React.FormEvent) => {
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!guest || !validateForm()) {
@@ -293,14 +298,14 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error updating guest:', error);
-      setErrors({ phone: 'Failed to update guest. Please try again.' });
+      setErrors({ phone: t.guestManagement.updateFailed || 'Failed to update guest. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!guest || !confirm(`Are you sure you want to delete ${guest.firstName} ${guest.lastName}? This action cannot be undone.`)) {
+    if (!guest || !confirm(t.guestManagement.confirmDelete.replace('{name}', `${guest.firstName} ${guest.lastName}`))) {
       return;
     }
 
@@ -312,7 +317,7 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error deleting guest:', error);
-      alert('Failed to delete guest. Please try again.');
+      alert(t.guestManagement.deleteFailed);
     } finally {
       setIsDeleting(false);
     }
@@ -339,16 +344,16 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={`Edit Guest: ${guest.firstName} ${guest.lastName}`} maxWidth="600px">
+    <Modal isOpen={isOpen} onClose={handleClose} title={`${t.guestManagement.editGuestTitle}: ${guest.firstName} ${guest.lastName}`} maxWidth="600px">
       <Form onSubmit={handleSubmit}>
         <InfoText>
-          <strong>Invite Code:</strong> {guest.inviteCode} | 
-          <strong> Invited:</strong> {guest.invitedAt.toLocaleDateString()} |
-          <strong> Plus Ones:</strong> {guest.plusOnes?.length || 0}
+          <strong>{t.guestManagement.infoInviteCode}:</strong> {guest.inviteCode} | 
+          <strong> {t.guestManagement.infoInvited}:</strong> {guest.invitedAt.toLocaleDateString()} |
+          <strong> {t.guestManagement.infoPlusOnes}:</strong> {guest.plusOnes?.length || 0}
         </InfoText>
 
         <FormGroup>
-          <Label htmlFor="firstName">First Name *</Label>
+          <Label htmlFor="firstName">{t.rsvp.firstName} *</Label>
           <Input
             id="firstName"
             type="text"
@@ -361,7 +366,7 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="lastName">Last Name *</Label>
+          <Label htmlFor="lastName">{t.rsvp.lastName} *</Label>
           <Input
             id="lastName"
             type="text"
@@ -374,7 +379,7 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="phone">Phone Number *</Label>
+          <Label htmlFor="phone">{t.guestManagement.phoneNumberLabel}</Label>
           <Input
             id="phone"
             type="tel"
@@ -382,40 +387,41 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
             onChange={(e) => handleInputChange('phone', e.target.value)}
             $error={!!errors.phone}
             disabled={isSubmitting || isDeleting}
-            placeholder="e.g., +1 (555) 123-4567 or 555-123-4567"
+            placeholder={t.guestManagement.phonePlaceholder}
           />
           {errors.phone && <ErrorMessage>{errors.phone}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="email">Email Address</Label>
+          <Label htmlFor="email">{t.auth.email}</Label>
           <Input
             id="email"
             type="email"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
             disabled={isSubmitting || isDeleting}
-            placeholder="Optional"
+            placeholder={t.common.optional || 'Optional'}
           />
+          {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="rsvpStatus">RSVP Status</Label>
+          <Label htmlFor="rsvpStatus">{t.guestManagement.rsvpStatusLabel}</Label>
           <Select
             id="rsvpStatus"
             value={formData.rsvpStatus}
             onChange={(e) => handleInputChange('rsvpStatus', e.target.value)}
             disabled={isSubmitting || isDeleting}
           >
-            <option value="pending">Pending</option>
-            <option value="attending">Attending</option>
-            <option value="not_attending">Not Attending</option>
-            <option value="maybe">Maybe</option>
+            <option value="pending">{t.rsvpAnalytics.statusPending}</option>
+            <option value="attending">{t.rsvpAnalytics.statusAttending}</option>
+            <option value="not_attending">{t.rsvpAnalytics.statusNotAttending}</option>
+            <option value="maybe">{t.rsvpAnalytics.statusMaybe}</option>
           </Select>
         </FormGroup>
 
         <FormGroup>
-          <Label>Attendance</Label>
+          <Label>{t.rsvpResponses.attendanceTitle}</Label>
           <CheckboxGroup>
             <CheckboxLabel>
               <Checkbox
@@ -424,7 +430,7 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
                 onChange={(e) => handleInputChange('attendingCeremony', e.target.checked)}
                 disabled={isSubmitting || isDeleting}
               />
-              Attending Ceremony
+              {t.guestManagement.attendingCeremonyLabel}
             </CheckboxLabel>
             
             <CheckboxLabel>
@@ -434,30 +440,30 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
                 onChange={(e) => handleInputChange('attendingReception', e.target.checked)}
                 disabled={isSubmitting || isDeleting}
               />
-              Attending Reception
+              {t.guestManagement.attendingReceptionLabel}
             </CheckboxLabel>
           </CheckboxGroup>
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="dietaryRestrictions">Dietary Restrictions</Label>
+          <Label htmlFor="dietaryRestrictions">{t.guestManagement.dietaryRestrictionsLabel}</Label>
           <TextArea
             id="dietaryRestrictions"
             value={formData.dietaryRestrictions}
             onChange={(e) => handleInputChange('dietaryRestrictions', e.target.value)}
             disabled={isSubmitting || isDeleting}
-            placeholder="Any dietary restrictions or allergies..."
+            placeholder={t.guestManagement.dietaryRestrictionsPlaceholder || ''}
           />
         </FormGroup>
 
         <FormGroup>
-          <Label htmlFor="specialRequests">Special Requests</Label>
+          <Label htmlFor="specialRequests">{t.guestManagement.specialRequestsLabel}</Label>
           <TextArea
             id="specialRequests"
             value={formData.specialRequests}
             onChange={(e) => handleInputChange('specialRequests', e.target.value)}
             disabled={isSubmitting || isDeleting}
-            placeholder="Any special requests or notes..."
+            placeholder={t.guestManagement.specialRequestsPlaceholder || ''}
           />
         </FormGroup>
 
@@ -468,13 +474,13 @@ export const EditGuestModal: React.FC<EditGuestModalProps> = ({
             onClick={handleDelete}
             disabled={isSubmitting || isDeleting}
           >
-            {isDeleting ? 'Deleting...' : 'Delete Guest'}
+            {isDeleting ? t.guestManagement.deletingGuest : t.guestManagement.deleteGuestTitle}
           </Button>
           <Button type="button" onClick={handleClose} disabled={isSubmitting || isDeleting}>
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button type="submit" variant="primary" disabled={isSubmitting || isDeleting}>
-            {isSubmitting ? 'Updating...' : 'Update Guest'}
+            {isSubmitting ? t.guestManagement.updatingGuest : t.guestManagement.updateGuest}
           </Button>
         </ButtonGroup>
       </Form>
