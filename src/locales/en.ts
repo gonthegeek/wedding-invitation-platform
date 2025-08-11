@@ -157,7 +157,8 @@ export const englishTranslations: TranslationKeys = {
     footerThankYou: 'Thank you for being part of one of the best days of our lives!',
     withLoveSignature: 'With love:',
     scrollIndicator: 'Scroll to see our invitation',
-    dressCodeNote: 'Please avoid wearing white (reserved for the bride)'
+    dressCodeNote: 'Please avoid wearing white (reserved for the bride)',
+    and: 'and'
   },
   customization: {
     customizeInvitation: 'Customize Invitation',
@@ -271,7 +272,24 @@ export const englishTranslations: TranslationKeys = {
     rsvpSection: 'RSVP Section',
     photoGallerySection: 'Photo Gallery',
     loveQuoteSection: 'Love Quote',
-    specialInstructionsSection: 'Special Instructions'
+    specialInstructionsSection: 'Special Instructions',
+    sectionVisibility: 'Section Visibility',
+    previewInvitation: 'Preview Invitation',
+    enterText: 'Enter text...',
+    enterUrl: 'Enter URL',
+    fontGeorgia: 'Georgia',
+    fontTimesNewRoman: 'Times New Roman',
+    fontPlayfairDisplay: 'Playfair Display',
+    fontMerriweather: 'Merriweather',
+    fontArial: 'Arial',
+    fontHelvetica: 'Helvetica',
+    fontOpenSans: 'Open Sans',
+    fontLato: 'Lato',
+    fontMontserrat: 'Montserrat',
+    fontDancingScript: 'Dancing Script',
+    fontGreatVibes: 'Great Vibes',
+    fontPacifico: 'Pacifico',
+    fontSatisfy: 'Satisfy'
   },
   date: {
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

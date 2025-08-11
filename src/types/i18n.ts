@@ -159,6 +159,8 @@ export interface TranslationKeys {
     withLoveSignature: string;
     scrollIndicator: string;
     dressCodeNote: string;
+    // Added for names conjunction in headings
+    and?: string;
   };
   customization: {
     customizeInvitation: string;
@@ -273,6 +275,25 @@ export interface TranslationKeys {
     photoGallerySection: string;
     loveQuoteSection: string;
     specialInstructionsSection: string;
+    // Added missing keys referenced in components
+    sectionVisibility?: string;
+    previewInvitation?: string;
+    enterText?: string;
+    enterUrl?: string;
+    // Font label keys for select options
+    fontGeorgia?: string;
+    fontTimesNewRoman?: string;
+    fontPlayfairDisplay?: string;
+    fontMerriweather?: string;
+    fontArial?: string;
+    fontHelvetica?: string;
+    fontOpenSans?: string;
+    fontLato?: string;
+    fontMontserrat?: string;
+    fontDancingScript?: string;
+    fontGreatVibes?: string;
+    fontPacifico?: string;
+    fontSatisfy?: string;
   };
   date: {
     months: string[];

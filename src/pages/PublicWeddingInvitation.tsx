@@ -1173,7 +1173,7 @@ export const PublicWeddingInvitation: React.FC = () => {
                 <EventCard>
                   <EventIcon>👔</EventIcon>
                   <EventTitle>{t.invitation.dressCodeTitle}</EventTitle>
-                  <EventTime>{wedding.settings?.dressCode || t.wedding.dressCode}</EventTime>
+                  <EventTime>{wedding.settings?.dressCode || t.customization.dressCode}</EventTime>
                   <EventLocation>
                     {wedding.settings?.dressCodeDescription && (
                       <>
