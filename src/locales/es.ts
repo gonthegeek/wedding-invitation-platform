@@ -371,5 +371,29 @@ export const spanishTranslations: TranslationKeys = {
     statusNotAttending: 'No asiste',
     statusMaybe: 'Tal vez',
     statusPending: 'Pendiente'
+  },
+  rsvpResponses: {
+    title: 'Respuestas Detalladas de RSVP ({count})',
+    searchPlaceholder: 'Buscar invitados...',
+    loading: 'Cargando respuestas de invitados...',
+    emptyNoResponses: 'Aún no hay respuestas de RSVP. Las respuestas aparecerán aquí una vez que los invitados envíen su confirmación.',
+    emptyNoMatches: 'Ningún invitado coincide con tu búsqueda.',
+    attendanceTitle: 'Asistencia',
+    attendingWedding: '✓ Asistirá a la boda',
+    willAttendCeremony: '• Asistirá a la ceremonia',
+    willAttendReception: '• Asistirá a la recepción',
+    willNotAttend: '✗ No asistirá',
+    maybeAttending: '? Tal vez asista',
+    plusOnesTitle: 'Acompañantes ({count})',
+    dietaryLabel: 'Alimentación:',
+    transportationTitle: 'Transporte',
+    needsTransportation: '✓ Necesita transporte',
+    detailsLabel: 'Detalles:',
+    accommodationTitle: 'Alojamiento',
+    needsAccommodation: '✓ Necesita alojamiento',
+    emergencyContactTitle: 'Contacto de Emergencia',
+    messagesAndRequestsTitle: 'Mensajes y Solicitudes',
+    specialRequests: 'Solicitudes Especiales:',
+    messageLabel: 'Mensaje:'
   }
 };

@@ -372,4 +372,28 @@ export interface TranslationKeys {
     statusMaybe: string;
     statusPending: string;
   };
+  rsvpResponses: {
+    title: string;
+    searchPlaceholder: string;
+    loading: string;
+    emptyNoResponses: string;
+    emptyNoMatches: string;
+    attendanceTitle: string;
+    attendingWedding: string;
+    willAttendCeremony: string;
+    willAttendReception: string;
+    willNotAttend: string;
+    maybeAttending: string;
+    plusOnesTitle: string;
+    dietaryLabel: string;
+    transportationTitle: string;
+    needsTransportation: string;
+    detailsLabel: string;
+    accommodationTitle: string;
+    needsAccommodation: string;
+    emergencyContactTitle: string;
+    messagesAndRequestsTitle: string;
+    specialRequests: string;
+    messageLabel: string;
+  };
 }

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useGuest } from '../../hooks/useGuest';
 import { Search, User, Heart, Music, Car, Home, Phone, MessageSquare, AlertCircle } from 'lucide-react';
 import type { Guest, PlusOne } from '../../types';
+import { useTranslation } from '../../hooks/useLanguage';
 
 interface DetailedRSVPResponsesProps {
   weddingId: string;
@@ -189,6 +190,7 @@ const EmptyState = styled.div`
 export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ weddingId }) => {
   const { guests, loading } = useGuest(weddingId);
   const [searchTerm, setSearchTerm] = useState('');
+  const t = useTranslation();
 
   // Filter guests who have responded (not pending)
   const respondedGuests = guests.filter((guest: Guest) => guest.rsvpStatus !== 'pending');
@@ -201,10 +203,10 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
 
   const formatStatus = (status: string) => {
     switch (status) {
-      case 'attending': return 'Attending';
-      case 'not_attending': return 'Not Attending';
-      case 'maybe': return 'Maybe';
-      default: return 'Pending';
+      case 'attending': return t.rsvpAnalytics.statusAttending;
+      case 'not_attending': return t.rsvpAnalytics.statusNotAttending;
+      case 'maybe': return t.rsvpAnalytics.statusMaybe;
+      default: return t.rsvpAnalytics.statusPending;
     }
   };
 
@@ -212,7 +214,7 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
     return (
       <Container>
         <div style={{ textAlign: 'center', padding: '48px' }}>
-          Loading guest responses...
+          {t.rsvpResponses.loading}
         </div>
       </Container>
     );
@@ -221,12 +223,12 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
   return (
     <Container>
       <Header>
-        <Title>Detailed RSVP Responses ({filteredGuests.length})</Title>
+        <Title>{t.rsvpResponses.title.replace('{count}', String(filteredGuests.length))}</Title>
         <SearchContainer>
           <SearchIcon />
           <SearchInput
             type="text"
-            placeholder="Search guests..."
+            placeholder={t.rsvpResponses.searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -236,8 +238,8 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
       {filteredGuests.length === 0 ? (
         <EmptyState>
           {respondedGuests.length === 0 
-            ? "No RSVP responses yet. Responses will appear here once guests submit their RSVPs."
-            : "No guests match your search criteria."
+            ? t.rsvpResponses.emptyNoResponses
+            : t.rsvpResponses.emptyNoMatches
           }
         </EmptyState>
       ) : (
@@ -261,19 +263,19 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
               <InfoCard>
                 <InfoTitle>
                   <Heart size={16} />
-                  Attendance
+                  {t.rsvpResponses.attendanceTitle}
                 </InfoTitle>
                 <InfoContent>
                   {guest.rsvpStatus === 'attending' ? (
                     <>
-                      <div>✓ Attending the wedding</div>
-                      {guest.attendingCeremony && <div>• Will attend ceremony</div>}
-                      {guest.attendingReception && <div>• Will attend reception</div>}
+                      <div>{t.rsvpResponses.attendingWedding}</div>
+                      {guest.attendingCeremony && <div>{t.rsvpResponses.willAttendCeremony}</div>}
+                      {guest.attendingReception && <div>{t.rsvpResponses.willAttendReception}</div>}
                     </>
                   ) : guest.rsvpStatus === 'not_attending' ? (
-                    <div>✗ Will not be attending</div>
+                    <div>{t.rsvpResponses.willNotAttend}</div>
                   ) : (
-                    <div>? Maybe attending</div>
+                    <div>{t.rsvpResponses.maybeAttending}</div>
                   )}
                 </InfoContent>
               </InfoCard>
@@ -283,7 +285,7 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                 <InfoCard>
                   <InfoTitle>
                     <User size={16} />
-                    Plus Ones ({guest.plusOnes.length})
+                    {t.rsvpResponses.plusOnesTitle.replace('{count}', String(guest.plusOnes.length))}
                   </InfoTitle>
                   <PlusOnesList>
                     {guest.plusOnes.map((plusOne: PlusOne, index: number) => (
@@ -293,7 +295,7 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                         </PlusOneName>
                         {plusOne.dietaryRestrictions && (
                           <InfoContent>
-                            Dietary: {plusOne.dietaryRestrictions}
+                            {t.rsvpResponses.dietaryLabel} {plusOne.dietaryRestrictions}
                           </InfoContent>
                         )}
                       </PlusOneItem>
@@ -307,7 +309,7 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                 <InfoCard>
                   <InfoTitle>
                     <AlertCircle size={16} />
-                    Dietary Restrictions
+                    {t.rsvpAnalytics.dietaryRestrictionsTitle}
                   </InfoTitle>
                   <InfoContent>{guest.dietaryRestrictions}</InfoContent>
                 </InfoCard>
@@ -318,7 +320,7 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                 <InfoCard>
                   <InfoTitle>
                     <Music size={16} />
-                    Song Requests
+                    {t.rsvp.songRequests}
                   </InfoTitle>
                   <InfoContent>{guest.songRequests}</InfoContent>
                 </InfoCard>
@@ -329,13 +331,13 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                 <InfoCard>
                   <InfoTitle>
                     <Car size={16} />
-                    Transportation
+                    {t.rsvpResponses.transportationTitle}
                   </InfoTitle>
                   <InfoContent>
-                    <div>✓ Needs transportation</div>
+                    <div>{t.rsvpResponses.needsTransportation}</div>
                     {guest.transportationDetails && (
                       <div style={{ marginTop: '4px' }}>
-                        Details: {guest.transportationDetails}
+                        {t.rsvpResponses.detailsLabel} {guest.transportationDetails}
                       </div>
                     )}
                   </InfoContent>
@@ -347,13 +349,13 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                 <InfoCard>
                   <InfoTitle>
                     <Home size={16} />
-                    Accommodation
+                    {t.rsvpResponses.accommodationTitle}
                   </InfoTitle>
                   <InfoContent>
-                    <div>✓ Needs accommodation</div>
+                    <div>{t.rsvpResponses.needsAccommodation}</div>
                     {guest.accommodationDetails && (
                       <div style={{ marginTop: '4px' }}>
-                        Details: {guest.accommodationDetails}
+                        {t.rsvpResponses.detailsLabel} {guest.accommodationDetails}
                       </div>
                     )}
                   </InfoContent>
@@ -365,7 +367,7 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                 <InfoCard>
                   <InfoTitle>
                     <Phone size={16} />
-                    Emergency Contact
+                    {t.rsvpResponses.emergencyContactTitle}
                   </InfoTitle>
                   <InfoContent>
                     <div>{guest.emergencyContactName}</div>
@@ -381,18 +383,18 @@ export const DetailedRSVPResponses: React.FC<DetailedRSVPResponsesProps> = ({ we
                 <InfoCard>
                   <InfoTitle>
                     <MessageSquare size={16} />
-                    Messages & Requests
+                    {t.rsvpResponses.messagesAndRequestsTitle}
                   </InfoTitle>
                   <InfoContent>
                     {guest.specialRequests && (
                       <div style={{ marginBottom: '8px' }}>
-                        <strong>Special Requests:</strong><br />
+                        <strong>{t.rsvpResponses.specialRequests}</strong><br />
                         {guest.specialRequests}
                       </div>
                     )}
                     {guest.message && (
                       <div>
-                        <strong>Message:</strong><br />
+                        <strong>{t.rsvpResponses.messageLabel}</strong><br />
                         {guest.message}
                       </div>
                     )}

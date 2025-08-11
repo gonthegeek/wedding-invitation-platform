@@ -371,5 +371,29 @@ export const englishTranslations: TranslationKeys = {
     statusNotAttending: 'Not Attending',
     statusMaybe: 'Maybe',
     statusPending: 'Pending'
+  },
+  rsvpResponses: {
+    title: 'Detailed RSVP Responses ({count})',
+    searchPlaceholder: 'Search guests...',
+    loading: 'Loading guest responses...',
+    emptyNoResponses: 'No RSVP responses yet. Responses will appear here once guests submit their RSVPs.',
+    emptyNoMatches: 'No guests match your search criteria.',
+    attendanceTitle: 'Attendance',
+    attendingWedding: '✓ Attending the wedding',
+    willAttendCeremony: '• Will attend ceremony',
+    willAttendReception: '• Will attend reception',
+    willNotAttend: '✗ Will not be attending',
+    maybeAttending: '? Maybe attending',
+    plusOnesTitle: 'Plus Ones ({count})',
+    dietaryLabel: 'Dietary:',
+    transportationTitle: 'Transportation',
+    needsTransportation: '✓ Needs transportation',
+    detailsLabel: 'Details:',
+    accommodationTitle: 'Accommodation',
+    needsAccommodation: '✓ Needs accommodation',
+    emergencyContactTitle: 'Emergency Contact',
+    messagesAndRequestsTitle: 'Messages & Requests',
+    specialRequests: 'Special Requests:',
+    messageLabel: 'Message:'
   }
 };
