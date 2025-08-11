@@ -2,7 +2,8 @@ import type { TranslationKeys } from '../types/i18n';
 
 export const englishTranslations: TranslationKeys = {
   common: {
-    loading: 'Loading...'
+    loading: 'Loading...',
+    refresh: 'Refresh'
   },
   auth: {
     email: 'Email',
@@ -370,7 +371,9 @@ export const englishTranslations: TranslationKeys = {
     statusAttending: 'Attending',
     statusNotAttending: 'Not Attending',
     statusMaybe: 'Maybe',
-    statusPending: 'Pending'
+    statusPending: 'Pending',
+    filterAllGuests: 'All Guests',
+    moreFilters: 'More Filters'
   },
   rsvpResponses: {
     title: 'Detailed RSVP Responses ({count})',
@@ -407,6 +410,12 @@ export const englishTranslations: TranslationKeys = {
     filterAttending: 'Attending',
     filterNotAttending: 'Not Attending',
     filterMaybe: 'Maybe',
+    sectionTitle: 'Guest List Management',
+    sectionSubtext: 'Manage your guest list, send invitations, and track responses',
+    addGuestBtn: 'Add Guest',
+    sendInvitationsBtn: 'Send Invitations',
+    viewDeletedBtn: 'View Deleted',
+    importGuestsBtn: 'Import Guests',
     tableName: 'Name',
     tablePhone: 'Phone',
     tableStatus: 'Status',
@@ -422,5 +431,10 @@ export const englishTranslations: TranslationKeys = {
     deleteFailed: 'Failed to delete guest. Please try again.',
     editGuestTitle: 'Edit guest',
     deleteGuestTitle: 'Delete guest'
+  },
+  weddingManagement: {
+    tabAnalytics: 'RSVP Analytics',
+    tabResponses: 'Detailed Responses',
+    tabGuests: 'Guest Management'
   }
 };

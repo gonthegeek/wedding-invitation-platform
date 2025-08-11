@@ -3,6 +3,7 @@ export type Language = 'en' | 'es';
 export interface TranslationKeys {
   common: {
     loading: string;
+    refresh: string;
   };
   auth: {
     email: string;
@@ -371,6 +372,8 @@ export interface TranslationKeys {
     statusNotAttending: string;
     statusMaybe: string;
     statusPending: string;
+    filterAllGuests: string;
+    moreFilters: string;
   };
   rsvpResponses: {
     title: string;
@@ -422,5 +425,16 @@ export interface TranslationKeys {
     deleteFailed: string;
     editGuestTitle: string;
     deleteGuestTitle: string;
+    sectionTitle: string;
+    sectionSubtext: string;
+    addGuestBtn: string;
+    sendInvitationsBtn: string;
+    viewDeletedBtn: string;
+    importGuestsBtn: string;
+  };
+  weddingManagement: {
+    tabAnalytics: string;
+    tabResponses: string;
+    tabGuests: string;
   };
 }

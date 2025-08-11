@@ -14,6 +14,7 @@ import { GuestImportExport } from '../components/guest/GuestImportExport';
 import { useWedding } from '../hooks/useWedding';
 import { useGuest } from '../hooks/useGuest';
 import type { Guest } from '../types/guest';
+import { useTranslation } from '../hooks/useLanguage';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -251,32 +252,12 @@ const WeddingManagementPage: React.FC = () => {
   // Get guest data for modals and share with GuestManagementContent
   const { guests, loading, error, stats, refreshGuests, getDeletedGuests, restoreGuest, deleteGuest } = useGuest(weddingId);
 
+  const t = useTranslation();
+
   const handleRefresh = async () => {
     setRefreshing(true);
     // Simulate refresh delay
     setTimeout(() => setRefreshing(false), 1000);
-  };
-
-  // Guest management handlers
-  const handleAddGuest = () => {
-    setIsAddGuestModalOpen(true);
-  };
-
-  const handleSendInvitations = () => {
-    setIsSendInvitationsModalOpen(true);
-  };
-
-  const handleViewDeleted = () => {
-    setIsDeletedGuestsModalOpen(true);
-  };
-
-  const handleImportGuests = () => {
-    setIsImportExportModalOpen(true);
-  };
-
-  const handleEditGuest = (guest: Guest) => {
-    setSelectedGuest(guest);
-    setIsEditGuestModalOpen(true);
   };
 
   const handleGuestAdded = () => {
@@ -303,7 +284,7 @@ const WeddingManagementPage: React.FC = () => {
       <Layout>
         <PageContainer>
           <CenteredContainer>
-            <p>Loading wedding data...</p>
+            <p>{t.customization.loadingWeddingDetails}</p>
           </CenteredContainer>
         </PageContainer>
       </Layout>
@@ -316,8 +297,8 @@ const WeddingManagementPage: React.FC = () => {
       <Layout>
         <PageContainer>
           <CenteredContainer>
-            <p>No wedding found for this account.</p>
-            <ThemedLink to="/couple/create-wedding">Create a wedding first</ThemedLink>
+            <p>{t.customization.noWeddingFound}</p>
+            <ThemedLink to="/couple/create-wedding">{t.customization.createWedding}</ThemedLink>
           </CenteredContainer>
         </PageContainer>
       </Layout>
@@ -329,11 +310,11 @@ const WeddingManagementPage: React.FC = () => {
       <PageContainer>
         <Header>
           <HeaderContent>
-            <HeaderTitle>Wedding Management</HeaderTitle>
+            <HeaderTitle>{t.nav.weddingManagement}</HeaderTitle>
             <HeaderActions>
               <ActionButton onClick={handleRefresh} disabled={refreshing}>
                 <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
-                Refresh
+                {t.common.refresh}
               </ActionButton>
             </HeaderActions>
           </HeaderContent>
@@ -346,21 +327,21 @@ const WeddingManagementPage: React.FC = () => {
             onClick={() => setActiveTab('dashboard')}
           >
             <BarChart3 size={16} />
-            RSVP Analytics
+            {t.weddingManagement.tabAnalytics}
           </Tab>
           <Tab 
             $active={activeTab === 'responses'} 
             onClick={() => setActiveTab('responses')}
           >
             <MessageSquare size={16} />
-            Detailed Responses
+            {t.weddingManagement.tabResponses}
           </Tab>
           <Tab 
             $active={activeTab === 'guests'} 
             onClick={() => setActiveTab('guests')}
           >
             <Users size={16} />
-            Guest Management
+            {t.weddingManagement.tabGuests}
           </Tab>
         </TabsList>
       </TabsContainer>
@@ -370,9 +351,9 @@ const WeddingManagementPage: React.FC = () => {
           <>
             <ActionBar>
               <div>
-                <SectionHeading>RSVP Analytics & Insights</SectionHeading>
+                <SectionHeading>{t.dashboard.rsvpAnalyticsDashboard}</SectionHeading>
                 <SectionSubtext>
-                  Track guest responses and wedding attendance in real-time
+                  {t.rsvpAnalytics.pageDescription}
                 </SectionSubtext>
               </div>
               <ActionGroup>
@@ -380,15 +361,15 @@ const WeddingManagementPage: React.FC = () => {
                   value={statusFilter} 
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
-                  <option value="all">All Guests</option>
-                  <option value="attending">Attending</option>
-                  <option value="not_attending">Not Attending</option>
-                  <option value="maybe">Maybe</option>
-                  <option value="pending">Pending</option>
+                  <option value="all">{t.rsvpAnalytics.filterAllGuests}</option>
+                  <option value="pending">{t.rsvpAnalytics.statusPending}</option>
+                  <option value="attending">{t.rsvpAnalytics.statusAttending}</option>
+                  <option value="not_attending">{t.rsvpAnalytics.statusNotAttending}</option>
+                  <option value="maybe">{t.rsvpAnalytics.statusMaybe}</option>
                 </StatusFilter>
                 <ActionButton>
                   <Filter size={16} />
-                  More Filters
+                  {t.rsvpAnalytics.moreFilters}
                 </ActionButton>
               </ActionGroup>
             </ActionBar>
@@ -405,34 +386,34 @@ const WeddingManagementPage: React.FC = () => {
           <>
             <ActionBar>
               <div>
-                <SectionHeading>Guest List Management</SectionHeading>
+                <SectionHeading>{t.guestManagement.sectionTitle}</SectionHeading>
                 <SectionSubtext>
-                  Manage your guest list, send invitations, and track responses
+                  {t.guestManagement.sectionSubtext}
                 </SectionSubtext>
               </div>
               <ActionGroup>
-                <ActionButton variant="primary" onClick={handleAddGuest}>
+                <ActionButton variant="primary" onClick={() => setIsAddGuestModalOpen(true)}>
                   <UserPlus size={16} />
-                  Add Guest
+                  {t.guestManagement.addGuestBtn}
                 </ActionButton>
-                <ActionButton onClick={handleSendInvitations}>
+                <ActionButton onClick={() => setIsSendInvitationsModalOpen(true)}>
                   <Send size={16} />
-                  Send Invitations
+                  {t.guestManagement.sendInvitationsBtn}
                 </ActionButton>
-                <ActionButton onClick={handleViewDeleted}>
+                <ActionButton onClick={() => setIsDeletedGuestsModalOpen(true)}>
                   <Trash2 size={16} />
-                  View Deleted
+                  {t.guestManagement.viewDeletedBtn}
                 </ActionButton>
-                <ActionButton onClick={handleImportGuests}>
+                <ActionButton onClick={() => setIsImportExportModalOpen(true)}>
                   <Upload size={16} />
-                  Import Guests
+                  {t.guestManagement.importGuestsBtn}
                 </ActionButton>
               </ActionGroup>
             </ActionBar>
 
             <GuestManagementContent 
               weddingId={weddingId} 
-              onEditGuest={handleEditGuest}
+              onEditGuest={(g) => { setSelectedGuest(g); setIsEditGuestModalOpen(true); }}
               guests={guests}
               loading={loading}
               error={error}

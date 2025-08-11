@@ -2,7 +2,8 @@ import type { TranslationKeys } from '../types/i18n';
 
 export const spanishTranslations: TranslationKeys = {
   common: {
-    loading: 'Cargando...'
+    loading: 'Cargando...',
+    refresh: 'Refrescar'
   },
   auth: {
     email: 'Correo Electrónico',
@@ -370,7 +371,9 @@ export const spanishTranslations: TranslationKeys = {
     statusAttending: 'Asistiendo',
     statusNotAttending: 'No asiste',
     statusMaybe: 'Tal vez',
-    statusPending: 'Pendiente'
+    statusPending: 'Pendiente',
+    filterAllGuests: 'Todos los invitados',
+    moreFilters: 'Más filtros'
   },
   rsvpResponses: {
     title: 'Respuestas Detalladas de RSVP ({count})',
@@ -407,6 +410,12 @@ export const spanishTranslations: TranslationKeys = {
     filterAttending: 'Asistiendo',
     filterNotAttending: 'No Asiste',
     filterMaybe: 'Tal vez',
+    sectionTitle: 'Gestión de Lista de Invitados',
+    sectionSubtext: 'Administra tu lista, envía invitaciones y rastrea respuestas',
+    addGuestBtn: 'Agregar Invitado',
+    sendInvitationsBtn: 'Enviar Invitaciones',
+    viewDeletedBtn: 'Ver Eliminados',
+    importGuestsBtn: 'Importar Invitados',
     tableName: 'Nombre',
     tablePhone: 'Teléfono',
     tableStatus: 'Estado',
@@ -422,5 +431,10 @@ export const spanishTranslations: TranslationKeys = {
     deleteFailed: 'No se pudo eliminar al invitado. Inténtalo de nuevo.',
     editGuestTitle: 'Editar invitado',
     deleteGuestTitle: 'Eliminar invitado'
+  },
+  weddingManagement: {
+    tabAnalytics: 'Analítica de Confirmaciones',
+    tabResponses: 'Respuestas Detalladas',
+    tabGuests: 'Gestión de Invitados'
   }
 };
