@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRSVPAnalytics } from '../../hooks/useRSVPAnalytics';
+import { useTranslation } from '../../hooks/useLanguage';
 
 interface RSVPDashboardProps {
   weddingId: string;
@@ -237,11 +238,12 @@ const DietaryCount = styled.span`
 
 export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
   const { analytics, loading, error } = useRSVPAnalytics(weddingId);
+  const t = useTranslation();
 
   if (loading) {
     return (
       <DashboardContainer>
-        <LoadingSpinner>Loading RSVP analytics...</LoadingSpinner>
+        <LoadingSpinner>{t.rsvpAnalytics.loading}</LoadingSpinner>
       </DashboardContainer>
     );
   }
@@ -250,7 +252,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
     return (
       <DashboardContainer>
         <ErrorMessage>
-          Error loading RSVP analytics: {error}
+          {t.rsvpAnalytics.errorPrefix} {error}
         </ErrorMessage>
       </DashboardContainer>
     );
@@ -259,7 +261,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
   if (!analytics) {
     return (
       <DashboardContainer>
-        <LoadingSpinner>No RSVP data available</LoadingSpinner>
+        <LoadingSpinner>{t.rsvpAnalytics.noData}</LoadingSpinner>
       </DashboardContainer>
     );
   }
@@ -267,13 +269,13 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
   const formatRSVPStatus = (status: string) => {
     switch (status) {
       case 'attending':
-        return 'Attending';
+        return t.rsvpAnalytics.statusAttending;
       case 'not_attending':
-        return 'Not Attending';
+        return t.rsvpAnalytics.statusNotAttending;
       case 'maybe':
-        return 'Maybe';
+        return t.rsvpAnalytics.statusMaybe;
       default:
-        return 'Pending';
+        return t.rsvpAnalytics.statusPending;
     }
   };
 
@@ -288,51 +290,51 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
 
   return (
     <DashboardContainer>
-      <PageTitle>RSVP Dashboard</PageTitle>
+      <PageTitle>{t.rsvpAnalytics.pageTitle}</PageTitle>
       <PageDescription>
-        Track guest responses and manage your wedding attendance in real-time
+        {t.rsvpAnalytics.pageDescription}
       </PageDescription>
 
       <StatsGrid>
         <StatCard>
           <StatValue className="primary">{analytics.respondedCount}</StatValue>
-          <StatLabel>Responses Received</StatLabel>
+          <StatLabel>{t.rsvpAnalytics.responsesReceived}</StatLabel>
           <StatSubtext>
-            {analytics.responseRate.toFixed(1)}% response rate
+            {t.rsvpAnalytics.responseRate.replace('{rate}', analytics.responseRate.toFixed(1))}
           </StatSubtext>
         </StatCard>
 
         <StatCard>
           <StatValue className="success">{analytics.attendingCeremony}</StatValue>
-          <StatLabel>Attending Ceremony</StatLabel>
+          <StatLabel>{t.rsvpAnalytics.attendingCeremony}</StatLabel>
           <StatSubtext>
-            Plus {analytics.plusOnesData.attending} plus ones
+            {t.rsvpAnalytics.plusNPlusOnes.replace('{count}', String(analytics.plusOnesData.attending))}
           </StatSubtext>
         </StatCard>
 
         <StatCard>
           <StatValue className="warning">{analytics.pendingCount}</StatValue>
-          <StatLabel>Pending Responses</StatLabel>
+          <StatLabel>{t.rsvpAnalytics.pendingResponses}</StatLabel>
           <StatSubtext>
-            Out of {analytics.totalInvited} invited
+            {t.rsvpAnalytics.outOfInvited.replace('{total}', String(analytics.totalInvited))}
           </StatSubtext>
         </StatCard>
 
         <StatCard>
           <StatValue className="primary">{analytics.attendingReception}</StatValue>
-          <StatLabel>Attending Reception</StatLabel>
+          <StatLabel>{t.rsvpAnalytics.attendingReception}</StatLabel>
           <StatSubtext>
-            {analytics.attendanceRate.toFixed(1)}% attendance rate
+            {t.rsvpAnalytics.attendanceRate.replace('{rate}', analytics.attendanceRate.toFixed(1))}
           </StatSubtext>
         </StatCard>
       </StatsGrid>
 
       <ChartsSection>
         <ChartCard>
-          <ChartTitle>Response Progress</ChartTitle>
+          <ChartTitle>{t.rsvpAnalytics.responseProgressTitle}</ChartTitle>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>Attending ({analytics.attendingCeremony})</span>
+              <span>{`${t.rsvpAnalytics.attending} (${analytics.attendingCeremony})`}</span>
               <span>{((analytics.attendingCeremony / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>
             <ProgressBar>
@@ -345,7 +347,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
 
           <div style={{ marginTop: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>Not Attending ({analytics.notAttending})</span>
+              <span>{`${t.rsvpAnalytics.notAttending} (${analytics.notAttending})`}</span>
               <span>{((analytics.notAttending / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>
             <ProgressBar>
@@ -358,7 +360,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
 
           <div style={{ marginTop: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>Maybe ({analytics.maybeCount})</span>
+              <span>{`${t.rsvpAnalytics.maybe} (${analytics.maybeCount})`}</span>
               <span>{((analytics.maybeCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>
             <ProgressBar>
@@ -371,7 +373,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
 
           <div style={{ marginTop: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#6b7280' }}>
-              <span>Pending ({analytics.pendingCount})</span>
+              <span>{`${t.rsvpAnalytics.pending} (${analytics.pendingCount})`}</span>
               <span>{((analytics.pendingCount / analytics.totalGuests) * 100).toFixed(1)}%</span>
             </div>
             <ProgressBar>
@@ -384,7 +386,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
         </ChartCard>
 
         <ChartCard>
-          <ChartTitle>Dietary Restrictions</ChartTitle>
+          <ChartTitle>{t.rsvpAnalytics.dietaryRestrictionsTitle}</ChartTitle>
           {analytics.dietaryRestrictions.length > 0 ? (
             <DietaryRestrictionsList>
               {analytics.dietaryRestrictions.slice(0, 8).map((restriction, index) => (
@@ -396,7 +398,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
               {analytics.dietaryRestrictions.length > 8 && (
                 <DietaryItem>
                   <DietaryRestriction>
-                    +{analytics.dietaryRestrictions.length - 8} more restrictions
+                    {t.rsvpAnalytics.moreRestrictions.replace('{count}', String(analytics.dietaryRestrictions.length - 8))}
                   </DietaryRestriction>
                   <DietaryCount>
                     {analytics.dietaryRestrictions.slice(8).reduce((sum, r) => sum + r.count, 0)}
@@ -406,14 +408,14 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
             </DietaryRestrictionsList>
           ) : (
             <div style={{ color: '#6b7280', fontStyle: 'italic' }}>
-              No dietary restrictions reported yet
+              {t.rsvpAnalytics.noDietaryRestrictions}
             </div>
           )}
         </ChartCard>
       </ChartsSection>
 
       <RecentActivity>
-        <ChartTitle>Recent RSVP Activity</ChartTitle>
+        <ChartTitle>{t.rsvpAnalytics.recentActivityTitle}</ChartTitle>
         {analytics.recentResponses.length > 0 ? (
           analytics.recentResponses.map((response, index) => (
             <ActivityItem key={index}>
@@ -421,12 +423,12 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
                 <ActivityName>{response.guestName}</ActivityName>
                 <ActivityDetails>
                   {response.attendingCeremony && response.attendingReception 
-                    ? 'Attending ceremony and reception'
+                    ? t.rsvpAnalytics.attendingCeremonyAndReception
                     : response.attendingCeremony 
-                    ? 'Attending ceremony only'
+                    ? t.rsvpAnalytics.attendingCeremonyOnly
                     : response.attendingReception
-                    ? 'Attending reception only'
-                    : 'Not attending'
+                    ? t.rsvpAnalytics.attendingReceptionOnly
+                    : t.rsvpAnalytics.notAttendingLong
                   }
                 </ActivityDetails>
               </ActivityInfo>
@@ -440,7 +442,7 @@ export const RSVPDashboard: React.FC<RSVPDashboardProps> = ({ weddingId }) => {
           ))
         ) : (
           <div style={{ color: '#6b7280', fontStyle: 'italic', textAlign: 'center', padding: '24px' }}>
-            No RSVP responses yet
+            {t.rsvpAnalytics.noResponsesYet}
           </div>
         )}
       </RecentActivity>

@@ -339,4 +339,37 @@ export interface TranslationKeys {
     rsvpAnalyticsDashboard: string;
     viewInvitation: string;
   };
+  rsvpAnalytics: {
+    pageTitle: string;
+    pageDescription: string;
+    loading: string;
+    errorPrefix: string; // e.g., "Error loading RSVP analytics:"
+    noData: string;
+    responsesReceived: string;
+    responseRate: string; // expects {rate}
+    attendingCeremony: string;
+    plusNPlusOnes: string; // expects {count}
+    pendingResponses: string;
+    outOfInvited: string; // expects {total}
+    attendingReception: string;
+    attendanceRate: string; // expects {rate}
+    responseProgressTitle: string;
+    attending: string;
+    notAttending: string;
+    maybe: string;
+    pending: string;
+    dietaryRestrictionsTitle: string;
+    moreRestrictions: string; // expects {count}
+    noDietaryRestrictions: string;
+    recentActivityTitle: string;
+    attendingCeremonyAndReception: string;
+    attendingCeremonyOnly: string;
+    attendingReceptionOnly: string;
+    notAttendingLong: string;
+    noResponsesYet: string;
+    statusAttending: string;
+    statusNotAttending: string;
+    statusMaybe: string;
+    statusPending: string;
+  };
 }
