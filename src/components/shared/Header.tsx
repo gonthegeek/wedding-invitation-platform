@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { LanguageSelector } from './LanguageSelector';
 import { LogOut, User, Crown, Heart, Menu, ChevronRight, SunMedium, Moon, Monitor } from 'lucide-react';
 import { useThemeContext } from '../../contexts/ThemeContextBase';
+import { useTranslation } from '../../hooks/useLanguage';
 
 const HeaderContainer = styled.header`
   background: ${(p) => p.theme.colors.surface};
@@ -156,6 +157,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   const { currentUser, logout } = useAuth();
   const location = useLocation();
   const { mode, setMode } = useThemeContext();
+  const t = useTranslation();
 
   const handleLogout = async () => {
     try {
@@ -179,13 +181,13 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   const getRoleLabel = () => {
     switch (currentUser?.role) {
       case 'admin':
-        return 'Administrator';
+        return t.nav.roleAdmin;
       case 'couple':
-        return 'Couple';
+        return t.nav.roleCouple;
       case 'guest':
-        return 'Guest';
+        return t.nav.roleGuest;
       default:
-        return 'User';
+        return t.nav.roleUser;
     }
   };
 
@@ -194,31 +196,32 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
     const breadcrumbs: string[] = [];
     
     if (pathSegments[0] === 'admin') {
-      breadcrumbs.push('Admin');
+      breadcrumbs.push(t.nav.admin);
       if (pathSegments[1]) {
         const pageMap: Record<string, string> = {
-          'dashboard': 'Dashboard',
-          'analytics': 'Analytics',
-          'weddings': 'All Weddings',
-          'users': 'Users',
-          'venues': 'Venues',
-          'settings': 'Settings'
+          'dashboard': t.nav.dashboard,
+          'analytics': t.nav.analytics,
+          'weddings': t.nav.weddings,
+          'users': t.nav.users,
+          'venues': t.nav.venues,
+          'settings': t.nav.settings
         };
         breadcrumbs.push(pageMap[pathSegments[1]] || pathSegments[1]);
       }
     } else if (pathSegments[0] === 'couple') {
-      breadcrumbs.push('Couple Dashboard');
+      breadcrumbs.push(t.nav.coupleDashboard);
       if (pathSegments[1]) {
         const pageMap: Record<string, string> = {
-          'dashboard': 'Overview',
-          'wedding-management': 'Wedding Management',
-          'rsvp-dashboard': 'RSVP Analytics',
-          'invitations': 'Invitations',
-          'timeline': 'Timeline',
-          'gallery': 'Gallery',
-          'registry': 'Gift Registry',
-          'venues': 'Venues',
-          'settings': 'Settings'
+          'dashboard': t.nav.overview,
+          'wedding-management': t.nav.weddingManagement,
+          'wedding-details': t.nav.weddingDetails,
+          'rsvp-dashboard': t.nav.rsvpAnalytics,
+          'invitations': t.nav.invitations,
+          'timeline': t.nav.timeline,
+          'gallery': t.nav.gallery,
+          'registry': t.nav.registry,
+          'venues': t.nav.venues,
+          'settings': t.nav.settings
         };
         breadcrumbs.push(pageMap[pathSegments[1]] || pathSegments[1]);
       }
@@ -237,13 +240,13 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
     setMode(mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system');
   };
 
-  const themeLabel = mode === 'system' ? 'System' : mode === 'dark' ? 'Dark' : 'Light';
+  const themeLabel = mode === 'system' ? t.nav.themeSystem : mode === 'dark' ? t.nav.themeDark : t.nav.themeLight;
   const ThemeIcon = mode === 'system' ? Monitor : mode === 'dark' ? Moon : SunMedium;
 
   return (
     <HeaderContainer>
       <HeaderLeft>
-        <MenuButton onClick={onMenuToggle} aria-label="Toggle menu">
+        <MenuButton onClick={onMenuToggle} aria-label={t.nav.toggleMenu}>
           <Menu size={20} />
         </MenuButton>
         
@@ -262,7 +265,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
       </HeaderLeft>
       
       <HeaderRight>
-        <ThemeToggle onClick={cycleMode} aria-label={`Toggle theme (current: ${themeLabel})`}>
+        <ThemeToggle onClick={cycleMode} aria-label={t.nav.toggleThemeAria.replace('{theme}', themeLabel)}>
           <ThemeIcon size={16} />
           <span>{themeLabel}</span>
         </ThemeToggle>
@@ -280,7 +283,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
         
         <LogoutButton onClick={handleLogout}>
           <LogOut size={18} />
-          <span>Logout</span>
+          <span>{t.nav.logout}</span>
         </LogoutButton>
       </HeaderRight>
     </HeaderContainer>

@@ -283,5 +283,33 @@ export const englishTranslations: TranslationKeys = {
     selectLanguage: 'Select Language',
     english: 'English',
     spanish: 'Español'
+  },
+  nav: {
+    admin: 'Admin',
+    coupleDashboard: 'Couple Dashboard',
+    dashboard: 'Dashboard',
+    analytics: 'Analytics',
+    weddings: 'All Weddings',
+    users: 'Users',
+    venues: 'Venues',
+    settings: 'Settings',
+    overview: 'Overview',
+    weddingManagement: 'Wedding Management',
+    rsvpAnalytics: 'RSVP Analytics',
+    invitations: 'Invitations',
+    timeline: 'Timeline',
+    gallery: 'Gallery',
+    registry: 'Gift Registry',
+    logout: 'Logout',
+    toggleMenu: 'Toggle menu',
+    themeSystem: 'System',
+    themeDark: 'Dark',
+    themeLight: 'Light',
+    toggleThemeAria: 'Toggle theme (current: {theme})',
+    roleAdmin: 'Administrator',
+    roleCouple: 'Couple',
+    roleGuest: 'Guest',
+    roleUser: 'User',
+    weddingDetails: 'Wedding Details'
   }
 };

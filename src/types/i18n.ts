@@ -284,4 +284,32 @@ export interface TranslationKeys {
     english: string;
     spanish: string;
   };
+  nav: {
+    admin: string;
+    coupleDashboard: string;
+    dashboard: string;
+    analytics: string;
+    weddings: string;
+    users: string;
+    venues: string;
+    settings: string;
+    overview: string;
+    weddingManagement: string;
+    rsvpAnalytics: string;
+    invitations: string;
+    timeline: string;
+    gallery: string;
+    registry: string;
+    logout: string;
+    toggleMenu: string;
+    themeSystem: string;
+    themeDark: string;
+    themeLight: string;
+    toggleThemeAria: string; // expects {theme}
+    roleAdmin: string;
+    roleCouple: string;
+    roleGuest: string;
+    roleUser: string;
+    weddingDetails: string;
+  };
 }

@@ -283,5 +283,33 @@ export const spanishTranslations: TranslationKeys = {
     selectLanguage: 'Seleccionar Idioma',
     english: 'English',
     spanish: 'Español'
+  },
+  nav: {
+    admin: 'Admin',
+    coupleDashboard: 'Panel de Pareja',
+    dashboard: 'Tablero',
+    analytics: 'Analítica',
+    weddings: 'Todas las Bodas',
+    users: 'Usuarios',
+    venues: 'Lugares',
+    settings: 'Configuración',
+    overview: 'Resumen',
+    weddingManagement: 'Gestión de Boda',
+    rsvpAnalytics: 'Analítica de Confirmaciones',
+    invitations: 'Invitaciones',
+    timeline: 'Cronograma',
+    gallery: 'Galería',
+    registry: 'Mesa de Regalos',
+    logout: 'Cerrar sesión',
+    toggleMenu: 'Abrir/cerrar menú',
+    themeSystem: 'Sistema',
+    themeDark: 'Oscuro',
+    themeLight: 'Claro',
+    toggleThemeAria: 'Cambiar tema (actual: {theme})',
+    roleAdmin: 'Administrador',
+    roleCouple: 'Pareja',
+    roleGuest: 'Invitado',
+    roleUser: 'Usuario',
+    weddingDetails: 'Detalles de la Boda'
   }
 };
