@@ -313,4 +313,30 @@ export interface TranslationKeys {
     weddingDetails: string;
     platformTitle: string;
   };
+  dashboard: {
+    welcomeTitle: string;
+    welcomeSubtitle: string;
+    readyToGetStarted: string;
+    readyDescription: string;
+    createInvitationCTA: string;
+    whatYouCanDo: string;
+    designCustomizeTitle: string;
+    designCustomizeDesc: string;
+    weddingManagementTitle: string;
+    weddingManagementDesc: string;
+    shareOnlineTitle: string;
+    shareOnlineDesc: string;
+    yourWedding: string;
+    editWeddingDetails: string;
+    rsvpsReceived: string;
+    ofInvited: string; // expects {total}
+    guestsInvited: string;
+    noGuestsYet: string;
+    daysUntilWedding: string;
+    daysToGo: string;
+    manageYourWedding: string;
+    managementHub: string;
+    rsvpAnalyticsDashboard: string;
+    viewInvitation: string;
+  };
 }

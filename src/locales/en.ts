@@ -312,5 +312,31 @@ export const englishTranslations: TranslationKeys = {
     roleUser: 'User',
     weddingDetails: 'Wedding Details',
     platformTitle: 'Wedding Platform'
+  },
+  dashboard: {
+    welcomeTitle: 'Welcome to Your Wedding Dashboard',
+    welcomeSubtitle: "Let's create your beautiful wedding invitation!",
+    readyToGetStarted: '🎉 Ready to Get Started?',
+    readyDescription: 'Create your wedding invitation and share it with your guests. Our easy-to-use wizard will guide you through the process step by step.',
+    createInvitationCTA: 'Create Your Wedding Invitation',
+    whatYouCanDo: 'What You Can Do',
+    designCustomizeTitle: '📝 Design & Customize',
+    designCustomizeDesc: 'Choose templates, colors, and fonts that match your style',
+    weddingManagementTitle: '👥 Wedding Management',
+    weddingManagementDesc: 'Manage guests, track RSVPs, and send invitations',
+    shareOnlineTitle: '🌐 Share Online',
+    shareOnlineDesc: 'Get a custom URL to share your invitation easily',
+    yourWedding: 'Your Wedding',
+    editWeddingDetails: 'Edit Wedding Details',
+    rsvpsReceived: 'RSVPs Received',
+    ofInvited: 'of {total} invited',
+    guestsInvited: 'Guests Invited',
+    noGuestsYet: 'No guests added yet',
+    daysUntilWedding: 'Days Until Wedding',
+    daysToGo: 'days to go!',
+    manageYourWedding: 'Manage Your Wedding',
+    managementHub: 'Wedding Management Hub',
+    rsvpAnalyticsDashboard: 'RSVP Analytics Dashboard',
+    viewInvitation: 'View Beautiful Invitation'
   }
 };

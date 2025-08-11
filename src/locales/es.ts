@@ -312,5 +312,31 @@ export const spanishTranslations: TranslationKeys = {
     roleUser: 'Usuario',
     weddingDetails: 'Detalles de la Boda',
     platformTitle: 'Plataforma de Bodas'
+  },
+  dashboard: {
+    welcomeTitle: 'Bienvenido a tu Panel de Boda',
+    welcomeSubtitle: '¡Creemos tu hermosa invitación de boda!',
+    readyToGetStarted: '🎉 ¿Listo para comenzar?',
+    readyDescription: 'Crea tu invitación de boda y compártela con tus invitados. Nuestro asistente fácil de usar te guiará paso a paso.',
+    createInvitationCTA: 'Crear tu invitación de boda',
+    whatYouCanDo: 'Lo que puedes hacer',
+    designCustomizeTitle: '📝 Diseña y Personaliza',
+    designCustomizeDesc: 'Elige plantillas, colores y fuentes que se adapten a tu estilo',
+    weddingManagementTitle: '👥 Gestión de Boda',
+    weddingManagementDesc: 'Administra invitados, rastrea RSVPs y envía invitaciones',
+    shareOnlineTitle: '🌐 Compartir en Línea',
+    shareOnlineDesc: 'Obtén una URL personalizada para compartir tu invitación fácilmente',
+    yourWedding: 'Tu Boda',
+    editWeddingDetails: 'Editar Detalles de la Boda',
+    rsvpsReceived: 'RSVPs Recibidos',
+    ofInvited: 'de {total} invitados',
+    guestsInvited: 'Invitados',
+    noGuestsYet: 'Aún no hay invitados',
+    daysUntilWedding: 'Días hasta la Boda',
+    daysToGo: '¡días restantes!',
+    manageYourWedding: 'Gestiona tu Boda',
+    managementHub: 'Centro de Gestión de Boda',
+    rsvpAnalyticsDashboard: 'Panel de Analítica de RSVP',
+    viewInvitation: 'Ver Invitación Hermosa'
   }
 };

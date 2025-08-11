@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '../components/shared/Layout';
 import { useWedding } from '../hooks/useWedding';
 import styled from 'styled-components';
+import { useTranslation } from '../hooks/useLanguage';
 
 const DashboardContainer = styled.div`
   width: 100%;
@@ -148,6 +149,7 @@ const LoadingSpinner = styled.div`
 export const CoupleDashboard: React.FC = () => {
   const { wedding, loading } = useWedding();
   const navigate = useNavigate();
+  const t = useTranslation();
 
   const handleCreateWedding = () => {
     navigate('/couple/create-wedding');
@@ -186,15 +188,14 @@ export const CoupleDashboard: React.FC = () => {
       <Layout>
         <DashboardContainer>
           <WelcomeSection>
-            <h1>Welcome to Your Wedding Dashboard</h1>
-            <p className="subtitle">Let's create your beautiful wedding invitation!</p>
+            <h1>{t.dashboard.welcomeTitle}</h1>
+            <p className="subtitle">{t.dashboard.welcomeSubtitle}</p>
           </WelcomeSection>
 
           <DashboardCard style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h3>🎉 Ready to Get Started?</h3>
+            <h3>{t.dashboard.readyToGetStarted}</h3>
             <p className="description">
-              Create your wedding invitation and share it with your guests. 
-              Our easy-to-use wizard will guide you through the process step by step.
+              {t.dashboard.readyDescription}
             </p>
             <button 
               onClick={handleCreateWedding}
@@ -211,29 +212,29 @@ export const CoupleDashboard: React.FC = () => {
                 transition: 'all 0.2s ease'
               }}
             >
-              Create Your Wedding Invitation
+              {t.dashboard.createInvitationCTA}
             </button>
           </DashboardCard>
 
           <ActionSection>
-            <h3>What You Can Do</h3>
+            <h3>{t.dashboard.whatYouCanDo}</h3>
             <ActionButtons>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>📝 Design & Customize</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>{t.dashboard.designCustomizeTitle}</h4>
                 <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                  Choose templates, colors, and fonts that match your style
+                  {t.dashboard.designCustomizeDesc}
                 </p>
               </div>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>👥 Wedding Management</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>{t.dashboard.weddingManagementTitle}</h4>
                 <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                  Manage guests, track RSVPs, and send invitations
+                  {t.dashboard.weddingManagementDesc}
                 </p>
               </div>
               <div style={{ padding: '1rem', textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>🌐 Share Online</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>{t.dashboard.shareOnlineTitle}</h4>
                 <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                  Get a custom URL to share your invitation easily
+                  {t.dashboard.shareOnlineDesc}
                 </p>
               </div>
             </ActionButtons>
@@ -253,48 +254,48 @@ export const CoupleDashboard: React.FC = () => {
 
         <DashboardGrid>
           <DashboardCard>
-            <h3>Your Wedding</h3>
+            <h3>{t.dashboard.yourWedding}</h3>
             <p className="description">
               {wedding.ceremonyLocation.name}
             </p>
             <ActionButton to="/couple/wedding-details" variant="primary">
-              Edit Wedding Details
+              {t.dashboard.editWeddingDetails}
             </ActionButton>
           </DashboardCard>
           
           <DashboardCard>
-            <h3>RSVPs Received</h3>
+            <h3>{t.dashboard.rsvpsReceived}</h3>
             <p className="metric">0</p>
-            <p className="description">of 0 invited</p>
+            <p className="description">{t.dashboard.ofInvited.replace('{total}', '0')}</p>
           </DashboardCard>
           
           <DashboardCard>
-            <h3>Guests Invited</h3>
+            <h3>{t.dashboard.guestsInvited}</h3>
             <p className="metric">0</p>
-            <p className="description">No guests added yet</p>
+            <p className="description">{t.dashboard.noGuestsYet}</p>
           </DashboardCard>
           
           <DashboardCard>
-            <h3>Days Until Wedding</h3>
+            <h3>{t.dashboard.daysUntilWedding}</h3>
             <p className="metric">{getDaysUntilWedding(wedding.weddingDate)}</p>
-            <p className="description">days to go!</p>
+            <p className="description">{t.dashboard.daysToGo}</p>
           </DashboardCard>
         </DashboardGrid>
 
         <ActionSection>
-          <h3>Manage Your Wedding</h3>
+          <h3>{t.dashboard.manageYourWedding}</h3>
           <ActionButtons>
             <ActionButton to="/couple/wedding-management" variant="primary">
-              Wedding Management Hub
+              {t.dashboard.managementHub}
             </ActionButton>
             <ActionButton to="/couple/rsvp-dashboard" variant="primary">
-              RSVP Analytics Dashboard
+              {t.dashboard.rsvpAnalyticsDashboard}
             </ActionButton>
             <ActionButton to="/couple/customize" variant="primary">
-              Customize Invitation
+              {t.customization.customizeInvitation}
             </ActionButton>
             <ActionButton to={`/wedding/${wedding.id}`} variant="secondary" target="_blank">
-              View Beautiful Invitation
+              {t.dashboard.viewInvitation}
             </ActionButton>
           </ActionButtons>
         </ActionSection>
